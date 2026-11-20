@@ -6,6 +6,8 @@ Project Zomboid Build 42 (42.21) add-on for [Project A-Life NPCs](https://steamc
 - Steam Workshop ID: 3827364142
 - Author: Lebanon
 
+Licensed: personal modification OK; to share changes, make a companion mod. See LICENSE.
+
 Adds relationships, factions, camp life and NPC building on top of Project A-Life NPCs.
 An optional AI bridge (local Ollama / LM Studio, or an OpenAI-compatible API with your own key) lives in `Contents/mods/ALifeChatPlus/bridge/`. The mod works fine with AI off.
 

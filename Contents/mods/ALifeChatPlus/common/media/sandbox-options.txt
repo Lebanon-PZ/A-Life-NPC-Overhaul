@@ -1,0 +1,1309 @@
+VERSION = 1,
+
+option ALifeChatPlus.Immersive
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_Immersive,
+}
+
+option ALifeChatPlus.Moments
+{
+	type = enum,
+	numValues = 3,
+	default = 1,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_Moments,
+	valueTranslation = ALifeChatPlus_Moments,
+}
+
+option ALifeChatPlus.Toasts
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_Toasts,
+}
+
+option ALifeChatPlus.ToastSec
+{
+	type = integer,
+	min = 3,
+	max = 20,
+	default = 7,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_ToastSec,
+}
+
+option ALifeChatPlus.NameDiscovery
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_NameDiscovery,
+}
+
+option ALifeChatPlus.Emotions
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_Emotions,
+}
+
+option ALifeChatPlus.ChangeOverTime
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_ChangeOverTime,
+}
+
+option ALifeChatPlus.Habits
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_Habits,
+}
+
+option ALifeChatPlus.LifeTopics
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_LifeTopics,
+}
+
+option ALifeChatPlus.Dreams
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_Dreams,
+}
+
+option ALifeChatPlus.OutfitTalk
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_OutfitTalk,
+}
+
+option ALifeChatPlus.WeatherTalk
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_WeatherTalk,
+}
+
+option ALifeChatPlus.WoundTalk
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_WoundTalk,
+}
+
+option ALifeChatPlus.WoundTalkFreq
+{
+	type = integer,
+	min = 0,
+	max = 300,
+	default = 100,
+	page = ALifeChatPlus_General,
+	translation = ALifeChatPlus_WoundTalkFreq,
+}
+
+option ALifeChatPlus.NpcLanguage
+{
+	type = enum,
+	numValues = 14,
+	default = 1,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_NpcLanguage,
+	valueTranslation = ALifeChatPlus_NpcLanguage,
+}
+
+option ALifeChatPlus.AIWaitSec
+{
+	type = integer,
+	min = 3,
+	max = 30,
+	default = 20,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_AIWaitSec,
+}
+
+option ALifeChatPlus.MemLines
+{
+	type = integer,
+	min = 2,
+	max = 20,
+	default = 6,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_MemLines,
+}
+
+option ALifeChatPlus.TalkTiles
+{
+	type = integer,
+	min = 5,
+	max = 30,
+	default = 14,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_TalkTiles,
+}
+
+option ALifeChatPlus.ShoutTiles
+{
+	type = integer,
+	min = 10,
+	max = 60,
+	default = 32,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_ShoutTiles,
+}
+
+option ALifeChatPlus.ChimeChance
+{
+	type = integer,
+	min = 0,
+	max = 100,
+	default = 55,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_ChimeChance,
+}
+
+option ALifeChatPlus.BackChance
+{
+	type = integer,
+	min = 0,
+	max = 100,
+	default = 40,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_BackChance,
+}
+
+option ALifeChatPlus.MaxChain
+{
+	type = integer,
+	min = 0,
+	max = 4,
+	default = 2,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_MaxChain,
+}
+
+option ALifeChatPlus.Ambient
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_Ambient,
+}
+
+option ALifeChatPlus.AmbientMinSec
+{
+	type = integer,
+	min = 10,
+	max = 300,
+	default = 20,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_AmbientMinSec,
+}
+
+option ALifeChatPlus.AmbientMaxSec
+{
+	type = integer,
+	min = 10,
+	max = 600,
+	default = 40,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_AmbientMaxSec,
+}
+
+option ALifeChatPlus.AmbientCooldownSec
+{
+	type = integer,
+	min = 30,
+	max = 1800,
+	default = 120,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_AmbientCooldownSec,
+}
+
+option ALifeChatPlus.AmbientReplyChance
+{
+	type = integer,
+	min = 0,
+	max = 100,
+	default = 60,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_AmbientReplyChance,
+}
+
+option ALifeChatPlus.BanterChance
+{
+	type = integer,
+	min = 0,
+	max = 100,
+	default = 50,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_BanterChance,
+}
+
+option ALifeChatPlus.Attention
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_Attention,
+}
+
+option ALifeChatPlus.Voice
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_Voice,
+}
+
+option ALifeChatPlus.RadioNews
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Talk,
+	translation = ALifeChatPlus_RadioNews,
+}
+
+option ALifeChatPlus.Bonds
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_Bonds,
+}
+
+option ALifeChatPlus.Romance
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_Romance,
+}
+
+option ALifeChatPlus.NpcLove
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_NpcLove,
+}
+
+option ALifeChatPlus.OrientSame
+{
+	type = integer,
+	min = 0,
+	max = 100,
+	default = 7,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_OrientSame,
+}
+
+option ALifeChatPlus.OrientBoth
+{
+	type = integer,
+	min = 0,
+	max = 100,
+	default = 10,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_OrientBoth,
+}
+
+option ALifeChatPlus.Recruiting
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_Recruiting,
+}
+
+option ALifeChatPlus.Party
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_Party,
+}
+
+option ALifeChatPlus.PartyCap
+{
+	type = integer,
+	min = 1,
+	max = 10,
+	default = 6,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_PartyCap,
+}
+
+option ALifeChatPlus.BaseParty
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_BaseParty,
+}
+
+option ALifeChatPlus.WitnessValues
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_WitnessValues,
+}
+
+option ALifeChatPlus.Grudges
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_Grudges,
+}
+
+option ALifeChatPlus.Nemesis
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_Nemesis,
+}
+
+option ALifeChatPlus.Betrayal
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_Betrayal,
+}
+
+option ALifeChatPlus.Promises
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_Promises,
+}
+
+option ALifeChatPlus.LastWords
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_LastWords,
+}
+
+option ALifeChatPlus.LossTalk
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_LossTalk,
+}
+
+option ALifeChatPlus.PartnerLossTrauma
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_PartnerLossTrauma,
+}
+
+option ALifeChatPlus.TurnedReact
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_TurnedReact,
+}
+
+option ALifeChatPlus.DarkPersonas
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_People,
+	translation = ALifeChatPlus_DarkPersonas,
+}
+
+option ALifeChatPlus.Bands
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Bands,
+}
+
+option ALifeChatPlus.Directives
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Directives,
+}
+
+option ALifeChatPlus.Politics
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Politics,
+}
+
+option ALifeChatPlus.Dynamics
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Dynamics,
+}
+
+option ALifeChatPlus.Territory
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Territory,
+}
+
+option ALifeChatPlus.ClaimTiles
+{
+	type = integer,
+	min = 15,
+	max = 150,
+	default = 45,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_ClaimTiles,
+}
+
+option ALifeChatPlus.TributeDays
+{
+	type = integer,
+	min = 1,
+	max = 14,
+	default = 3,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_TributeDays,
+}
+
+option ALifeChatPlus.Threats
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Threats,
+}
+
+option ALifeChatPlus.AttackPlayer
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AttackPlayer,
+}
+
+option ALifeChatPlus.AttackNpc
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AttackNpc,
+}
+
+option ALifeChatPlus.Rumors
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Rumors,
+}
+
+option ALifeChatPlus.Notes
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Notes,
+}
+
+option ALifeChatPlus.NpcBases
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_NpcBases,
+}
+
+option ALifeChatPlus.NpcBaseRate
+{
+	type = integer,
+	min = 0,
+	max = 300,
+	default = 100,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_NpcBaseRate,
+}
+
+option ALifeChatPlus.NpcBuild
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_NpcBuild,
+}
+
+option ALifeChatPlus.AirportFaction
+{
+	type = boolean,
+	default = false,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AirportFaction,
+}
+
+option ALifeChatPlus.AirportStartDay
+{
+	type = integer,
+	min = 0,
+	max = 365,
+	default = 1,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AirportStartDay,
+}
+
+option ALifeChatPlus.AirportX
+{
+	type = integer,
+	min = 0,
+	max = 40000,
+	default = 0,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AirportX,
+}
+
+option ALifeChatPlus.AirportY
+{
+	type = integer,
+	min = 0,
+	max = 40000,
+	default = 0,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AirportY,
+}
+
+option ALifeChatPlus.Settlers
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_Settlers,
+}
+
+option ALifeChatPlus.CPMorale
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPMorale,
+}
+
+option ALifeChatPlus.CPMoraleRate
+{
+	type = enum,
+	numValues = 3,
+	default = 2,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPMoraleRate,
+	valueTranslation = ALifeChatPlus_CPMoraleRate,
+}
+
+option ALifeChatPlus.CPMoraleLeave
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPMoraleLeave,
+}
+
+option ALifeChatPlus.WalkOutAt
+{
+	type = integer,
+	min = 30,
+	max = 100,
+	default = 60,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_WalkOutAt,
+}
+
+option ALifeChatPlus.CPRules
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPRules,
+}
+
+option ALifeChatPlus.CPPatrolPoints
+{
+	type = integer,
+	min = 1,
+	max = 10,
+	default = 5,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPPatrolPoints,
+}
+
+option ALifeChatPlus.CPNightWatch
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPNightWatch,
+}
+
+option ALifeChatPlus.CPWatchWakes
+{
+	type = enum,
+	numValues = 3,
+	default = 2,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPWatchWakes,
+	valueTranslation = ALifeChatPlus_CPWatchWakes,
+}
+
+option ALifeChatPlus.CPHordeSize
+{
+	type = integer,
+	min = 5,
+	max = 50,
+	default = 10,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPHordeSize,
+}
+
+option ALifeChatPlus.CPAlarm
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPAlarm,
+}
+
+option ALifeChatPlus.CPAlarmAuto
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPAlarmAuto,
+}
+
+option ALifeChatPlus.CPAlarmFighters
+{
+	type = enum,
+	numValues = 3,
+	default = 2,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPAlarmFighters,
+	valueTranslation = ALifeChatPlus_CPAlarmFighters,
+}
+
+option ALifeChatPlus.CPAlarmLights
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPAlarmLights,
+}
+
+option ALifeChatPlus.CPAlarmBell
+{
+	type = boolean,
+	default = false,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPAlarmBell,
+}
+
+option ALifeChatPlus.CPAlarmClear
+{
+	type = integer,
+	min = 0,
+	max = 240,
+	default = 30,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPAlarmClear,
+}
+
+option ALifeChatPlus.CPMeals
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPMeals,
+}
+
+option ALifeChatPlus.CPMealHour
+{
+	type = integer,
+	min = 0,
+	max = 23,
+	default = 18,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPMealHour,
+}
+
+option ALifeChatPlus.CPMealPortions
+{
+	type = enum,
+	numValues = 3,
+	default = 2,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPMealPortions,
+	valueTranslation = ALifeChatPlus_CPMealPortions,
+}
+
+option ALifeChatPlus.CPSickBay
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPSickBay,
+}
+
+option ALifeChatPlus.CPBitten
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPBitten,
+}
+
+option ALifeChatPlus.CPBiteRule
+{
+	type = enum,
+	numValues = 3,
+	default = 1,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPBiteRule,
+	valueTranslation = ALifeChatPlus_CPBiteRule,
+}
+
+option ALifeChatPlus.CPBiteHide
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPBiteHide,
+}
+
+option ALifeChatPlus.CPArmory
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPArmory,
+}
+
+option ALifeChatPlus.CPArmoryAmmo
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPArmoryAmmo,
+}
+
+option ALifeChatPlus.CPArmoryAmmoWho
+{
+	type = enum,
+	numValues = 2,
+	default = 1,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPArmoryAmmoWho,
+	valueTranslation = ALifeChatPlus_CPArmoryAmmoWho,
+}
+
+option ALifeChatPlus.CPArmoryRepair
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPArmoryRepair,
+}
+
+option ALifeChatPlus.CPArmoryArmor
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPArmoryArmor,
+}
+
+option ALifeChatPlus.CPEvenings
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPEvenings,
+}
+
+option ALifeChatPlus.CPEveningStart
+{
+	type = integer,
+	min = 0,
+	max = 23,
+	default = 19,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPEveningStart,
+}
+
+option ALifeChatPlus.CPEveningEnd
+{
+	type = integer,
+	min = 0,
+	max = 23,
+	default = 22,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPEveningEnd,
+}
+
+option ALifeChatPlus.CPGrief
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPGrief,
+}
+
+option ALifeChatPlus.CPAnimals
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPAnimals,
+}
+
+option ALifeChatPlus.CPFarm
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPFarm,
+}
+
+option ALifeChatPlus.CPFarmWaterAt
+{
+	type = integer,
+	min = 10,
+	max = 90,
+	default = 40,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPFarmWaterAt,
+}
+
+option ALifeChatPlus.CPFarmHarvest
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPFarmHarvest,
+}
+
+option ALifeChatPlus.CPFortify
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPFortify,
+}
+
+option ALifeChatPlus.CPFortifyOwn
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPFortifyOwn,
+}
+
+option ALifeChatPlus.CPHaulers
+{
+	type = integer,
+	min = 1,
+	max = 4,
+	default = 2,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPHaulers,
+}
+
+option ALifeChatPlus.CPHaulTrip
+{
+	type = integer,
+	min = 1,
+	max = 20,
+	default = 8,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPHaulTrip,
+}
+
+option ALifeChatPlus.CPHaulDrops
+{
+	type = integer,
+	min = 2,
+	max = 10,
+	default = 5,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPHaulDrops,
+}
+
+option ALifeChatPlus.CPHaulOverflow
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPHaulOverflow,
+}
+
+option ALifeChatPlus.CPHaulFridgeWarn
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Base,
+	translation = ALifeChatPlus_CPHaulFridgeWarn,
+}
+
+option ALifeChatPlus.WZMaxZones
+{
+	type = integer,
+	min = 1,
+	max = 25,
+	default = 10,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZMaxZones,
+}
+
+option ALifeChatPlus.WZMaxDistance
+{
+	type = integer,
+	min = 1,
+	max = 150,
+	default = 75,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZMaxDistance,
+}
+
+option ALifeChatPlus.WZWorkersPerZone
+{
+	type = integer,
+	min = 1,
+	max = 4,
+	default = 2,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZWorkersPerZone,
+}
+
+option ALifeChatPlus.WZWhileAway
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZWhileAway,
+}
+
+option ALifeChatPlus.WZAwayRate
+{
+	type = integer,
+	min = 1,
+	max = 20,
+	default = 6,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZAwayRate,
+}
+
+option ALifeChatPlus.WZBurnSafeRadius
+{
+	type = integer,
+	min = 1,
+	max = 10,
+	default = 5,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZBurnSafeRadius,
+}
+
+option ALifeChatPlus.WZBurnZombieRadius
+{
+	type = integer,
+	min = 15,
+	max = 50,
+	default = 30,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZBurnZombieRadius,
+}
+
+option ALifeChatPlus.WZBurnWeather
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZBurnWeather,
+}
+
+option ALifeChatPlus.WZBurnWatch
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZBurnWatch,
+}
+
+option ALifeChatPlus.WZSqueamish
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZSqueamish,
+}
+
+option ALifeChatPlus.WZShovelSearch
+{
+	type = integer,
+	min = 1,
+	max = 150,
+	default = 50,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZShovelSearch,
+}
+
+option ALifeChatPlus.WZGraveLayOut
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_WorkZones,
+	translation = ALifeChatPlus_WZGraveLayOut,
+}
+
+option ALifeChatPlus.DarkContent
+{
+	type = boolean,
+	default = false,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_DarkContent,
+}
+
+option ALifeChatPlus.Nomads
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Nomads,
+}
+
+option ALifeChatPlus.Outposts
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Outposts,
+}
+
+option ALifeChatPlus.Caravans
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Caravans,
+}
+
+option ALifeChatPlus.CaravanTiles
+{
+	type = integer,
+	min = 300,
+	max = 6000,
+	default = 1500,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_CaravanTiles,
+}
+
+option ALifeChatPlus.WalkTilesPerHour
+{
+	type = integer,
+	min = 40,
+	max = 600,
+	default = 150,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_WalkTilesPerHour,
+}
+
+option ALifeChatPlus.DriveTilesPerHour
+{
+	type = integer,
+	min = 200,
+	max = 4000,
+	default = 900,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_DriveTilesPerHour,
+}
+
+option ALifeChatPlus.RadioCalls
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_RadioCalls,
+}
+
+option ALifeChatPlus.RadioRangePct
+{
+	type = integer,
+	min = 10,
+	max = 500,
+	default = 100,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_RadioRangePct,
+}
+
+option ALifeChatPlus.RadioShare
+{
+	type = integer,
+	min = 0,
+	max = 100,
+	default = 60,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_RadioShare,
+}
+
+option ALifeChatPlus.AllyHelp
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AllyHelp,
+}
+
+option ALifeChatPlus.Bounties
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Bounties,
+}
+
+option ALifeChatPlus.TradingPost
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_TradingPost,
+}
+
+option ALifeChatPlus.MarketDays
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_MarketDays,
+}
+
+option ALifeChatPlus.Journal
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Journal,
+}
+
+option ALifeChatPlus.NpcVehicles
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_NpcVehicles,
+}
+
+option ALifeChatPlus.AirportFlights
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AirportFlights,
+}
+
+option ALifeChatPlus.AirportAbductions
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_AirportAbductions,
+}
+
+option ALifeChatPlus.ItemWorth
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_ItemWorth,
+}
+
+option ALifeChatPlus.MissingPeople
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_MissingPeople,
+}
+
+option ALifeChatPlus.HealthLog
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_HealthLog,
+}
+
+option ALifeChatPlus.PeopleLeave
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_PeopleLeave,
+}
+
+option ALifeChatPlus.OwnCaravans
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_OwnCaravans,
+}
+
+option ALifeChatPlus.Chokepoints
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_Chokepoints,
+}
+
+option ALifeChatPlus.WarMap
+{
+	type = boolean,
+	default = true,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_WarMap,
+}
+
+option ALifeChatPlus.TWDRealNames
+{
+	type = boolean,
+	default = false,
+	page = ALifeChatPlus_Factions,
+	translation = ALifeChatPlus_TWDRealNames,
+}

@@ -1,0 +1,4 @@
+CapsLock
+# Change the word above to the key you hold to talk, then restart the voice.
+# Options: CapsLock, Mouse4, Mouse5, MiddleMouse, RightCtrl, RightAlt, ScrollLock, Pause, Backtick, F1-F12, or a single letter/number.
+# Pick a key you do not type with.

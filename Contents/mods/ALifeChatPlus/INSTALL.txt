@@ -1,0 +1,63 @@
+A-LIFE NPC OVERHAUL (beta)
+Project Zomboid Build 42.21
+==========================
+
+Talk to Project A-Life NPCs, give them orders, run a camp. Their groups trade,
+raid, starve and settle real houses. Nothing spawns. The AI is optional:
+everything works without it.
+
+
+NEEDS
+-----
+- Project A-Life NPCs (Steam Workshop)
+- Recommended: A-Life Jeem Extension (Steam Workshop)
+- For the AI only: Windows, and a graphics card with 6-8 GB of video memory,
+  or a cloud AI account with your own key
+
+
+1. INSTALL
+----------
+1. Subscribe on the Steam Workshop. Steam puts it in place for you.
+2. In the mod list: Project A-Life first, then the Jeem Extension, then
+   A-Life NPC Overhaul. Safe to add to a save you already have.
+3. Load your game.
+
+
+2. FIRST STEPS IN GAME
+----------------------
+- Right-click > A-Life: the quick wheel for whoever (or wherever) you point at.
+  The A-Life window (all the tabs) is on the wheel too.
+- Talk: walk up to someone and use the chat key, or open the talk window.
+- Keys: Options > Mods > A-Life NPC Overhaul. Nothing is bound at first.
+  Bind "A-Life window" and "Talk to the nearest person" at least.
+- Stuck? The Help tab in the A-Life window.
+- Settings: A-Life window > Settings. A switch you save there stays for this
+  world. "Back to sandbox values" undoes them. Sandbox pages: NPC Overhaul 1-6.
+
+
+3. THE AI (optional)
+--------------------
+With it, people understand anything you say and answer in their own words.
+Without it, plain orders work (Help > Commands lists them).
+
+Free and local:
+1. In game: A-Life window > AI tab > "Open the AI folder".
+2. Double-click Setup.cmd. It installs Ollama and a model, and a small helper
+   that starts the AI with the game and stops it after.
+3. Back in game, the AI tab shows if it's working and lets you test it.
+
+Cloud (your own key): same folder, double-click "Set up cloud AI.cmd",
+or fill in the form on the AI tab.
+
+Read "READ ME FIRST.txt" in that folder for what each file does.
+
+
+4. SOMETHING WRONG?
+-------------------
+Send these on Discord or in the Workshop comments:
+- console.txt  (C:\Users\<you>\Zomboid)
+- Zomboid\Lua\ALifeChatPlus_health.txt
+AI trouble: AI tab > Doctor check, then send Zomboid\Lua\alifeai_doctor.txt.
+
+A feature that hits an error switches itself off for the session and tells you.
+See CHANGELOG.txt for what's new.

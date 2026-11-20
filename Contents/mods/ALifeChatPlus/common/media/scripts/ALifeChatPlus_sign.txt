@@ -1,0 +1,62 @@
+module ALifeChatPlus
+{
+    imports
+    {
+        Base
+    }
+
+    model SignBoard
+    {
+        mesh = weapons/2handed/Plank,
+        texture = ALifeSignBoard,
+        scale = 1.0,
+        attachment world
+        {
+            offset = 0.0 0.212 -0.0099,
+            rotate = 0.0 -90.0 0.0,
+        }
+    }
+
+    item SignBoard
+    {
+        DisplayName = Painted Sign,
+        DisplayCategory = Household,
+        ItemType = base:normal,
+        Weight = 1.5,
+        Icon = ALifeSignBoard,
+        WorldStaticModel = SignBoard,
+    }
+
+    /* pre-1.0: claim sign (docs/SIGNS.md). Planted from the inventory menu; its ground = a radius around it. */
+    item ClaimSign
+    {
+        DisplayName = Claim Sign,
+        DisplayCategory = Household,
+        ItemType = base:normal,
+        Weight = 6.0,
+        Icon = ALifeSignBoard,
+        WorldStaticModel = SignBoard,
+        Tooltip = Tooltip_ALifeClaimSign,
+    }
+
+    craftRecipe MakeClaimSign
+    {
+        timedAction = SawLogs,
+        time = 200,
+        Tags = InHandCraft;CanBeDoneFromFloor,
+        category = Carpentry,
+        xpAward = Woodwork:10,
+        inputs
+        {
+            item 1 tags[base:hammer] mode:keep flags[MayDegradeVeryLight],
+            item 1 [Base.IronBand],
+            item 3 [Base.Plank] flags[Prop2],
+            item 1 [Base.LongStick],
+            item 6 [Base.Nails],
+        }
+        outputs
+        {
+            item 1 ALifeChatPlus.ClaimSign,
+        }
+    }
+}

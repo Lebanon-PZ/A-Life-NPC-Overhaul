@@ -1,0 +1,10 @@
+name=A-Life NPC Overhaul (Beta)
+id=ALifeChatPlus
+author=Lebanon
+modversion=0.9.5
+versionMin=42.21.0
+require=\ProjectALifeNPCs
+loadModAfter=\ProjectALifeNPCs,\ProjectALifeJimmy
+pack=alife_signs
+tiledef=ALifeNPCOverhaul_tiles 3827
+description=Talk to Project A-Life NPCs, give them orders, and watch their groups trade, raid, starve and settle real houses. They remember how you treat them. Nothing spawns. Immersive: no stat screens, you read people by how they act. The AI (local or cloud) is optional: everything works without it.

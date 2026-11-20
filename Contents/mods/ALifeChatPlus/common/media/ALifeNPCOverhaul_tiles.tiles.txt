@@ -1,0 +1,247 @@
+version = 1
+tileset
+{
+    file = alife_signs_01
+    size = 8,16
+    id = 1
+    // alife_signs_01_0
+    tile
+    {
+        xy = 0,0
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Hostile Sign
+        Facing = S
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_1
+    tile
+    {
+        xy = 1,0
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Hostile Sign
+        Facing = E
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_2
+    tile
+    {
+        xy = 2,0
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Neutral Sign
+        Facing = S
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_3
+    tile
+    {
+        xy = 3,0
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Neutral Sign
+        Facing = E
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_4
+    tile
+    {
+        xy = 4,0
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Friendly Sign
+        Facing = S
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_5
+    tile
+    {
+        xy = 5,0
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Friendly Sign
+        Facing = E
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_6
+    tile
+    {
+        xy = 6,0
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Slaver Sign
+        Facing = S
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_7
+    tile
+    {
+        xy = 7,0
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Slaver Sign
+        Facing = E
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_8
+    tile
+    {
+        xy = 0,1
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Hostile Sign
+        Facing = N
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_9
+    tile
+    {
+        xy = 1,1
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Hostile Sign
+        Facing = W
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_10
+    tile
+    {
+        xy = 2,1
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Neutral Sign
+        Facing = N
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_11
+    tile
+    {
+        xy = 3,1
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Neutral Sign
+        Facing = W
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_12
+    tile
+    {
+        xy = 4,1
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Friendly Sign
+        Facing = N
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_13
+    tile
+    {
+        xy = 5,1
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Friendly Sign
+        Facing = W
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_14
+    tile
+    {
+        xy = 6,1
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Slaver Sign
+        Facing = N
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+    // alife_signs_01_15
+    tile
+    {
+        xy = 7,1
+        BlocksPlacement =
+        CanScrap =
+        CustomName = Slaver Sign
+        Facing = W
+        GroupName = Territory
+        IsLow =
+        IsMoveAble =
+        Material = Wood
+        Material2 = Nails
+        PickUpWeight = 30
+    }
+}

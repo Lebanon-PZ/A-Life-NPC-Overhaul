@@ -1,0 +1,60 @@
+gemma3:4b
+#
+# ^ The FIRST LINE is the AI model the NPCs use. To switch, replace it with any name below (copy it exactly),
+#   save, and restart the game. A model you don't have yet downloads by itself the first time (a few minutes).
+#   Bigger = richer, more in-character replies, but slower and uses more video memory (VRAM).
+#   Your VRAM: Task Manager > Performance > GPU > "Dedicated GPU memory". The game itself needs some too.
+#
+# ===== MODELS =======================================================================================
+#   name                                  size  VRAM   profile  what it's like
+# --- Small / fast ------------------------------------------------------------------------------------
+# llama3.2:3b                             3B    4 GB   lite     Fastest. Short, simple replies. Older or laptop GPUs.
+# qwen2.5:3b                              3B    4 GB   lite     Quick and follows instructions; voice is a bit flat.
+# --- Balanced (default) --------------------------------------------------------------------------------
+# gemma3:4b                               4B    6 GB   normal   Default. Good mix of speed and character. Can be polite/plain.
+# hf.co/HauhauCS/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive:Q4_K_M
+#                                         4B    6-8 GB normal   Uncensored Gemma. Raiders sound like raiders, no refusals.
+# --- Rich ------------------------------------------------------------------------------------------------
+# llama3.1:8b                             8B    8 GB   full     A-Life Talk's original default. Handles long prompts well.
+# qwen2.5:7b                              7B    8 GB   full     Best at keeping facts straight and staying on topic.
+# hf.co/bartowski/L3-8B-Stheno-v3.2-GGUF:Q4_K_M
+#                                         8B    8 GB   full     Role-play tuned. Most human, gritty and emotional;
+#                                                               sometimes looser with facts.
+# --- Large (12 GB+ cards) --------------------------------------------------------------------------------
+# gemma3:12b                              12B   12 GB  full     Noticeably smarter and more natural. Slower.
+# mistral-nemo                            12B   12 GB  full     Strong role-play voice and long memory. Slower.
+#
+# VRAM numbers are rough, for the model alone. If the game stutters while NPCs talk, go one size smaller.
+#
+# ===== PERFORMANCE PROFILE ==========================================================================
+# How much the NPC is told every time it talks. Small models get confused by too much, so they're told less.
+# By default it's picked from the model (the "profile" column above). You don't have to touch this.
+#
+#   lite    Who they are, their mood toward you, what's happening right now, what they remember.
+#           Their group's politics are left out. Shortest prompt, fastest replies. Best for 3B models.
+#   normal  Everything in lite, plus their group: how it's run, what they believe, their goals, allies
+#           and enemies. Best for 4B models.
+#   full    Everything: all ties, what changed since your last visit, longer memory and context.
+#           Best for 7B and up.
+#
+# Always included, any profile: name answers, tribute demands, war with you, secret pacts and join
+# offers. The big ones (war, unpaid tribute, people wanting to join or leaving your base) also show
+# on screen, so the AI can never forget them.
+#
+# To force a profile, delete the "# " in front of ONE of these lines (put it back for automatic):
+# profile=lite
+# profile=normal
+# profile=full
+#
+# ===== LOADING SETTINGS (0.8.11.2) ====================================================================
+# Delete the "# " in front of a line to change it (put it back for the default).
+#
+#   num_ctx   How much text the model reads at once. BOTH AI helpers use this same number, so Ollama loads the
+#             model once. A big number on a big model can overflow your video memory: it then spills onto the
+#             CPU and gets very slow ("AI bridge stuck ... timed out"). 4096 is plenty.
+# num_ctx=4096
+#   warmup    Seconds to wait for the model to load when the game starts (big models load slowly the first time).
+# warmup=180
+#   fallback  If your model doesn't load in time, NPCs use this one instead (only if it's downloaded) and the game
+#             tells you. Your model is tried again next time you start the game.
+# fallback=gemma3:4b

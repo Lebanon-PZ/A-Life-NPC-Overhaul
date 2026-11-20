@@ -1,0 +1,31 @@
+# A-Life NPC Overhaul - CLOUD AI (optional). No GPU, no Ollama needed.
+# Works with any OpenAI-compatible service: OpenRouter, OpenAI, Groq, DeepSeek, Mistral, Together, LM Studio...
+# 1. Get an API key from your provider.  2. Fill in the lines below.  3. Set enabled=true.  4. Save, start the game.
+# This file lives in Zomboid\Lua so mod updates never touch it. Never share it: it holds your key.
+#
+# Privacy: what you type or say to NPCs (and what the game tells the AI about them) is sent to your provider.
+# Cost: you pay your provider per request. max_per_hour caps it; when the cap is hit, NPCs use A-Life's own lines
+# until the hour rolls over.
+
+enabled=false
+
+# The provider's address (the part before /chat/completions). Examples:
+#   OpenRouter: https://openrouter.ai/api/v1
+#   OpenAI:     https://api.openai.com/v1
+#   Groq:       https://api.groq.com/openai/v1
+#   DeepSeek:   https://api.deepseek.com/v1
+#   LM Studio:  http://127.0.0.1:1234/v1   (local, any key works)
+url=https://openrouter.ai/api/v1
+
+key=
+
+# The model name exactly as your provider lists it (on OpenRouter: the id on the model's page)
+model=
+
+# NPCs talking to each other, gossip, memory summaries, backstories and radio news:
+#   off   = only replies to YOU use the cloud (cheapest; the rest uses A-Life's own lines)
+#   cloud = everything uses the cloud (richest, costs much more)
+background=off
+
+# Hard cap on cloud requests per hour (both AI helpers together)
+max_per_hour=150

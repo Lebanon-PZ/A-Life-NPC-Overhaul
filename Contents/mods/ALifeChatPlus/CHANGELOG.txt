@@ -1,0 +1,1987 @@
+A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
+
+pre-1.0 (work in progress toward 1.0: multiplayer)
+
+- Fixed: people walking off platforms and roofs and breaking legs. They left their planned path and stepped onto
+  open air on an upper floor. They now look one stride ahead and stop at an open edge (stairs are fine) before the
+  step off, then get a fresh order as usual. Settings: on/off, how far ahead, how often.
+
+- Fixed: the camp's food count. The "Food" line in the camp widget, the camp's mood and the party-size food rule
+  only looked at the ground floor, 14 tiles round the middle of the base, 60 containers, one container per piece of
+  furniture, and never at the Food store you marked, so a full store could read "running low". They now read your
+  marked Food stores first (any floor, any distance), then the whole base area on every floor, every container,
+  food in bags too. Rotten food doesn't count. Settings > Your camp and base: how far, how many floors, how many
+  containers.
+- New: hover tips everywhere. Every tab, every button and every setting row in the A-Life window says what it
+  does when you rest the mouse on it: shows after half a second, goes a quarter second after you move off. Setting
+  rows also show their lowest and highest value. Settings > Interface: tips on/off and both delays.
+- New: every sandbox option has a tooltip now, and every number option says what a low and a high value does (the
+  game adds min, max and default under it).
+- Changed: presets and window style are drop-downs at the top of the Settings tab. Chill and Hardcore now each
+  change 30+ settings across fights, capture, people, camp mood, raids, the region boss, tasks and survival, and
+  say in plain words what they do before you pick. Presets keep your window style and hover tips.
+- Changed: the default window style is A-Life (Project A-Life's own look). Saved choices are kept.
+- Fixed: long yes/no questions wrap instead of running off the screen.
+- New: territory signs stand up. Groups put up a real painted sign on a post (wood, nails, weathered), turned
+  toward you, instead of dropping a board on the ground. You can pick it up and turn it like furniture. The floating
+  words still show over it. Falls back to the old board until the new tile sheet is in.
+- MAJOR, claim signs: a group's ground is now a circle around the signs it puts up (45 tiles, setting). No sign,
+  no claim. Groups make them from real parts in their stockpile: an iron band, 3 planks, a long stick, 6 nails and
+  a hammer. Short of parts, they say so and you can bring some. Four kinds, by how the group treats people:
+  hostile, neutral, friendly, slaver (dark content only). A group that changes its ways repaints. Pull one up
+  while they're close and they blame you. Signs no longer appear from nowhere.
+- New: make your own claim sign (Carpentry, same parts) and plant it from the right-click menu. Groups won't
+  claim ground over yours.
+
+- MAJOR, camp life: ten new things for the people living at your base. No numbers anywhere, every number a
+  setting (Settings > Your camp and base), nothing spawns.
+- New: breakdowns. Someone unhappy too long loses it for a few hours before they get as far as walking out: a
+  tantrum (dumps a drop point on the floor, nothing broken), snapping at the housemate they like least, eating
+  through your food, finding a bottle in the stores, hiding inside, sitting alone at the edge of camp, or just
+  refusing to work. Who they are decides which. They feel better after. Camp > People > "Talk X down" ends it early.
+- New: good days. Someone content for a couple of days can have a really good one: much better at their camp job
+  for a day, or their mood rubs off and everyone else feels better.
+- New: job likes. Everyone likes one or two camp jobs and can't stand one (from their past and personality). In a
+  job they like they're happier and a bit better at it; in one they hate, the opposite. They say so when you give
+  them the job. The AI knows.
+- New: keep stocked. Camp > Keep stocked: "keep 40 planks" and builders saw logs from your stockpile until it's
+  there (Fortify on). Watch anything else in a container ("keep at least 10 nails"): once a day someone says what's
+  running low, and a letter.
+- New: drop point priority. Camp > Drop point priority: High / Normal / Low. Loads go to the highest with room, and
+  a hauler moves things up from low to high.
+- New: inside zone. Camp > Areas: mark the inside (up to 4 rectangles), then per person Anywhere / Inside at night /
+  Inside always, or "Everyone in at night". Outside when they shouldn't be, they walk back in. Work outside is
+  skipped. The night watch and patrols still go where the duty is.
+- New: own beds. Camp > Beds on a bed: give it to someone. In the evening anyone without one takes a free bed. They
+  sleep in their own bed and never in someone else's. No bed of their own: worse mood. A room to themselves: a bit
+  better. Too many in one room: a bit worse.
+- New: schedules. Camp > Schedules: Day, Night, Early or None per person (camp default: Day). Sleep hours they go
+  to bed and sleep, free time is for dinner and the fire, not work. Night shift people take the night watch first.
+- New: raids follow what people know. A-Life's raids come more when someone out there knows what your stores are
+  worth (strangers who were inside your base, anyone who walked out of your camp), up to x3 for a rich camp. Nobody
+  knows: half as often. It fades after two weeks. A vague letter when word gets out.
+- New: fistfights. Two people who can't stand each other, one of them fed up: now and then it comes to blows. Fists
+  only, nobody gets hurt for real. A card: Let them (clears the air, they hate each other more) or Break it up (no
+  relief, both a bit sour with you).
+- Fix: someone walking with you (a job, "follow me") who fell far behind popped in next to you, sometimes in front
+  of you, right by a horde. Now they walk or run to you like anyone would. Settings > Fights: followCatchUpWarp
+  brings the old pop-in back.
+- New: gun sense. On the dead, people use blades first. A gun only when outnumbered AND cornered: a horde near (or
+  6 dead within 8 tiles) and either 3 dead right on them, or one on them with their back to a wall or too hurt to
+  outrun it (40 pct health). A horde alone is not enough: A-Life pulled guns whenever one was near, and the shots
+  drew the whole town. People are different: on a person they go for the gun first, straight away. Your A-Life
+  party still follows its order wheel (Weapons). No blade in their pack: they use what they have. All numbers in
+  Settings > Fights (gunSense...).
+- New: melee style. Everyone has a kind of melee weapon they know (knife, machete, bat, short club, axe, spear) and
+  is better with it than with the rest. They pick what they can actually use, not just the biggest weapon: a
+  machete man keeps his machete over a bat. Their skill with what is in their hands sets how hard they hit, how
+  often they land a crit, and how well they shove the dead off. Your A-Life companions use their own melee skill
+  (teaching and camp practice count). Everyone gets better with a kind by using it. The Party tab says "good with
+  knives" when someone really is. All numbers in Settings > Fights (meleeStyle...).
+- The Commands tab is now part of Help: Help > Commands (same list, same buttons). One tab fewer.
+- Help > Commands: each group (Fighting, Getting around, Gear...) is now a drop-down. Click a heading to open or
+  close it; Open all / Close all buttons. Open ones are remembered.
+- Under the hood: the code folders are named ALifeNPCOverhaul now (was ALifeChatPlus), console lines say
+  [ALifeNPCOverhaul]. Mod ID, saves, sandbox settings and key binds are unchanged. The base files now load first
+  because the code asks for them, not because of how the folders were named.
+- Fix: switches you changed in the in-game Settings went back to the sandbox value on the next load (about 80 of
+  them: dreams, romance, party size, grudges...). A switch you click and Save now stays for that world. Its row says
+  "(kept for this world)". New button: "Back to sandbox values" forgets them all (asks first). An admin changing the
+  sandbox mid-game still wins.
+- Multiplayer: clicking a setting now goes to the server (admins only). Not an admin? The real value comes back
+  instead of the screen showing a change that never happened.
+- Settings open on "Most used" (immersive, popups, party size, romance, voice...). The full lists start folded:
+  click a heading. Search still opens everything.
+- First load: one letter with the basics (right-click > A-Life, how to talk, where the keys are, the Help tab). Once
+  per player.
+- One-time tips: hover reading set to "only while the key is held" with no key bound says where to bind it. The
+  first line you type with the AI off says plain orders still work and Help > Commands lists them (once ever, no
+  nagging). Settings > first-time tips turns all of them off; Help > "Show the tips again" brings them back.
+- Same words everywhere: right-edge news is a "letter" (sandbox "Side popups" is now "Letters"), the centre popup is
+  a "decision card". "What popped up" is now "Missed something?". "Name this place" is "Name this spot" everywhere.
+  The old right-click menu says "A-Life: ..." instead of "A-Life Talk: ...". The quick wheel's two "Everything
+  else" slices are now "More with <name>" and "All of A-Life". The radial key is "A-Life quick wheel".
+- The "old AI helper" warning now tells you the right fix (Restart AI helper.cmd), not a file that doesn't apply.
+- INSTALL.txt and README.md rewritten (they were from 0.2.6 and 0.8.4: wrong install folder, Jeem marked as
+  required). New "READ ME FIRST.txt" in the bridge folder: which file to click when.
+- Bug reports: one list everywhere: console.txt + Zomboid\Lua\ALifeChatPlus_health.txt; AI trouble: AI tab >
+  Doctor check, send Zomboid\Lua\alifeai_doctor.txt.
+- Sandbox page 1 says most switches can be changed in game too.
+- Credits: by Lebanon.
+- Window styles: pick how the A-Life windows look (Settings, Interface: uiStyle). Overhaul (ours, default), A-Life
+  (Project A-Life's own look, drawn by A-Life itself in its colours; follows A-Life's theme option), CleanUI (the
+  CleanUI inventory look; uses CleanUI's opacity option when it's on, works without it), or Vanilla (the game's own
+  windows and buttons). Switches at once, no restart.
+- Multiplayer groundwork, part 2: the talk system now lives in shared/ and loads on the server too. A file only
+  starts its world clocks where the world is (single player or the server); a multiplayer client keeps its screen
+  (windows, letters, menus). Parts not moved over yet behave exactly as before.
+- Multiplayer AI: the server builds the AI request, the AI on the talking player's own computer answers it. No AI
+  on your machine = A-Life's own lines, as before. New settings: mpAI, mpAIStaleSec, mpAIStateSec.
+- Multiplayer: the server reads its own settings file at start (a server never fires the game-start event).
+- Fix: some settings were never saved and went back to default on every restart (leader gives orders, legacy,
+  chronicle, member, democracy and AI setup options). They load before the rest of the mod and found nowhere to
+  register.
+- Fix: tasks that send you to a store (or pharmacy, or house) could point at a random spot in the woods 50-120 tiles
+  away. A-Life only looked at part of the town and didn't know Zippee, Gigamart, corner or convenience stores, and
+  picked a spot in the wild when it found none. Now it's always a real store; no store near = no store task.
+  New setting: questRealPlaces (on).
+
+v0.9.5 (Beta, test build) - LEGACY, PART 5: last secrets (romance, walk away, seasonal nights, birthdays, letters)
+
+- Romance, deeper: a month, a hundred days, a year with your partner: they mark it. "Will you marry me?" after long
+  enough together, if they love you enough: a wedding, a feast from the real stores, in the Chronicle. Apart for
+  days and back again: they run to you. Lose them and the camp knows it. Die, and a partner living at your base is
+  the one who takes over.
+- Walk away, the last quest: once, very rarely (a year in, at peace, a big camp that loves you), a chance to leave it
+  all. The camp gives you what it can spare from its real storage and goes on without you; you're remembered as a
+  Legend who walked away.
+- Seasonal nights at camp: ghost stories on Halloween, a Thanksgiving feast (the real fourth Thursday), a New Year's
+  Eve toast. Feasts only with food in the stores.
+- Ages and birthdays: everyone has an age and a birthday; your people mention theirs, a year older.
+- Letters on the dead: now and then one of a group's dead carries a letter saying where their group keeps its stash.
+- Only the leader gives orders. Your next character after a death can't order the old camp's people (camp orders,
+  jobs, follow / wait / guard, sending them places) until the heir hands the camp back. Joined an NPC group? Their
+  people take orders from their leader, not you, until you lead them. Talking is always fine.
+- No elections in your own camp: your people follow you because they love you, need you, or fear you. Votes on laws
+  stay.
+- The region boss lays down the law: the group that won the last war sends a messenger with its rules. A kingdom:
+  no group raids another, nobody keeps people in chains. A warlord: nobody raids but them. A group that raids
+  another gets hit by the boss a couple of days later, for real. You kill someone from a group that wasn't after
+  you, or hold captives under a kingdom: a warning first, then the boss's people come for you. The law ends when
+  the boss falls or loses its hold.
+- Fix: error near a group's base (vhScan, ALifeTalk_Vehicles.lua:51). On 42.21 the game's list of loaded vehicles
+  is a set, not a list, so reading it by number broke. Groups never saw their parked cars, and "car near you",
+  party seats from cars and NPC remarks about cars nearby were silently broken the same way. All of them now share one
+  vehicle reader (ALifeCellCars).
+- Fix: "Both sides want you" (Kingmaker) came from groups you'd never met. Now both groups have to know you first
+  (visited them, came to your place, heard of it through trade, or answered you on the radio). "Your people are the
+  strongest group around here" also waits until at least one group nearby knows you.
+- The last war is harder to start. Before, two groups close in power went to war on day 90, wherever they were. Now
+  it needs all of: day 120, the weaker side at 85% of the stronger, both in the same region, bad blood between them
+  (rivals or worse), that rivalry holding for 7 days, then a 10% chance a day. Many saves never get one.
+- The leader rule covers every way to give an order: spoken commands, hotkeys, field orders ("go there", "bring the
+  leader"), orders to companions, and the whole Settlement tab (jobs, gate watch, rations, lieutenants, who moves
+  in). The Settlement tab is checked on the server, so it holds in multiplayer too. Check bites, show the map, wake me /
+  teach me and warnings are not orders and stay open.
+- Fix: your lieutenant letting someone in (or turning them away) while you're gone wrote two Chronicle lines for one
+  door. Now one line, saying it was their call.
+- Fix: when the airport's Guard turns on itself, the people they took really go free (they lose the airport as
+  home and walk from there). Before, the letter said so but they stayed theirs.
+- A veteran leader no longer says "your rations are cut" when you refuse an order: nothing cut them. The price
+  (they think less of you) is the same.
+- Multiplayer groundwork (nothing changes in single player): one switch for where world logic runs (single player
+  or the server, never twice on every client), letters / notes / news / choice cards that reach the right player
+  from the server (a card's answer only counts from the player it was sent to; unanswered cards expire), and the
+  server's settings as the rules in multiplayer (joining players get them; only an admin can change one; your own
+  popups and hotkeys stay yours). The world systems move onto it next, for 1.0.
+- 25 new settings (19 + 5 for the last war: regionWarRatio 85, regionWarNear on, regionWarTie -20,
+  regionWarRivalDays 7, regionWarChance 10; outCardTTL 48). regionWarDay default 90 -> 120.
+Console: "[ALifeRomanceDeep] ready v0.9.5", "[ALifeWalkAway] ready v0.9.5", "[ALifeSecrets] ready v0.9.5",
+"[ALifeLeaderGate] ready v0.9.5", "[ALifeLeaderGateUI] ready v0.9.5", "[ALifeRegionRules] ready v0.9.5",
+"[ALifeSide] ready v0.9.5", "[ALifeOut] ready v0.9.5", "[ALifeSettingsNet] ready v0.9.5".
+Unverified in game: all of it; game date reading (getDay / getYear), the farewell gift from storage, multiplayer.
+
+v0.9.4 (Beta, test build) - LEGACY, PART 4: the order hardens (coalitions, the last war, democracy, the fortress)
+
+- Coalitions: when one group towers over the rest, the weaker ones near each other band together, if together they'd
+  match it. A coalition breaks when its enemy is gone, a member falls, or two members fight. Its members stand with
+  each other when one is attacked.
+- The last war (from day 90): the two strongest sides close in power go to war. Back one (your strength fights with
+  them), broker a peace (by how both see you), or stay out. A battle a week; the loser is taken in; the winners pick
+  one leader for the region.
+- The order hardens after the war: a kingdom, a warlord's land, a coalition, or free towns, from who holds the
+  strength. Kingdoms and warlords make every weaker group near them pay; free towns end tribute. If the rulers lose
+  their hold, the order breaks and war is possible again.
+- Democracy: put laws to a vote ("let's vote on short rations", "vote on opening the door", "vote on no killing
+  prisoners"). Each of your people votes from real things: hunger, food left, beds, who they are, what they think of
+  you. No elections in your camp: they follow you because they love you, need you, or fear you.
+- The fortress: when the airport stands empty, the strongest group near it wants it. Make a base there first and
+  it's yours (and they hate you for it); otherwise they move in and dig in.
+- 10 new settings.
+Console: "[ALifeRegion] ready v0.9.4", "[ALifeDemocracy] ready v0.9.4", "[ALifeDemocracyUI] ready v0.9.4",
+"[ALifeFortress] ready v0.9.4".
+Unverified in game: all of it; off-screen battles between groups, multiplayer.
+
+v0.9.3 (Beta, test build) - LEGACY, PART 3: the region settles (the airport's final move, tribute and power plays)
+
+- The airport's final move, once per save, from how the Guard is really doing (not before 60 days): starving and
+  few -> mutiny, the base breaks up and the people they took walk out; short on food with a helicopter left -> the
+  last flight out, the airport stands empty; short and they like you -> they offer a pact (keep the supply flights
+  coming every week and they stand behind you; miss one and it's off); strong -> they take the weakest group near
+  Louisville by force.
+- Tribute between groups: a ruling raider band, or any group far stronger than a neighbour, makes them pay. Real
+  food moves every week. Near the ones paying, they ask you: help them break it (when the strong ones come to
+  collect, your strength stands with them), collect it for the strong ones, or stay out.
+- The kingdom deal: the strongest group near your base, far stronger than you, may offer you a place under them:
+  food every week, and nobody weaker dares ask you for tribute. Miss a week and it's off.
+- Two camps blame each other: when one of a group's people dies to the dead near another group, they blame the
+  neighbours. Near them, they ask you: the truth calms it if they believe you; a lie sends them after the neighbours.
+- New task: the inside man (watch a rival group's place for the giver).
+- 10 new settings.
+Console: "[ALifeAirportEnd] ready v0.9.3", "[ALifePower] ready v0.9.3".
+Unverified in game: all of it; the Guard's crew flying out (records off the map), tribute food moving between
+groups' stores, multiplayer.
+
+v0.9.2 (Beta, test build) - LEGACY, PART 2: your place in it (the camp outlives you, join their people, the fast path)
+
+- The camp outlives you: when you die, your 1st lieutenant (else the 2nd, else the one the camp would follow most)
+  takes over and keeps running it their way, even with your next character standing there. Setting: lieutenant /
+  the camp's vote / nobody.
+- Your title, from what you really did: a Legend (loved, a strong camp), a Tyrant (exiles, captives, people turned
+  away, not liked), a Warning (the camp fell apart), or nobody much. The Chronicle starts a new chapter.
+- Your name goes on the camp's memorial. The zombie that gets up where you fell is your old self; it may walk home.
+- A stranger (setting; off = the camp stays yours): your next character starts with nobody's trust, and the base
+  belongs to the heir. Earn the heir's trust and ask ("I want the camp back"), or claim you're kin ("I'm Joe's
+  brother": they may see through it, and a Tyrant's kin gets no benefit of the doubt).
+- Join their people: "can I join you?" to an NPC group. They decide by what they think of you; a predator leader
+  wants a clear yes. Climb guest, member, trusted, second, leader, told in words, never numbers.
+- The leader gives orders (a card: take it or refuse it): night watch, gate duty, food for the pot, medicine when
+  one of them is really hurt. Refusing costs you, by who the leader is: disappointed, remembered, rations cut,
+  kicked out. When their leader dies, their second (you) leads.
+- Kill one of them while you're one of them: out, and they hate you.
+- The fast path: a big haul handed over counts. Dirty: tell one of them another is stealing (believed, or seen
+  through if they're close), or take over ("step aside, I'm taking over") with the group behind you. Caught: rank
+  down, thrown out, or locked up in their camp (a predator leader).
+- 14 new settings.
+Console: "[ALifeLegacy] ready v0.9.2", "[ALifeLegacyUI] ready v0.9.2", "[ALifeMember] ready v0.9.2",
+"[ALifeMemberUI] ready v0.9.2", "[ALifeLieutenant] ready v0.9.2".
+Unverified in game: Jeem base owner moving to the heir, A-Life opinions reset for a new character, the zombie of
+your old self, order cards, multiplayer for all of it.
+
+v0.9.1 (Beta, test build) - LEGACY, PART 1 (MAJOR): the Chronicle, every story ends, NPC stand-offs, traditions, first quests
+
+- The Chronicle: the camp writes down what really happens to it (deaths, funerals or no time for one, people let in
+  or turned away, exiles, who leads, what your second-in-command decided while you were away, captures, backing a
+  side, runs coming home, stories ending, feasts, fights, traditions). Each entry is told by someone who was there:
+  warm if they like you, bitter if they don't. With the AI on, big entries are written in their own voice.
+- Chapters by season and by leader. New Chronicle tab. Write it into a notebook (needs a pen; one chapter a page,
+  the book is renamed) so a later character can find it, or save it to Zomboid/Lua/ALifeChronicle.txt.
+- Every story ends: a few days into someone's story, word comes where their person really is (a rumor, a trader,
+  the radio). Family who died: a grave ending. Stories nobody moves for 30 days end themselves: they let it go, or
+  turn bitter. Someone who hated you dies: their family carries part of it. An open revenge passes to a relative.
+- Familiar face (rare): one of your camp who turned may walk back toward camp. The camp knows who it was.
+- NPC stand-offs: when two people are about to fight near you, it's held: step in (works better if they like you
+  and they're yours), side with one (the other usually backs down; a predator doesn't), or walk away.
+- Traditions: do something three times and it becomes the camp's way: eating together after a run (a real meal
+  from the stores), burying your own (skipping a funeral costs more), taking people in or keeping strangers out
+  (the camp's vote leans that way), keeping feast days, settling fights with words. Go against it twice and it's gone.
+- New quests, real people and real stuff: the prodigal (family who walked out after a fight), survivor's guilt
+  (walk with them to where someone died), second chance (they slipped off the drink and want to try again),
+  medicine run (only when someone of theirs is really hurt), winter's coming (fall only).
+- Fixes: ghost build "needs X" text was empty in multiplayer. Field orders' lookout warnings and picking up
+  dropped food could not be switched off. A sandbox switch set to off could come back on when an in-game override
+  was cleared.
+- 23 new settings (Chronicle, stories, stand-offs, traditions, quests).
+Console: "[ALifeChronicle] ready v0.9.1", "[ALifeChronicleUI] ready v0.9.1", "[ALifeStoryEnds] ready v0.9.1",
+"[ALifeNpcStandoff] ready v0.9.1", "[ALifeTraditions] ready v0.9.1", "[ALifeGoals] ready v0.9.1".
+Unverified in game: notebook writing outside the write window, zombie walking home, NPC stand-off cards in a real
+fight, medicine run health reading on A-Life NPCs, multiplayer for all of it.
+
+v0.9.0.1 (Beta, test build) - ghost build upgrades
+
+- Plan anything the game's build menu builds (Build tab > Plan something, grouped like vanilla's menu, cost on hover).
+  Stages come from the game: a wall's frame goes up first. Recipes that need a fluid or power are left out.
+- Shift-click start and end for a line, Ctrl+Shift for a box (walls face the right way). Most per line: setting.
+- Plans stay inside your base (plus a few tiles). Outposts: setting "ghost build outside the base"; builders carry
+  the materials out there.
+- Who builds it: pick a person per plan, or say "Sam builds the gate". Others wait a while, then anyone may.
+- Take down: right-click something, plan to take it down. Needs a saw and a screwdriver, works like vanilla's dismantle.
+- Building stockpiles: right-click a container. Builders walk there and carry what they need (real items moved).
+- Send for supplies: the Build tab shows totals and what's short, and asks the scavengers to look.
+- Saved layouts: save the plans around you, stamp them down somewhere else.
+- Torches, paint, glue: only the uses the recipe needs are taken, never the whole item.
+- Building makes real noise the dead hear (radius 20, setting).
+- Auto repair: builders mend wooden walls and fences below 60% on their own (setting). Metal and brick are left.
+- Apprentice: an idle, less skilled worker helps a builder: 30% faster, the helper learns 1.5x.
+- 12 new settings (22 ghost build settings in all).
+Console: "[ALifeGhostBuild] ready v0.9.0.1: ...", "[ALifeGhost] ready v0.9.0.1: ...".
+Unverified in game: all of it, the catalog calls, noise from an NPC, box facing, hauling in multiplayer.
+
+v0.9.0 (Beta, test build) - THE QOL UPDATE (MAJOR): the AI in game, read people, party cards, ghost build (built as 0.8.12)
+
+- New AI tab in the A-Life window. Set up the AI from inside the game, top to bottom, each step turns green:
+  1. the AI helper running (if not: how to start it, and why the game can't), 2. Ollama (Get Ollama button installs it;
+  Windows asks once), 3. pick a model (installed ones, plus a known-good list: hover for download size, video memory,
+  speed, filtered or not; download with a progress bar; delete old ones), 4. test reply (time taken, load time, words a
+  second, how much ran on the graphics card; too slow says what to try), 5. AI ready.
+- Advanced (closed by default): reading size (num_ctx), reply length, wait limit, load wait, backup model. Each has a
+  hover with what it does and a safe range. A change restarts the AI.
+- Buttons: Restart AI, Test reply, Doctor check. Doctor check makes one file for bug reports:
+  Zomboid\Lua\alifeai_doctor.txt (helper and bridge logs, AI choices, mod settings, A-Life lines from console.txt).
+  Your cloud key is never in it.
+- The helper takes requests from the game through a file. Fixed list only (download, delete, pick, warm up, test,
+  restart, doctor, get Ollama); model names are checked; it never runs a command line from the game.
+- Your AI choices live in Zomboid\Lua\alifeai_setup.txt and win over model.txt, so a mod update doesn't reset them.
+- Multiplayer: the AI runs on the host. The host (or an admin) gets the full tab; everyone else sees "Host AI: ready /
+  warming / down".
+- Every AI setting is in the game now (no Notepad, no txt files):
+  - Open the AI folder: one button opens the folder with Setup.cmd in Windows Explorer.
+  - Cloud AI: pick a provider (OpenRouter, OpenAI, Groq, DeepSeek, Mistral, LM Studio), paste your key, type the model,
+    only-replies-to-me or everything, max per hour. The key box is hidden and never shows your key again; empty =
+    keep the saved one. The key stays in Zomboid\Lua\alifeai_cloud.txt on your PC and is never logged.
+  - Talk key (push to talk): pick it on the tab. Kept in alifeai_setup.txt, so mod updates don't reset it.
+  - How much they're told (lite / normal / full / auto) in Advanced.
+  - In this game: AI wait (3-30 s), the language people answer in, voice on/off. Kept with the world and beats the
+    sandbox page; an admin changing that sandbox option mid-game wins again.
+- Start with Windows: a switch on the AI tab (the same Startup shortcut Setup.cmd makes).
+- AI light over the talk window: AI ready / slow / warming up / down / off, plus the model. Nothing shows if you never
+  set the AI up.
+- One letter, once ever, a minute and a half into your first game without a working AI: where the AI tab is.
+- Letters: Clear all shows from 2 letters. Right-click it: clear all, clear all but the important (red) ones, show
+  all / important only / news only. The filter is kept.
+- Sandbox options changed mid-game (admin panel, debug) now take effect within 10 seconds. Only the ones that changed:
+  what you set in the Settings window still holds.
+- Read people: rest the mouse on someone for half a second and a line or two shows over their head. How they are
+  toward you, and why: "Wary of you. Hand near the knife." / "Out for you. They haven't forgotten." / "Won't come
+  along: doesn't trust you yet." No box, no numbers. Passing over shows nothing; the line stays a moment so a walking
+  NPC doesn't blink. Close range only (15 tiles). Same words over whoever the quick wheel is for, and at the top of the
+  talk window. Settings: off, only while a key is held (Options > Mods > "Hover: read people"), delay, range.
+  Multiplayer: the server reads them and only answers for people near you.
+- Party tab, redone as cards. One card per person with you, your settlers at home after them:
+  - their figure in the clothes they wear right now (away from you: how you last saw them),
+  - name, role, how they are toward you, health, hurts, hunger, thirst, mood, what they're doing,
+  - the order they're on (and if they didn't follow it), gear (weapon, low on ammo, bag), what they're wearing,
+  - the last few lines of your journal about them.
+  Click a card, then an order below (follow, wait, guard, go to base, talk, stance, part ways). Two columns on a wide
+  window; Prev / Next when there are more cards than fit. Words, no numbers (immersive off brings the numbers back).
+  partyCards off = the old list.
+- Last warning before someone attacks you. When a real person would warn first (you're trespassing, told to leave,
+  threatened them), they say it, you get a red note and a red letter, and the line over their head says "About to
+  attack you. Walk away." Walk 6 tiles further off within 5 seconds and they let you go. The clock stops while
+  paused. No warning when nobody would give one: they saw you kill a friend, a nemesis came back, a betrayal, a
+  stand-off you already lost. The opinion ladder's last warning shows on screen too.
+- Hotkeys (Options > Mods): talk to the nearest person (press again to close the talk window), repeat your last
+  order (same people; spots like "hold there" worked out again from where you are). Quick orders repeat too.
+- Settings: Chill / Default / Hardcore buttons. Default puts every setting back; Chill turns off betrayals, nemeses,
+  saboteurs, ambushes, long last warnings; Hardcore turns everything on and meaner. Asks first, Save keeps it.
+  Search: every word you type must match ("camp food"), headings count too.
+- Your AI rules: how people talk is in plain text files the AI reads live: bridge\prompts.txt (the mod's) and
+  Zomboid\Lua\alifeai_prompts.txt (yours, survives updates). [extra] = house rules for every line, [mode.reply]
+  only for answers to you. Save and the next line uses it: no update, no restart. AI tab > Advanced > Your AI rules.
+- Ghost build (Build tab). Plan walls (frame, then wall), fences, gates, log walls, sandbag walls (guard post) and
+  barbed wire with no materials: vanilla's own build cursor, see-through plans in the world. The people who live
+  at your base build them, top of the list first: the recipe's real tool and materials from base storage (taken
+  out for real when a step is done), the recipe's skill (how good a builder they are; they get better), the
+  recipe's time (slower when only just able). Vanilla's build code puts it up, so it's the same object. Missing
+  something: they say what and you get one letter. Zombies close: they stop, the frame stays. Up / Down / Cancel
+  (nothing is lost). "stop building", "get building", "fix the fence" (1 plank + 2 nails). Built so turrets can
+  plug in later (crew, power, ammo hooks; other mods can add their own buildables).
+- Translations: every menu, tab, button, setting, heading, hover line and Help entry can be translated now
+  (Translate/<LANG>/IG_UI.json, 937 lines). English shows when a line is missing. Translators wanted.
+- Fix: the A-Life window's Help text had a broken line that could stop the whole window file from loading.
+New settings: attackLastWarn (on), attackLastWarnSec (5), attackLastWarnLeave (6), attackLastWarnNote (on),
+talkKeyTiles (4), ghostBuild (on), ghostLeaderOnly (off), ghostRange (60), ghostMax (200), ghostBuilders (2),
+ghostTimeMs (100), ghostFetchTiles (12), ghostWasteChance (25), ghostLetters (on), ghostAskMin (30).
+New settings: hoverCue (on), hoverKeyOnly (off), hoverDelayMs (500), hoverRange (15), hoverStickMs (1500),
+hoverPickTiles (1.3), hoverAskMs (4000), hoverWhyMin (20), hoverHeadPx (120), hoverWheel (on), hoverTalkTop (on),
+partyNeedLow (25), partyNeedBad (55), partyNeedUrgent (80), partyAmmoLow (6), partyCards (on), partyAvatars (6),
+partyJournal (3).
+Console: "[ALifeCues] ready v0.9.0: ...", "[ALifeHover] ready v0.9.0: hover cue on, 500 ms, 15 tiles; ...",
+"[ALifePartyCards] ready v0.9.0: ...", "[ALifeHotkeys] ready ...",
+"[ALifePresets] ready ...", "[ALifeGhostBuild] ready v0.9.0: 6 buildable types ...", "[ALifeGhost] ready ...".
+New settings (alifetalk_settings.txt): aiSetupTab (on), aiSlowMs (8000), aiSetupStaleMs (20000), aiTestFreshMin (60),
+aiStatusLight (on), aiFirstLetter (on), aiFirstLetterSec (90), letterClearAllAt (2), sandboxLiveSec (10; 0 = off). alifeai_setup.txt gains profile= and ptt=.
+Console: "[ALifeAISetupTab] ready v0.9.0: AI tab on, slow above 8000 ms, 9 known-good models".
+Not verified in game: all of it. Get Ollama (winget + the Windows prompt) needs a PC without Ollama to see.
+
+v0.8.11.2 (Beta, test build) - talk fixes
+
+- "Get out of here!" / "Back off!" / "Run!" to someone fighting the dead is a warning now, not a threat. They react
+  to the danger instead of turning on you. The AI is told about the dead around them, you fighting beside them, and
+  how far they trust you.
+- Hostile takes two signs: one rude line, one bare threat word or one misheard word never moves anyone toward a fight.
+  Two inside 3 minutes can. A threat with "or I shoot" or a gun on them counts as two.
+- "Hola" no longer reads as a hold-up. Lines in another language skip the English typo fixer and keyword guesses and go
+  to the AI as typed. Nothing hostile is ever guessed from a misspelled word; only your own exact words start a hold-up.
+- NPCs answer in the language you typed. The game language setting is only the fallback.
+- Slow AI: plain small talk gets "Hm... give me a second" while the AI finishes, not A-Life's stock "What?". The bridge's
+  own stock lines vary too. Every typed line logs who answered it and why (console: "input '...' -> AI / A-Life (why)").
+- Threat words match whole words only ("freezer" is not "freeze", "your bagel" is not "your bag"). Same for orders.
+- AI helper: both bridges ask Ollama for the same context size (they used 8192 and 4096, so Ollama loaded the model
+  twice and crawled). Warm-up waits up to 3 minutes and says why it failed: Ollama not running, or running but the
+  model too slow to load (too big for your video memory). If your model won't load, NPCs use gemma3:4b for that game
+  and a letter tells you. model.txt: num_ctx=, warmup=, fallback=.
+New settings (alifetalk_settings.txt): hostileSigns (2), hostileSignWindowMs (180000), fightWarnTalk, inputLog.
+Console: "[ALifeHostile] ready v0.8.11.2: hostile needs 2 signs, fight warnings on, foreign lines to the AI, input log on".
+Not verified in game: all of it. The model fallback needs a real slow model to see.
+
+v0.8.11.1 (Beta, test build) - fixes to 0.8.11
+
+- Car flee works now: a group that breaks runs for a real car near it and drives off, away from you (A-Life's car life:
+  doors, keys, hotwiring, fuel). The old one hooked a car system that never runs for them.
+- Car block: they swing the car across the road before they stop (single player; in MP it stops in its lane).
+  Camp block starts farther out (250 tiles) and the crew already next to its car goes first.
+- Ambush: they set up on your way in (between their home and you), not wherever they stood. They can lie in wait
+  before anyone fires: A-Life opens the fight the moment one of them spots you.
+- Fake run: no more mood shouts or "they're pushing" calls from your people while the act is on.
+- "Sam, hands up!" mid-fight gets one answer (fight talk), not two.
+- Fake surrenders (feint on): criminals keep a gun hidden until they decide whether to try it.
+- Runners who drop their bag lose it off their back on the model too.
+- Under fire works on a dedicated server.
+New settings (Fights): carFleeTiles, carBlockSwing, carBlockSwingMs, carBlockSwingTiles, ambushAhead.
+Console: "[ALifeCarBlock] ready v0.8.11.1 ... broken groups drive off", "[ALifeAmbush] hooked ProjectALife.ModuleCover.find",
+"[ALifeUnderFire] hooked ProjectALife.Suppression.noteGhostRound (dedicated server)".
+Not verified in game: all of it. The car swing edits A-Life's live driving route (needs a look in game).
+
+v0.8.11 (Beta, test build) - ENEMY TACTICS: TALK, TRICKS, LOOT, FEAR
+
+All new numbers are settings (Fights).
+- Talk them into giving up: yell "give up", "drop your weapons", "hands up" at a group fighting you. A-Life's own order
+  odds (who they are, your gun and aim, your people, theirs, distance, cover) plus how the fight is going for them:
+  pushing never, steady rarely, careful sometimes, falling back often, running most. "Drop it" puts their guns on the
+  floor. Shout it to reach farther. Never at home. One try every 8 s per group. AI on: they answer in their own voice.
+- Runners drop stuff: a group that breaks may drop the bag off their back, or their heaviest things, to run faster.
+  Real items from their real packs, on the floor where they stood. Weapons stay in hand while running.
+- Give-up means guns down: a group that gives up (beaten or talked down) puts its guns on the floor.
+- Fake run: a smart group that isn't beaten may shout "Run!" and pull back to draw you out of cover. Chase them in close
+  and they turn on you. Your own people get fooled too. Smart = military, police, and criminals with their leader up
+  (setting). Once per fight.
+- Ambush: a smart group at home that spots you coming may go quiet instead of opening up at range: they take cover,
+  hold fire and spring when you walk within 7 tiles (A-Life's own ambusher). Rare. Ends if one of them is hit.
+- Car block: a hostile crew in a car stops in the road and fights from behind it. Chase them in your car and they may
+  pull over and pile out, taking cover on the side of the car away from you. Drive at a hostile group's home and they
+  may run to their car and drive out toward you to do the same. Real cars only (A-Life's car life: doors, keys,
+  hotwiring, fuel). The car stops in its lane, it doesn't turn across the road.
+- Under fire (off by default): rounds cracking past you raise your panic, and vanilla does the rest (panic and stress
+  cut your hit chance and slow your reload). Pinned under steady fire it stacks. Cowardly, Brave and Desensitized
+  count like vanilla panic.
+Console: "[ALifeFightTalk] ready v0.8.11", "[ALifeDropLoot] ready v0.8.11", "[ALifeFakeRun] ready v0.8.11",
+"[ALifeAmbush] ready v0.8.11", "[ALifeCarBlock] ready v0.8.11", "[ALifeUnderFire] ready v0.8.11", "[ALifeFightBrain] ready v0.8.11".
+Not verified in game: all of it. Bag drop model update on NPCs; ambush when A-Life opens the fight record (they may
+only "spot" you once shooting starts); car block (needs car life on; the
+camp trip takes A-Life's own time to reach the car and start it); under fire on a dedicated server (A-Life's ghost rounds only graze local players).
+
+v0.8.10.1 (Beta, test build) - ENEMY TACTICS, THE GAPS FILLED
+
+The brain now reads more of the real fight. All new numbers are settings (Fights).
+- Empty guns: an enemy whose gun is dry with nothing to reload rushes you with what's in their hands when you're
+  close and they're pushing (A-Life's own all-in charge). Dry and far away, it shakes them.
+- Cover counts: caught in the open they fold sooner (A-Life's own cover finder, a few people checked per think).
+- Bleeding counts.
+- Home turf is where they really live (their A-Life home), not only outposts. Near it they never run or give up.
+- Night: who sees who. Your light on and theirs off, they have the edge; theirs on and yours off, you do.
+- Falling back or playing it careful, they drag their wounded to cover (A-Life's own rescue). Running, they leave them.
+- Hunt: they go to where they last saw you first, then follow your noise. Timed on the game clock (60 game minutes,
+  then they leave noises alone for 2 game hours).
+- Your people say "we can't hold this" when a group twice your size pushes you (no longer needs A-Life to list them
+  in the fight).
+- Preset 1 is really plain now: A-Life's group tactics (push plans, flanks, cover fire, fall backs, radio) off for
+  enemies. Your party is never touched.
+Console: "[ALifeFightBrain] ready v0.8.10.1: ..."
+Not verified in game: A-Life's all-in charge started from outside its own melee check; cover raycasts cost in big
+fights (3 per group per think, cached 6 s).
+
+v0.8.10 (Beta, test build) - ENEMY TACTICS
+
+Enemy groups read the fight and go hard or go soft. Built on A-Life's own tactics (push, flank, bounding, cover,
+suppression, fall back, rescue the wounded, radio for help): one brain per group decides which of them it uses.
+All new numbers are settings (new "Fights" heading). Preset: 1 plain A-Life, 2 smart (default), 3 brutal.
+- Moods: push, steady, careful, fall back, run, give up. They look at real things: how many on each side, who's hurt or
+  down, who they've lost, their leader going down, shaken friends, empty guns, the dead closing in, night, home turf,
+  military and police hold tighter, criminals fold sooner, and (single player) who each of them is: brave or scared.
+- A mood holds a few seconds before it changes, so they don't flip back and forth.
+- They shout it: "Fall back!", "Push them!", "We give up!". Real info for you. Your people call out what the other side
+  is doing ("They're running!", "They're giving up, hold fire!") and when you can't hold.
+- Give up: a beaten group can put their hands up to you when you're armed, close and they can see you (A-Life's own
+  surrender, then prisoners as before). Never at their home. Never to other NPCs (that's 0.9).
+- People who want you alive stop pushing to kill once you're hurt, so they can take you instead.
+- Hunt: win a fight and run, and they come after your noise for a while, then give up and leave it.
+- A group that breaks may yell to pull the dead onto you while it slips away, and may run for its car and drive off.
+- Feint (off by default): criminals may fake giving up and turn on you when you walk in close.
+- Your party is never run by the brain. Your orders run them.
+New orders for your people (Fighting):
+- "Suppress them": anyone with a semi or full auto rifle lays steady fire where the enemy is to keep their heads
+  down. Real rounds, real noise. A bolt-action or a handgun can't.
+- "Flank left" / "flank right": they swing out to that side of the enemy and hit them from there. Dangerous, harder to
+  talk someone into. "In position!" when they get there.
+Console lines:
+- "[ALifeFightBrain] ready v0.8.10: on, preset 2, veto hooked, contacts read, car flee hooked (...)"
+- "[ALifePartyTactics] ready v0.8.10: 3 commands (suppress them, flank left, flank right), hook on"
+- per change: "[ALifeFightBrain] group <id>: push -> steady (score 0.47; 2 us, 1 them; lost 2, leader down)"
+Not verified in game: forcing A-Life modules on for NPCs whose profile lacks them; whether your companions show up in
+A-Life's fight contacts (if not, "we can't hold this" never fires); A-Life's gunner support fire for companions;
+the "enemy" spot facing fallback (getForwardDirection, guarded); dedicated servers use default settings.
+Not in: molotov burn-outs (A-Life NPCs can't throw yet), blocking roads with cars, an aim penalty for you when pinned.
+
+v0.8.9 (Beta, test build) - THE REST OF THE COMMANDS
+
+Say it in your own words, as before. Works without the AI. All new numbers are settings (Party and orders).
+Out ahead (a new group on the Commands tab):
+- "Take point": one of yours walks a few steps ahead of you the way you're going. When they see the dead or someone
+  hostile they stop, hold there and call it, with the direction. Drops back after about an hour.
+- "Scout ahead": they go out the way you're facing (25 tiles), look around a few minutes, come back and tell you
+  what's there in rough words ("North: a bunch of dead, someone, and they didn't look friendly"). Real counts, no numbers.
+- "Keep an eye on him": they watch the person you're talking to (or the nearest stranger), turning as he moves. They
+  tell you if he walks off (and which way) or turns on you.
+- "Search that body": they walk to the nearest body and take what's in its pockets and bag, best first, as much as
+  they can carry. Never what the body is wearing or has strapped on. They tell you what they took.
+- "Lure them off": they run off to the side of the trouble making real noise, go quiet, lose them, come back.
+  Dangerous: harder to talk someone into (like take point and scout).
+- "Go tell Sam we need ammo": they walk to someone you know by name and pass it on. Out of sight it takes real walking
+  time. Sam remembers it. They come back and tell you how it went.
+Help me:
+- "Give him some food": one of yours walks over and hands the person you're talking to their own food (they keep their
+  last one). The other side eats, is grateful, and thinks better of you.
+- "Take me to your leader": ask anyone. If they like you enough and their leader is around, the leader walks over,
+  you learn their name, and they hear you out. Not liked enough: no. Asked the leader: "You're looking at them."
+Getting around:
+- "Fall back to the farmhouse" / "meet me at the bridge": any place you named on the map. Everyone near you goes
+  there and waits (the named-place orders from 0.7). A line with no named place in it isn't a command.
+On their own:
+- Lookouts call it: someone told to keep a lookout, guard a spot, take point, or wait till morning shouts out the dead
+  or strangers they see, and which way. Once per sighting, not again for 10 minutes.
+- Food you drop: someone hungry near it takes it. Yours put it in their bag (A-Life eats it when they're hungry);
+  others eat it there. They thank you like a gift. Single player only for now.
+Also in this build (built after 0.8.8 was packaged): the 0.8.8 UI pass (door line, camp status, stand down, camp log,
+scout marks) and the rest of 0.8.8 (gate guard, camp work by word, gear stays on the body, exile/lead votes).
+Console lines:
+- "[ALifeFieldJobs] ready v0.8.9: 7 commands (take point, scout, keep an eye, search body, lure, feed, message), hooks on"
+- "[ALifeFieldCmds] ready v0.8.9: 9 new commands, lookouts on, dropped food on (5/5 hooks)"
+Not verified in game: A-Life go_to over long distances (messages), body containers on A-Life's server, A-Life
+companions walking to dropped food (non-companions use our walk), getForwardDirection on 42.21 (guarded; falls back
+to the way you're moving), the drop hook in multiplayer (server side).
+
+v0.8.8 (Beta, test build) - SETTLEMENT (MAJOR)
+
+Your base becomes a town. Built on Jeem's residents (beds, food stores, shifts, training, refugees at the door),
+never a copy of them. Everything works without the AI.
+The camp has opinions:
+- When people come to your door, your residents have a say: the food left, the beds left, whether the newcomers run
+  with a crowd they hate, and who they are (the wary don't trust strangers, the young want more hands). You get it as
+  a letter in plain words ("most of them don't want them here", "Vic is dead set against it"). No numbers.
+- Go against the ones who cared and they like you less; go with them and they like you a little more.
+- One door: Jeem's refugee visits. People you already know moving in through talk go through the same vote.
+Rations (say it to anyone of yours at a base you run):
+- "Full rations", "short rations" (three quarters), "half rations", "guards eat first" (whoever's on watch eats full,
+  everyone else half). The Food stores really last longer, your people really get hungrier, and hunger does the rest.
+- The party cap counts Jeem's beds (minus the residents sleeping in them) when you're at a Jeem base.
+People who get better:
+- New camp roles: Scout, Mechanic, Teacher. Hunter and Trader aren't in: there's no real path for them yet.
+- Time in a role makes them better at it (up to 40% over a season, settings).
+- A-Life companions practise their role's skill: a level every 6 x level days (0 to 5 in about a season).
+- Teachers: residents in training at a Jeem base learn half again as fast.
+- Scouts: once a day, who's really out there, how many, which way, friendly or not.
+Your second-in-command:
+- "You're in charge while I'm gone" (1st), "you're next in line" (2nd). While you're away they answer people at the
+  door (asking the camp first; the wary want a clear yes) and set the rations when food runs low or comes back.
+  When you return they tell you what happened.
+- Someone sworn to you (the Oath) who's passed over for 1st holds it against you and turns rival to who got it.
+  Someone who swears after you picked a 1st wants the job, and turns rival.
+Stand in the way (0.8.7 stories):
+- "Watch your back": warn the person someone wants dead. They thank you; the one who wanted revenge may find out (sure
+  if their people saw it) and won't forgive it.
+- Hand a drinker a bottle while they're trying to quit: once they sober up, they know who did it.
+Where you see it:
+- Right-click a refugee party at your door: under Jeem's "Take them in" / "Send them away" there's a grey line with
+  what your people think, and the same words when you hover either option.
+- The camp board (and the Camp tab) shows the ration rule, the food in words, who runs things while you're away and
+  who's next in line, with a "stand down" button for each.
+- Stand down (button, or say it): how they take it depends on how long they had it, who they are, how you two get on,
+  whether they swore to you, and whether they're hurt (then they're glad of the rest).
+- "What happened" on the camp board, and "From your camp" in the Journal: your lieutenant's reports, your scouts,
+  people at the door. Your scouts' sightings go on your map, roughly, and come off after a few days.
+- The camp board says how good people have got at their job: new to it, getting the hang of it, knows the job well,
+  born to it.
+- The talk window's Say tab has "Watch your back" when someone you know of really wants that person dead.
+The rest of 0.8.8:
+- The gate. "You're on the gate" to one of your base's people. They meet everyone who comes to the door. Anyone who
+  runs with people you're at war with gets sent off on the spot. The rest: they tell you who's there and what the camp
+  thinks, in person if you're home, over the radio if you're not (your walkie on, charged, on the base channel, in
+  range). Nobody answers in 4 hours: they decide, the way the camp leans (a wary guard wants a clear yes). They
+  notice a plant from a group you wiped out, sometimes, and only when there really is one.
+- Sending someone away (Jeem's faction page) and picking who's in charge go past the camp too: friends of the one
+  you threw out remember it, and so do the ones who won't take orders from your new 1st.
+- Work by word, to one of your base's people: "chop wood", "make planks", "gather branches / twigs / stones", "sort
+  the stores", "tend the crops", "drop the job", "take the day / evening / night watch", "off the watch". It goes
+  through Jeem's own jobs and watches. No woodlot, no materials store: they tell you so.
+- What you hand someone stays on their body when they die. A-Life thins a dead NPC's pack at random; the coat you
+  gave them isn't thinned any more (Jeem's Give window, hand gifts, and A-Life's companion sheet).
+- People you take in at the door can be a plant from a group you wiped out, like anyone else who joins.
+Settings: 42 new rows (Your camp and base, Groups, trade and the world). Every number is yours.
+Not checked in game yet: the lieutenant answering the door with you offline (Jeem's answer is given your name, not
+you), scout and teacher on a real Jeem base.
+
+Console:
+- "[ALifeCampVote] ready v0.8.8: the camp has opinions (on Jeem's refugee door, on)"
+- "[ALifeGateGuard] ready v0.8.8: the gate guard (on Jeem's refugee door, on)"
+- "[ALifeCampWork] ready v0.8.8: camp work by word (Jeem jobs found, on)"
+- "[ALifeGivenKeep] ready v0.8.8: what you hand someone stays on them (3/3 hooks, on)"
+- "[ALifeRations] ready v0.8.8: rations (2/2 hooks on Jeem's stores and meals, on)"
+- "[ALifeGrowth] ready v0.8.8: people who get better (on, a level every 6 x level days)"
+- "[ALifeLieutenant] ready v0.8.8: second-in-command (on)"
+- "[ALifeSettlement] ready v0.8.8: settlement (roles +3, settle vote on, 28 settings)"
+- "[ALifeSettlementUI] ready v0.8.8: settlement screens (door line on, map marks on, camp log 0 kept)"
+- "[ALifeGoals] ready v0.8.8: a story for everyone (4/4 hooks, ...)"
+- Not tested in game yet.
+
+v0.8.7 (Beta, test build) - A STORY FOR EVERYONE
+
+Some people now carry a goal of their own. Only from what's real: no real basis, no story.
+- Family: their brother, mother, kid or partner is with another group or far away. They ask you to walk them there.
+  If their family died in the meantime, you find out together, and they're told the truth.
+- Making it right: someone they really fell out with (a rival, an ex, someone they don't trust). Walk them over to
+  talk it out. Their bond mends. If that person dies first, they carry the guilt.
+- Revenge: the one who killed someone they loved, still alive. Help them or don't.
+- Getting clean: a real drinker who wants to stop hands you every bottle they carry. Hold them two days, don't give
+  one back. Then they stay off it on their own; after 7 days dry they're done with it. A drink from you, or a bottle
+  they find, and it's over for now. They can ask again.
+- Comes up through A-Life's task board ("got any work?"), like the other 0.8.6 jobs. Works with the AI off.
+- AI on: what they want most is in their head when they talk to you.
+- The made-up off-screen goals about family that never existed ("find their sister") are gone. "Stay sober" only for
+  real drinkers. Old saves: those goals are swapped out, nothing else changes.
+- Built for multiplayer: the server keeps everyone's story; your game asks it.
+- Settings (Groups, trade and the world): stories on/off, days dry, share of drinkers who want out, how much a bond
+  mends, how far family must be, days before a new story, how close people must be.
+
+Console:
+- "[ALifeGoals] ready v0.8.7: a story for everyone (4/4 hooks, stories on, clean after 7 days dry)"
+- "[ALifeQuests] ready v0.8.7: 10/10 hooks on A-Life's task board (...)"
+- When one ends: "[ALifeGoals] story ended: <id> family -> helped (met)"
+- Not tested in game yet.
+
+v0.8.6 (Beta, test build) - PEOPLE WANT THINGS (MAJOR)
+
+A-Life 1.5's own task board ("got any work?") stays, with its talk rows, journal card and arrow. It is made honest:
+- Pay is real: it comes out of the giver's own pack, by what things are worth. They keep their last food, water,
+  medicine, ammo and weapon, and never give what they wear, hold or keep close. Nothing to spare: they say so, like
+  you a little more, and owe you one. Group jobs pay from the group's own stash when it's there.
+- Nothing from nothing: no items appear in your pack when you reach a place (search the pharmacy for real
+  antibiotics). No zombies spawned for a job; clearing counts the real dead. Anything they hand you to carry comes
+  from their pack, or they can't send you.
+- Made-up jobs are off: a crate that isn't on the road, a "missing" person who never existed, a contact nobody stands
+  at, a traveller who never walks with you, and 10 more. "Clear a house" off by default.
+New jobs, all about real people and real things:
+- They want things they're out of: smokes, a drink, coffee or tea, something to read, soap and a razor, reading
+  glasses, games for the evenings, an instrument for the fire, two bottles and something sweet for a party. Only
+  items that exist in the game.
+- Find someone of theirs who's far away, dead or held. You tell them the truth. Found with another group? Their people
+  may ask you to bring them back: they come only if they like you enough.
+- Carry word to a real person of a friendly group.
+- Bring home someone you hold: free them and they walk home with you.
+- Watch a settler's back on a run, or take a quiet walk with them. They really walk with you.
+- Dirty work for rough groups: settle a score with a real person of a group they hate, hit a rival's stash (anyone of
+  theirs nearby sees it), or drive a rival group out of the place they hold.
+- Rarity: common, uncommon, rare, very rare (settings).
+- The old 0.5 typed jobs are retired (setting "questsOld" brings the offers back, without made-up rewards).
+- Settings: 22 rows under "Groups, trade and the world". Every number is yours.
+Not real yet, so not in: a prisoner swap between two groups (A-Life has no NPC-held prisoners), and the person you
+bring back rejoining their old group in A-Life's own records (they walk home with you).
+
+Console:
+- "[ALifeQuests] ready v0.8.6: 10/10 hooks on A-Life's task board (real pay on, spawns off, made-up gifts off,
+  made-up tasks off: 14, new tasks 18)"
+- "[ALifeTalkQuests] ready v0.8.6: settings on the Settings tab (22 rows), old 0.5 job offers off"
+- Not tested in game yet.
+
+v0.8.5 (Beta, test build) - STAND-OFFS AND RADIO (MAJOR)
+
+Walkie (call one person by name):
+- Radio tab (A-Life window) and radial "Walkie: call someone": pick a person, then check in, any news, come to me,
+  I need help (they bring friends), I need serious help (everyone who can fight), or talk (AI on).
+- They need a two-way radio of their own with charge, or a spare battery to swap in (a real battery from their bag).
+  People of yours at home answer on the base's own set (Jeem's base radio). Same for you: a walkie on you, or a
+  placed radio right next to you.
+- Range: the weaker radio's own range (vanilla TransmitRange). Channel: you must be on their frequency. Your people
+  listen on "our channel" (Radio tab: Use my channel as ours; your first call sets it). Strangers' channels only if
+  they swap with you ("what's your channel?"), and only if they trust you. Known channels go into your walkie's presets.
+- Battery: theirs drains only during calls (the radio's own drain, scaled by call length). Dead and no spare = silent.
+- Coming to you is real: Jeem's radio escort, real people, real road time. They can refuse: too far, scared, busy.
+- They call you: a check-in when you've been away from base for 8 game hours, and right away when the base is
+  attacked or someone's hurt or bitten. You only hear it with your radio on, charged, on their channel, in range.
+  A missed check-in is remembered.
+- Overheard: hostiles with a walkie on your channel, and hostile groups scanning the band, can hear you. Mention home
+  and they may come sooner; say "come here" and they may go for you.
+- The old typed walkie talk now follows the same rules.
+
+Stand-offs (built on A-Life 1.5's own, never replacing it):
+- AI on: every stand-off line in that person's own voice, in A-Life's order; A-Life's line if the AI is slow.
+- AI on: say anything; the AI tells A-Life what you meant (alone, passing through, paying, refusing, haggling,
+  talking them down...).
+- Lies are checked: "just me" with your people in view (sneaking ones far off aren't seen), "not much" with a full pack.
+- They remember: past lies and fights make them jumpier; paying before makes them lean on you.
+- Your side's numbers and guns: outnumbered 2:1 they back down and ask less; outnumbering an unarmed you, they push.
+- Haggle the toll down (A-Life's toll already takes your most valuable things; we change how many).
+- Your people's orders mid stand-off ("hold fire", "flank them", "stay hidden") go to your people, not as your answer.
+- Calling for backup on the radio in front of them sets outlaws off and makes the law warn you.
+- Call someone out by name: "Sam, hands up!" They comply, back off, refuse or fight.
+- Someone who likes you a lot may lower their gun and join.
+
+Captured (MAJOR):
+- You can be taken: surrender to people who'd want you alive, or go down to them (the last stand; never zombies).
+  Outlaws and raiders want a ransom, slavers (dark content only) want to sell you, the army puts you to work.
+- They take your radio and guns (into their hands), bandage you with what THEY carry, and march you to where they
+  live: you black out while the real walk time passes.
+- Held: you can walk around and open doors; your hands are tied for everything else unless a captor helps
+  ("untie me"). You're fed and watered. A walkie, if you still had one, takes 5 seconds to key.
+- Ways out: talk them into it ("let me go"), slip away when no awake guard can see you (caught: dragged back and
+  watched closer; rough crews may beat you), or your people come.
+- Your people: they know if someone saw it or you missed a radio check-in. The camp rule (radial > Camp > "If one of
+  us is taken...") and how each feels about you decide who comes: a) pay anything (love), b) by force only (need),
+  c) you're on your own (fear; love sometimes comes anyway). The one sworn to you always comes: sometimes everyone in
+  the camp is dead when they get there, sometimes they hand you a gun and you fight out together.
+- MP: the rest of your faction is told.
+
+AI bridge 0.8.5: the bridge changed (stand-off mode). Close the old one and run Start AI Bridge.cmd again.
+Moved to 0.8.8: gate guard, NPC vs NPC stand-offs.
+
+Console:
+- "[ALifeWalkie] ready v0.8.5: ...", "[ALifeTalkWalkie] ready v0.8.5: walkie on, Radio tab on, ..."
+- "[ALifeStandoffPlus] ready v0.8.5: 6/6 hooks on A-Life's stand-offs ..."
+- "[ALifeCapture] ready v0.8.5: surrender hooked, last stand hooked ..."
+- "[ALifeTalkStandoff] ready v0.8.5", "[ALifeTalkCapture] ready v0.8.5: hands on, walkie delay on, camp rule menu on"
+- Not tested in game yet.
+
+v0.8.4 (Beta, test build) - REAL CARS
+
+Driving:
+- NPC groups take real parked cars again. A-Life's own "car life" is back: a travelling group notices a parked car,
+  gets in (open door, their key, forcing the door or smashing a window), starts it (keys in it, their key, or
+  hotwiring), tops up the tank and drives off. All noise is real: a smashed window carries.
+- Still never a car from nothing. A-Life's made-up cars (traffic, drive-bys, camp and outpost cars, start cars)
+  stay off. A car driven out of sight is the same car when it turns up again.
+- No made-up keys: they leave only if it's hotwired, the keys are in it, or one of them carries its key.
+- Siphoning another car needs a hose and a can on one of them. A pump more than a few tiles away needs a can.
+- Your cars are left alone: anything you drove in the last 3 days, cars in or near your base, a caravan's own
+  car, and the car someone is coming to pick you up in.
+- Fix: "come pick me up" could bring a copy of a car someone else had already driven off. Now: no car, no ride.
+- Settings (Settings tab, Groups, trade and the world): realCars (on), how close a car must be, how likely they
+  go for it, how many groups drive at once, how long your cars stay yours, keys, hose and can, pump reach, base
+  margin. "alifeCarsOff" off = A-Life's own cars back, as before.
+
+Fixes (from tester logs, 42.22):
+- Red errors when trading or giving clothes, boots or tools (isRotten on non-food). Trades still worked; now no spam.
+- "getParent of non-table" in ALifeDerelict when the game fills a zombie's bag (42.22 passes the loot table there).
+  The error also switched derelict emptying off for the session. Now only real containers are touched.
+- Not ours (report to Project A-Life): "Reserved NPC seat changed" in ALifeDrivingBoarding.lua.
+
+Console:
+- "[ALifeRealCars] ready v0.8.4: 8/8 hooks (NPCs take real cars: on)"
+- Once a day: "[ALifeRealCars] cars moved N, cars from nothing refused N, made-up keys refused N, ..."
+- Car life itself logs as A-Life's CarLife ("start", "entry method=hotwire result=done", "fix", "end").
+- Not tested in game yet.
+
+v0.8.3 (Beta, test build) - THEY TALK BACK (+ THEY DO WHAT YOU SAY, part 2)
+
+Talking:
+- They remember the whole visit, not just their last line. Follow-ups work.
+- They remember the last visit too (up to 7 days): how it ended, what was said, a question you never answered.
+- They end it: when they walk out, the talk window closes with their parting line. Keep pushing and they like you less.
+- Reply ideas on the Say tab: 2-3 short things you could say next. Pick one to say it.
+- They ask you things back now and then, and wait for your answer. Ignore them and they shrug it off.
+- Shorter, more natural replies by default, with a "..." while they think. Setting "talkLength" 2 = the old length.
+- Body language: the AI picks how they carry the line (friendly, nervous, angry...) and A-Life's gestures play it.
+- They come to you with a real reason: to answer something, a bite, a loss, hunger, or to check in. Never mid-fight.
+- Group talk: others nearby chime in, and "you all" / "everyone" brings them in.
+- A-Life's own talk rows: with the AI on, the AI answers them. With it off, someone bitten, grieving or starving
+  answers like it.
+- They ask you for things: food, water, medicine, ammo. Bring it later and they remember (they like you more, and
+  their thanks says so). Never bring it in 2 days and they let it go, a little sour.
+
+Commands (part 2):
+- The AI understands orders in any words. They only do it if they agree.
+- New: back off, back to base, wait here till morning, pick things up / use what you find / leave things be,
+  check me for bites, show me on the map (if they trust you, and you have a pen).
+- New: wake me if anything comes (one night; they wake you if the dead or someone hostile gets close).
+- New: teach me <skill> (first aid, cooking, carpentry, mechanics, aiming, sneaking, foraging, fighting). An hour
+  close to them; you can't learn past what they know; once a day per skill.
+- New: put on your <thing> / wear my <thing>. Their own clothes, or yours (they take it first).
+- New: siphon that car. They walk to it and fill their can. They need a hose and a can.
+- New: keep the engine running. When they get out, the car stays on for an hour.
+- Gear buttons on the Commands tab: "hand it over" and "carry this" list the real things.
+- Thirst for everyone: people get thirsty, drink from their group's water, and say so.
+- Fix: "give me your rifle, quick!" now finds the rifle (the words after a comma were read as part of the name).
+- Every number is a setting (Settings tab: Party and orders, AI and talking).
+- New bridge: close the old one and run Start AI Bridge.cmd again (the old one warns you).
+- Console:
+  - "[ALifeTalkCommands] ready v0.8.3: words on, Commands tab on (36 commands)"
+  - "[ALifeAsks] ready v0.8.3: asks become things (gifts on, wait 2 days)"
+  - "[ALifeAskBack] ready v0.8.3: ...", "[ALifeApproach] ready v0.8.3: ...", "[ALifeGestureAI] ready v0.8.3: ...",
+    "[ALifeStockLines] ready v0.8.3: ...", "[ALifeTalkEnd] ready v0.8.3: ..."
+- Not tested in game yet. Multiplayer tested off the game only.
+
+v0.8.2.1 (bug fix)
+- Talking to someone who is hurt or fighting: their own shouts now win. Your AI reply is no longer forced on screen when
+  A-Life says they are too hurt to talk, and it is no longer drawn back over their combat lines again and again
+  (the overlapping, looping speech bubbles). Calm NPCs work as before.
+- New switch "Speech: when they are hurt or fighting, their own shout wins" (on). Off = old behaviour.
+
+v0.8.2 (Beta, test build: part 1 of 2) - THEY DO WHAT YOU SAY
+
+Tell your people what to do in your own words, typed, by voice or in the talk window. They answer in their own
+voice, and they can say no.
+- 22 new commands, using A-Life 1.5's own companion orders:
+  - Fighting: hold fire, weapons free, melee only, guns on people only, guns on the dead only, guns only if needed,
+    get that one.
+  - Getting around: stay close, spread out, back to the car, guard this spot or door, keep a lookout, clear the house.
+  - Gear: give me your <thing>, carry my <thing>.
+  - Looking after themselves: patch yourself up, bandage me, eat something.
+  - Lights and noise: go dark, stop sneaking, lights on, lights off.
+- Who gets the order: say a name and only that person does it. Say "everyone" and everyone does. Otherwise it goes to
+  your people nearby. "Give me your..." goes to the person you're talking to.
+- They can refuse. It depends on how they feel about you, their first aid skill, and what they're carrying. They tell
+  you why ("I don't have one", "I don't know enough first aid for that"), and the person you're talking to answers
+  in their own words.
+- New Commands tab in the A-Life window, right after Now. It lists every command with what to say, what it does and
+  what it needs. It shows your party size and what you still need for more. Buttons give an order to someone near
+  you. The talk window's Say tab has a "(What can I tell them?)" row that opens it.
+- Bigger party: 6 by default, up to 10. Above 6, each place needs one of these:
+  - a bed for everyone at your base
+  - food and water stored for a few days
+  - most of your party trusts you
+  - enough car seats near you
+  You never lose anyone over it; you just can't take more on. Everything is a setting: size, max, the free part,
+  each requirement and how strict it is. A-Life's own companion limit follows the same number.
+  The size you pick in game is kept with the world. A world still on the old default of 4 moves to 6 once.
+- Talk window and pausing:
+  - Your pause key (Space) pauses the game again while you talk. It no longer picks a row, like Leave.
+  - The window stays open while paused, and you can keep reading, picking and typing.
+  - New setting "Pause while talking" (off by default): the window pauses the game when it opens and unpauses when it
+    closes, if it was the one that paused it.
+- Built for multiplayer: orders and the talk window's lines go through one client-to-server channel. In single player
+  it's a direct call. The multiplayer path is tested off the game, not in multiplayer yet.
+- Fix: the 0.8.0 and 0.8.1 switches (helicopters, A-Life cars, talk window) now stay how you set them after a
+  restart. Before, they came back on.
+- Console:
+  - "[ALifeTalkCommands] ready v0.8.2: words on, Commands tab on (22 commands)"
+  - "[ALifePartyCap] ready v0.8.2: party 6 now (size 6, max 10, free 6)"
+  - "[ALifeWindowTalk] ready v0.8.2: 8/8 hooks"
+  - one line per order, e.g. "[ALifeTalkCommands] 'hold fire': 2 did it, 0 didn't"
+- Part 2 adds: show me on the map, scout ahead, teach me, carry a message, keep an eye on someone, wait until dawn or
+  meet me at, siphon, check for bites, wake me if anything comes, lure them off, give him some food, back off, and
+  hunger and thirst for everyone, including picking up food you drop for them.
+
+v0.8.1 (Beta) - THE RPG TALK WINDOW: SAY IT IN YOUR OWN WORDS
+
+A-Life 1.5's talk window opens exactly as before, on its own tabs and rows. Now you can also just talk.
+- A "Say" tab next to A-Life's tabs. "Say something..." opens a typing box right under the window. Type anything,
+  press Enter, and the person you're talking to answers in their own words (the AI), in the window's caption. Esc
+  cancels.
+- Your chat key does the same while the window is open, from any tab, aimed at the person in the window (a name in
+  your line still picks someone else nearby).
+- A few lines you can just pick on the Say tab: what happened in Knox, what they think of you, their people, how
+  they're holding up. Father Gabe gets "I need to confess"; someone sworn to you gets asked about the Oath.
+- Trade, joining, orders and the rest stay on A-Life's own tabs: those are A-Life's actions and A-Life runs them.
+  (0.8.2 lets a typed line become one of those actions.)
+- Works while paused. With the AI helper off, A-Life answers as it always did, and the window says so once.
+- No Say tab while they've asked you something, during a dialogue tree, at a door, or when you're held captive.
+- Setting: "Talk window: a Say tab..." (Settings > AI and talking, on by default). Off = A-Life's window as it was.
+- Console: "[ALifeWindowTalk] ready v0.8.1: 6/6 hooks (Say tab and typing in the talk window: on)". If any part
+  fails it logs one line ("hook '...' failed, off for this session") and A-Life's window carries on untouched.
+
+v0.8.0 (Beta) - ONLY THE GUARD FLIES, AND A-LIFE'S CARS STAY PARKED
+
+The start of 0.8. A-Life 1.5 does a lot on its own that fights this mod: helicopters all day, its own traffic and car
+encounters, NPCs taking cars. This version turns those off at the source, so the world is quieter and faster, and this
+mod is the only thing that puts people in the air or behind a wheel.
+- Only the Guard flies: a helicopter only takes off when the Louisville National Guard is the one using it: your supply
+  flights, the Guard's own raids, its own support calls, and only while it still has something that flies. A-Life's
+  natural flights (news, police, military, brigands), routine flybys, other groups' raid helicopters and searchlights
+  are refused quietly before anything spawns. A-Life's scripted story flights (the day-365 ending, the Fiesta at the
+  tower) are A-Life's and left alone.
+- A-Life's cars stay parked: A-Life creates no cars of its own any more: traffic, drive-bys, pull-ups, travelers,
+  ambushes, pursuit and reinforcement cars, camp and outpost cars, cars rebuilt from its offline trips, NPCs taking
+  cars on their own. Raids and visitors that would have driven in walk in. A-Life's driving engine stays on: your
+  drive orders, your party riding with you or in a second car, pickups, and caravans in their own car still use it.
+  A-Life's "drive here" (a drive you order) is untouched.
+- Both are switches in Settings > Groups, trade and the world ("Helicopters fly only when the Guard is using them",
+  "A-Life makes no cars of its own"), on by default. Switching one off gives A-Life back its own, right away.
+- Console: "[ALifeAirspace] ready v0.8.0: 12/12 hooks (sky: Guard only, A-Life cars: off)", and once a day a count of
+  what was held back.
+
+v0.7.14 (Beta) - THE SABOTEUR (0.7 IS DONE)
+
+- From the roadmap, THE SABOTEUR: for a month after your people destroy a group (it falls within three days of you
+  killing its people), anyone new who joins your party or moves into your base may be one of theirs. Nobody is made:
+  it's a real person you recruited. Someone you've known a long time never is.
+- They give themselves away fairly: rounds go missing from your stores (they're in the plant's pack: search them), a
+  door to the base is found open in the night, and they aren't where they say they were (with the AI on, they lie
+  about it in their own words).
+- Someone of yours notices first: your camp medic, otherwise whoever's closest to you. They pull you aside (a decision,
+  front and centre): send them away, confront them (they may confess and leave, or turn on you), feed them false
+  information (the hostile group nearby acts on it and pays for it; the plant slips away), or not now.
+- Leave it too long and they're gone one night, with what went missing.
+- Settings: "The saboteur..." (Secrets and roadmap, on by default).
+- That closes 0.7. Next: 0.8.
+
+v0.7.13 (Beta) - KINGMAKER
+
+- From the roadmap, KINGMAKER: once a day your people are weighed against every group within about 5000 tiles, the
+  way groups weigh each other (how many, how armed, how fed; the Guard counts its helicopters).
+  * Kingmaker: you aren't the strongest, but the two strongest are close enough that your weight decides it. Both
+    send word (a decision): back one, back the other, or stay out of it. The side you back is stronger in every fight
+    it picks on paper and likes you for it; the other side doesn't. Hurt the side you backed and it's over. Asked again
+    at most once a week.
+  * The one who rules here: your people are the strongest group around by a clear margin. Raider bands weaker than
+    you stop demanding tribute, and people around here talk about you that way.
+- No numbers: a letter when it changes, a decision when it's yours to make, and how people talk.
+- Settings: "Kingmaker..." (Secrets and roadmap, on by default).
+
+v0.7.12 (Beta) - STRANGERS
+
+- From the roadmap, STRANGERS. Real people who turn out to be someone. Nobody is made: an ordinary A-Life stranger you
+  haven't met yet gets the life (name, what the AI knows about them, the odd thing they say when you meet).
+  * Oddballs: at most one per world, some days in: a used-car salesman still selling, a gym teacher with a whistle, a
+    drill sergeant, an insurance adjuster, a doomsday prepper, a mall Santa still in the suit, a conspiracy radio host,
+    a wedding planner, a Spiffo's fry-station manager, or a mime who never says a word.
+  * Familiar faces: each of the main people from a certain TV show about the dead has a chance to be out there, under a
+    name that's almost theirs (Nick Graves, Darrell Dixby, Herschel Gray, Carole Pelton, Reagan...). They go to someone
+    who fits (Darrell to a hunter, Herschel to a vet or farmer, The Mayor to a group's leader behind walls, Reagan to
+    a warband's leader). The show's children are grown: 18. At most one new familiar face every day and a half.
+    Sandbox: "Familiar faces use their real names" (off).
+  * The Confessor: Father Gabe Stoakes. Tell him you want to confess and he listens, and he knows what people say
+    you've done. What you tell him stays with him.
+  * The stranger who comes when it's over: once per world, when you're badly hurt with the dead on you and nobody of
+    yours near, a man in old military gear walks out of nowhere, clears the dead off you, says a word or two, leaves a
+    note at your feet, and is gone by morning. A few days later it's a rumour on the radio. (He is the one person this
+    mod ever brings into the world: he isn't anyone's, and he never stays.)
+  * Supporters: people who back the mod can show up in it (shared/ALifeChatPlus/ALifeDonors.lua): a named cameo, a
+    cameo of the kind they pick, a short approved line on the radio or a note, and for the top tier a cameo in every
+    world and a thank-you in Help > Thanks.
+- Settings: "Strangers..." (Secrets and roadmap, on by default).
+
+v0.7.11.2 (Beta) - BUG FIX
+
+- Bite news: when a bitten NPC's record was gone (died, removed), the "does the player get told" check still asked
+  A-Life for that NPC's opinion of you with no record, and A-Life's opinion code threw ("getModData of non-table",
+  "uid of non-table") from ALifeReputation / ALifeNpcOpinion. The check now skips NPCs with no record.
+- Opinion lookups in general: our opinion wrapper now returns "no opinion" for a missing record instead of passing
+  nil into A-Life, which covers the same mistake anywhere else a record read comes back empty.
+
+v0.7.11.1 (Beta) - BUG FIX
+
+- Drive orders: the tick handler used next(), which PZ's Kahlua doesn't have. It threw "Object tried to call nil in
+  tick" (ALifeDriveOrders.lua:585) and wiped pending drive jobs. Now checks for jobs with pairs().
+- Their cars on paper: the ten-minute car check read the cell's vehicle list with size()/get(), which that list doesn't
+  offer from Lua on 42.21. It threw (ALifePaperCars.lua:109) and saw no cars at all, so caravan cars were never sent
+  home, caught as stolen, or cleaned up. Now walks the list with its iterator (size()/get() kept as a fallback).
+- Same next() bug fixed before it could fire: helicopter-down deed (ALifeTasksLetters) and the Guard's heli crash
+  check (ALifeSkyPower).
+- Quick wheel: with Project Viewpoint, opening a car's radial threw "Expected a table" (ALifeTalk_Radial.lua:453) and
+  switched the A-Life vehicle slice off for the session. Viewpoint borrows the vehicle wheel to build its own
+  interaction menu; our slice now stays out of that borrowed menu instead of erroring.
+
+v0.7.11 (Beta) - SEASONS, CEREMONIES, AND A SETTINGS PAGE YOU CAN FIND THINGS IN
+
+- The settings page is sorted into categories: AI and talking; Interface and immersion; Relationships and feelings;
+  Party and orders; Your camp and base; Groups, trade and the world; Radio and news; Injury, death and prisoners;
+  Secrets and roadmap; Fixes, safety and debug. Click a heading to fold or unfold it; each shows how many switches it
+  holds. Searching still looks through everything, folded or not. Anything new that isn't sorted yet lands in "Other".
+- From the roadmap, SEASONS AND CEREMONIES: in the evening (5 to 9 PM), when you're home with your people, the camp
+  keeps the days that matter:
+  * The day it all started: on the anniversary of your game's start date (it reads your sandbox start date), a feast.
+  * Christmas dinner on December 25.
+  * The camp's founding: every 30 days since people first lived at your base, a dinner ("a month since we set up
+    here", "two months"...), on the first evening you're home after.
+  * First snow: the first time it snows while you're home, everyone stops and watches. No food, just the moment.
+- A feast eats real food out of your base's containers, one thing per person at the table. Not enough to go around
+  and there's no feast, and people feel that (their mood at camp gets worse, and they remember the year there wasn't
+  enough). A feast eases the camp's mood, lifts what everyone thinks of you a little, everyone remembers it, they're
+  seen eating together, and someone gives a toast that follows your camp's traditions (0.7.4). Word gets around that
+  your camp still keeps its days.
+- Settings: "Seasons and ceremonies..." (on by default).
+
+v0.7.10 (Beta) - THE OATH AND THE NIGHT SHIFT
+
+- From the roadmap, THE OATH: someone of yours (party or camp) whose love for you is at the very top, who thinks the
+  world of you, and who has never once seen you break one of your own camp rules kneels in front of you and swears an
+  oath. From then on they never desert you (no walking out, no leaving the party, never turning on you), they never
+  lie to you, and once, when the dead get within reach of you with them at your side, they throw themselves in the
+  way: the dead go for them instead. Break a rule in front of someone and they'll never swear it.
+- From the roadmap, NIGHT SHIFT: the same person keeping your night watch 30 nights straight. After that nothing gets
+  past them: they see twice as far, so the alarm comes earlier. On watch at night they stand at the ready.
+- Letters (0.7.8) are now a real piece of paper in your pack ("Letter for Maria (from Jorge)"). Lose it and you've lost
+  their last words; you hand it over in person. Paper has no gameplay value, so it's the one thing that may be made.
+- Prisoners you put to work in the garden are seen tending it (A-Life 1.5's animations).
+- Settings: "The Oath ... and Night shift ..." (on by default).
+
+v0.7.9 (Beta) - THE FIELD BAND, AND ASK ABOUT KNOX
+
+- The Field Band carries the real world: A-Life's Field Band chatter now also carries what really happened (the same
+  events the radio news is made from: helicopters down, fights, fires, wrecks, deaths), told by the groups you've
+  raised on the radio, by name. Now and then you catch a garbled exchange of Louisville National Guard call signs,
+  for as long as they still have something that flies.
+- From the roadmap, ASK ABOUT KNOX: ask anyone what really happened in Knox County ("what caused all this?" works too)
+  and you get their own theory, from their life story: the Army, a lab in Louisville, a meteor shower, the water...
+  One theory is the truth in every world, and the few people who hold it don't sound like they're guessing.
+  With the AI on, it answers from their theory; without it, they say it themselves.
+- Settings: "The Field Band carries what really happened..." (on by default).
+
+v0.7.8 (Beta) - CONTACTS, TASKS AND LAST LETTERS
+
+- Contacts: people you've really talked to go into A-Life's contacts book (name, group, where you met), and the
+  Louisville National Guard once you've raised them on the restricted channel.
+- Tasks: what this mod already asks of you shows in A-Life's journal Tasks tab, with the tracker and the arrow: a
+  supply flight on its way (be at your drop point), traders waiting at your place, someone missing you went to look
+  for (the rough area, never the exact spot), tribute that's due, and letters to deliver.
+- From the roadmap, "IF I DON'T MAKE IT BACK": before a raid, or a run away from you, someone close to you may press a
+  letter into your hand for the person they love most. Come back alive and they take it back. Don't, and it's yours
+  to deliver: find that person and give it to them. They'll remember who brought it.
+- From the roadmap, HIDDEN ACHIEVEMENTS: nothing pops up. What you've done is told around like everything else, and
+  people who've heard say it to your face: "the one who drops the walking tanks", "the one who shot a helicopter out
+  of the sky", "the one who carries the dead's last letters", "the one whose people stop for the wounded"...
+- Settings: "Contacts and journal tasks..." (on by default).
+
+v0.7.7 (Beta) - THE LOUISVILLE NATIONAL GUARD FLIES
+
+- The airport faction has a name: the Louisville National Guard (on the radio, the factions screen, their squads).
+  Saves from before keep their people and get the new name.
+- The Guard has a real fleet: two Hueys. A supply flight you call on the restricted channel is now a real A-Life
+  helicopter, flown by Guard people in their own colours, circling over your drop point while the crates go up and
+  down. Most routine helicopters near Louisville are theirs too.
+- Every Guard helicopter that's shot down is gone for good. Shoot one down yourself and they won't forget it. Both
+  lost: "We've got nothing left that flies." No more flights.
+- Air power counts: a group's strength (off-screen fights, tribute, who rules the area) counts its helicopters.
+- A helicopter down: it's on the radio, the spot gets a name ("Rotor Hill"), and the groups around race you to the
+  crash crate. Leave it lying too long and the nearest group that wants it gets there first: what's in it goes into
+  their real stash. Nothing is made.
+- Juggernauts: drop one and it's talked about. Everyone who saw it remembers, people who know you fear you a little
+  more, it's on the radio, and it's counted (for the hidden achievements coming in 0.7.8).
+- Settings: "Helicopters: ..." (on by default).
+
+v0.7.6 (Beta) - CARAVANS COME IN THEIR OWN CAR
+
+The game can't move a car whose ground isn't loaded, so a group's car now travels on paper, the way A-Life 1.5 moves
+its own cars: the real car is saved (model, every part's condition, fuel, battery, paint, rust) and rebuilt where it
+really is. Nothing is made: there is only ever one of their car.
+- They set out by car (a caravan that drives, as before). Their car leaves their lot: the next time their base is
+  loaded and you're not looking (30+ tiles away), it's saved and taken off. Anything left in its trunk or glovebox goes
+  into their stash (they unloaded it before leaving).
+- They arrive: their car is parked near your trading post or base, on the side they came from, and they walk over
+  from it to trade.
+- They leave: once nobody's near it (40+ tiles), it's saved again (fuel, any damage you did) and drives home on paper,
+  arriving after the real drive time. When their base is loaded and you're not looking, it's parked back on their lot.
+- Fuel stays honest: half the trip is gone from the tank when it parks at your place, the other half when it's home.
+- Their car, their property: drive off in it while it's theirs and you've stolen it. It's yours, it's gone from them,
+  and they think less of you for it.
+- No room to park, or the ground isn't loaded: they walk in like before.
+- Settings: "Caravans that drive come in their own car" (on by default).
+
+v0.7.5 (Beta) - FUEL AND THE ROAD
+
+Read from A-Life 1.5's real NPC cars (they burn fuel by distance, run dry, search for gas, give up and walk):
+- Fuel economy: gas gets dearer as the days go by (+1% a day, at most +60% from time alone), and dearer still while
+  A-Life's own drivers are out of fuel (the share of its cars that are dry, searching or left behind). Never more than
+  3x. Everything priced by "every item has its own worth" sees it: caravans, haggling, Airport flights, raids.
+- People off the road: a driver or passenger of an A-Life car near you remembers the real trip (where from, where to,
+  the tank running dry, leaving the car), so they can tell you where they were headed and the AI doesn't invent it.
+- From the roadmap, NAMED PLACES: where an A-Life car really ran dry and was left, people start calling the spot by it
+  ("Last Gallon, on the road to Rosewood"). Where we describe a place, that name comes first.
+- Settings: "Gas gets dearer..." (on by default).
+
+v0.7.4 (Beta) - THE WOUNDED REMEMBER, PRISONERS OF WAR, CAMP TRADITIONS
+
+Built on A-Life 1.5's "Injured survivor" menu (A-Life decides what happens; we remember it):
+- The downed person remembers what you did: helped, splinted, fed, robbed, left them lying there. It changes what they
+  think of you and the AI talks from it.
+- People who saw it judge it (anyone within about 20 tiles who knows you): helping a stranger counts for you; going
+  through a downed person's pockets or finishing off someone who was begging costs you; finishing off someone who
+  was still cursing you scares people more than it upsets them. Everyone who saw it remembers it.
+- "What happened?": who really put them down (the dead, gunfire, or the actual person and their group) goes into
+  their memory, and your next words go to them so you can ask more.
+- Prisoners of war: a downed (or dragged) enemy has given up. Drag them into your base and take them prisoner:
+  ransom, swap, recruit, prison work, the rules you already have. Nobody is made to put their hands up lying down.
+- Camp medics treat downed people too: one of the medic's own dressings, through A-Life's own recovery (they get up).
+- A-Life's own prisoners (switched off in A-Life 1.5 for now): when they're on, someone A-Life holds can't be taken
+  by us and the other way round, and A-Life prisoners you hold count as leverage over their group.
+- From the roadmap, CAMP TRADITIONS: what you keep doing becomes what your people do. Stop for the wounded three times
+  and it's a custom ("we don't leave the hurt lying"); finish off three attackers and it's "no quarter"; walk past
+  four and it's "we keep walking". You get a letter, your party and camp remember it, and your own people judge by
+  it from then on: breaking the custom costs double with them, keeping a hard one costs nothing.
+- Settings: "Downed people: ..." (on by default).
+
+v0.7.3 (Beta) - YOUR PARTY AND A-LIFE'S COMPANIONS ARE ONE GROUP
+
+A-Life 1.5 has its own companions (order wheel, companion sheet, they board your car and catch up). We hook into
+them, we don't replace them:
+- A-Life companions you hire count as your party: opinions, memories, grief, the talk window, the party tab.
+- A-Life moves them. We never take over their body, our walk-with mode stays off them, and our car code leaves
+  their boarding to A-Life (when A-Life's own boarding is on).
+- Your orders reach them as A-Life orders: follow, hold, guard (= hold), wait, fall back (= retreat), cover me.
+  Our danger stance doesn't override the orders you gave them on the wheel.
+- Leaving works both ways: someone who walks out on you (treated badly, starving, too scared) is dismissed in A-Life
+  too; someone you dismiss in A-Life leaves your party.
+- Hired in A-Life (talk window, right click, a visitor joining): they join your party, and if they were walking
+  with you in our companion mode, that hands over to A-Life.
+- Settings: "A-Life's companions are your party too" (on by default).
+
+v0.7.2.1 (Beta) - FIXES FOR PROJECT A-LIFE 1.5.0
+
+- Fix: giving a bandage or ripped sheets to a downed NPC now gets them up. A-Life 1.5 downed NPCs bleed out unless
+  A-Life marks them as helped; the old heal stopped the wound but left them on the ground to bleed out. Now it goes
+  through A-Life's own recovery, same as its "Stop the bleeding" option. (A splint still just splints, as in A-Life.)
+- Fix: companion catch-up and pickup moves could fail without anyone knowing. A-Life 1.5 lets only one thing move a
+  body per frame and says "no" to the rest; we read that "no" as "moved", so the NPC stayed behind while the log said
+  they caught up. Now a refused move falls back to a direct move (and A-Life's logs name us as the mover).
+- Fix: with Immersion off, A-Life 1.5's "they don't understand that" notice for visitors works again (we were dropping
+  the new argument it needs).
+
+v0.7.2 (Beta) - THE REST OF YOUR PARTY TAKES ANOTHER CAR
+
+- Not enough seats in your car: whoever's left takes an empty car nearby (within about 20 tiles of them). The first
+  of them drives, the rest ride along, and they say so.
+- They follow the road you actually took: your car leaves a waypoint every ~12 tiles and their driver (A-Life's own
+  NPC driving) drives through them. If they catch up and park, they pull out again as you move on.
+- You stop and get out: they pull up a few tiles behind you, get out and walk over. Get back in before they arrive
+  and they keep following.
+- Only a car that might run: upright, engine not wrecked, some gas, nobody in it. Still won't start (no key,
+  dead battery...): they get out and catch up on foot like before. No car nearby: they wait and catch up.
+- One second car at a time; anyone who still has no seat waits.
+- Settings: "Not enough seats: the rest of your party takes another car nearby and follows you" (on by default).
+
+v0.7.1 (Beta) - YOUR PARTY RIDES WITH YOU
+
+- Get in a car and your party gets in too: real seats, they walk to the doors (A-Life's own passenger boarding).
+  Get out and they get out. No order needed.
+- Only people close enough to see you get in (about 25 tiles). Car full: whoever has no seat waits outside and
+  catches up when you stop, as before.
+- Someone else's car (an NPC is driving): your party doesn't pile in. That's the driver's call.
+- People you told to "get in" who aren't in your party stay in the car when you get out.
+- Settings: "Your party gets in the car with you" (on by default).
+
+v0.7.0.8 (Beta) - FIX: NPCS GET IN CARS AND DRIVE AGAIN (A-LIFE 1.5)
+
+- Fix: "get in" / "sit in the car" did nothing, but the NPC still said "Alright, I'm in." A-Life 1.5 only takes
+  passenger orders when the car is in its "Player drives" mode, and it refuses quietly. Now the car is put in
+  Player drives mode first, the NPC is attached to a passenger seat, then told to board. They only say yes when
+  A-Life said yes; otherwise they say no and the console says why.
+- Fix: several people told to get in: each one joins the car's crew instead of replacing the last one.
+- Fix: "take us to <place>" used A-Life's "NPC only" mode, which doesn't let you get in. It now uses
+  "NPC drives / riders": they climb out if they were your passenger, take the wheel, you get in, then they drive.
+  You're in the driver's seat? They ask you to move over.
+- Fix: "come pick me up" broke at the car door: the NPC vanished and turned up back home. Moving them next to the
+  car was a 20+ tile jump, and A-Life reads that as a lost body. Now A-Life is told about the move. Same fix for
+  companions catching up after falling behind (30+ tiles).
+- Asked to pick you up while standing next to you ("come in the car"): they just walk over and get in.
+- A car that comes to pick you up arrives with them at the wheel, in "NPC drives / riders" mode: get in beside
+  them and say where to, or tell them to get out and drive it yourself.
+
+v0.7.0.7 (Beta) - YOUR OWN NOTES IN THE JOURNAL
+
+- Journal tab: "Write a note" on any group you know of. Your note is kept with this world, shown on the group's row
+  ("Your note: ..."), and at the top of its Notes. Several lines are fine; leave it empty to delete it.
+
+v0.7.0.6 (Beta) - FIX: THE SETTINGS PAGE FITS THE SCREEN
+
+- The Settings page is rebuilt. It was a fixed grid that ran off the screen once there were 150 switches, with
+  labels running into the next column and Save / Close off the bottom. Now it's one list that fits the window:
+  - it scrolls (mouse wheel), and labels wrap instead of overlapping
+  - two columns when the window is wide enough, one when it isn't
+  - a search box at the top ("radio", "camp", "immersive"...)
+  - click anywhere on a row to switch it; Save and Close are always on screen
+  - text follows your font size, same size as the other tabs
+
+v0.7.0.5 (Beta) - FIX: CAMP WIDGET HEAD COUNT
+
+- Fix: the camp widget said "0 people" with a full base. It counted only the old settler list (which stays empty
+  without the talk patch), not your camp. It now counts the way the camp board does: your settlers and Jeem's
+  residents who are home. Food per head counts everyone too, so "plenty" means plenty for all of them.
+
+v0.7.0.4 (Beta) - IMMERSIVE, SWITCHABLE IN GAME
+
+- Immersive can be switched in game: A-Life window > Settings > "Immersive". Off brings back the bond numbers, the
+  bond notes and the Factions overview right away; on takes them away again. Your choice is kept with this world
+  and beats the world's sandbox setting after a reload. Help tab explains what it hides.
+
+v0.7.0.3 (Beta) - FIX: THE A-LIFE WINDOW WOULDN'T OPEN
+
+- Fix: with immersive mode on (the default), the A-Life window was switched off: its key did nothing, the
+  "A-Life..." menu entry wasn't there, and the sidebar opened the old separate windows. An old rule from 0.6.10,
+  when the window still showed numbers. The 0.7 window is journal style with no numbers, so it's on in immersive
+  mode now.
+- If a tab ever fails to open, it's written to console.txt once and another tab opens instead (before: nothing
+  happened and nothing was logged).
+
+v0.7.0.2 (Beta) - LETTERS, AND TALKING WHILE PAUSED
+
+- Letters (like RimWorld's): news that isn't a decision now shows in full at the right edge, shrinks to a small tab
+  after a few seconds (sandbox: ToastSec), and stays until you clear it.
+  - Hover a tab to read it, left-click to open it again, right-click to clear it, or "Clear all" at the top.
+  - The same news twice moves the letter back to the top with a count (x2) instead of stacking copies.
+  - Bad news is red. When the right edge is full, "+N more" opens everything that popped up this session.
+  - The mod's own notes over your head are letters now: how people feel about you, "A car pulls up nearby",
+    "You recognize ...", camp, work zone and alarm notes, tribute, quests, the AI status warning. Instant feedback
+    (the radial's "not now" reasons, "Listening...") and the game's own notes stay where they were.
+  - Sizes follow your font size.
+- Important news pops up in the middle and pauses the game, like a decision: someone wants you dead, someone came to
+  collect what you never paid, one of your people turned on you. Every popup (decisions included) also leaves a red
+  letter, so it's still there after you've answered it. Settings: "Important news pauses the game" (off: just the
+  letter).
+- Talk while paused: pause, press the chat key and type. The AI helper's answer still comes in while the game stays
+  paused. A-Life switches game keys off for a moment after you send a line; that now ends while paused too, so you
+  can always unpause. Settings: "Talk while the game is paused".
+
+v0.7.0.1 (Beta) - THE QUICK WHEEL
+
+- The radial is now a quick wheel: eight slices or fewer, never more than one level deep.
+  - Pointing at someone: Talk, Follow me, Wait here, Guard here, Orders (go home, a job, meet me at / hold a named
+    place, stand down: one flat list), Their page (opens the People tab on them), Everything else.
+  - Pointing at nobody: your quick orders (the same buttons as the quick-order bar: hide one on the bar and it's gone
+    from the wheel too), Name this spot, Radio (straight to the calls you can make), the A-Life window, Everything else.
+  - "Everything else" is the old wheel, so nothing is lost. Settings > "Radial: the quick wheel" turns the old wheel back on.
+- Right-click > A-Life is now a normal submenu with the full list (Quick wheel at the top), instead of opening the
+  wheel.
+- The quick orders are on the Now tab too: to your posts, all clear, lights out, everyone follow, everyone wait,
+  Name this spot. Each button only shows when it can do something.
+- What popped up: notes and warnings over your head (from this mod, A-Life and the game) and the mod's toasts are
+  kept for the session. The Now tab shows the last few ("On screen lately", red for the bad ones) and "What popped
+  up" lists the last 40 with the time. For when a red line vanishes while your character is in the bath during an
+  alert. Settings: "Keep what pops up on screen".
+- Help tab: Quick wheel and What popped up added.
+
+v0.7.0 (Beta) - POWER, PART ONE: THE A-LIFE WINDOW AND THE WAR MAP
+
+THE A-LIFE WINDOW
+- One window with tabs for everything: Now, People, Party, Camp, Trade, World, Radio, Settings, Help. The right-click
+  and radial menus stay as shortcuts. Tabs that don't fit go under "More".
+- The buttons open the very same menus as the right-click (ours, and Jeem's own entries in Jeem's order), so the
+  window and the menus never disagree. With Jeem: Camp has Jeem's base and residents, Radio has the walkie to your
+  base, People has Jeem's people menu, Now has Jeem's status. Without Jeem those buttons aren't there.
+- Every window fits the screen, scrolls, and can be resized from its bottom-right corner (remembered). Text uses a
+  bigger font on big screens.
+- Now: what needs you and what changed: decisions waiting, your people who are away (and why), traders at your
+  place, anything that switched itself off after an error, and the camp's latest notes.
+- People: a journal of everyone you've met. Only what you've learned over time: their name once they told you, what
+  they said and did with you, how they seem toward you (in words), when and where you last saw them, where they went
+  if you sent them. Never a live position. Their avatar: live when they're near, otherwise as you remember them
+  (A-Life's own look for them), "not seen up close" if you can't picture them.
+- People: orders from their page (follow, wait, guard, go back to the base, a job, meet me at / hold a named place,
+  stand down). Tick the box next to several names to give them all the same order.
+- Camp: the camp board plus every camp menu (roles, rules, patrol, alarm, kitchen, farm and the rest), work zones,
+  named places, and Jeem's base and residents.
+- Trade: your trading post, market day, traders on the road or at your place, and what the thing in your hand is
+  worth to people out there (in words).
+- Radio: what your radio reaches and which groups you know can hear you, with the radio menu and Jeem's walkie.
+- Help: every feature in short. The first time you open each tab, a short tip pops up ("Show the tips again" in Help).
+
+QUALITY OF LIFE
+- The camp's notes (event log): stores getting thin or filling up, new faces, losses, someone not seen in a while,
+  traders passing through, groups growing warmer or colder toward you. Immersive: no numbers, no exact causes.
+- Why not: when someone refuses to come with you or to take a job, you're told why in plain words ("Jorge won't come
+  with you: your place is with your own people"), and it goes in their journal. Their own "mind if I tag along?"
+  check stays silent.
+- Named places: stand somewhere, Camp > "Name this spot" (or right-click the ground > "Name this place..."). It goes on
+  your map. Send people there to meet you (until you arrive, or a day) or to hold it until you call them back. They
+  really go: they walk there if it's close, or travel the road there (0.6.17). Your own people use the names when
+  they talk (with the AI helper).
+- Quick-order bar: a small bar of your favourite orders (to your posts, all clear, lights out, everyone follow,
+  everyone wait). Drag it anywhere; right-click it to pick the buttons, stack them, change size and see-through, or
+  lock it.
+- Camp widget: a small panel (food, people, mood, alarm, who's away; "around us" optional), in words. Drag it
+  anywhere; right-click it to pick what it shows, size, see-through, lock, or hide it while everything is fine.
+  Both are turned on from the Now tab and remembered in Zomboid/Lua/alifeai_ui.txt.
+- Settings: switches for the camp's notes, why not, named places and the first-time tips.
+
+THE WAR MAP
+- The start of 0.7 (Power). Wars between groups are now tracked, and you can see the ones you know about.
+- Only known wars. You hear about a war from:
+  - traders who come to your place (their own wars, and rumours of their neighbours')
+  - groups who answer your radio call, and fighters who come to help you
+  - shooting close enough to hear (a raid within about 200 tiles of you)
+  A war nobody told you about isn't on your map, and a war that ended still shows until someone tells you it's over.
+- What you know about each war: who's fighting, the last you heard and who from, who seemed to be winning (from the
+  fights you heard about), and how good the information is. Your own side's account beats a rumour; old news fades.
+- Estimated territory: a soft circle around where you think each group lives, sized from how many you were told
+  they are. Rough knowledge gives a bigger, blurrier circle, and it fades as the information gets old. Outposts
+  of theirs that you know about are drawn too (by chokepoint name when they hold one). Red dotted lines join groups
+  at war.
+- Where: World > "War map" opens your map with it on, and World > "Wars" lists every war you know of. The world
+  map has a "War map" button to switch the overlay on and off.
+- Performance: nothing runs unless the world map is open with the war map on; then the drawing list is rebuilt
+  every 2 seconds.
+- Sandbox: "War map" (on by default).
+
+FIXES
+- Fix: with Project Viewpoint (first or third person) NPCs often answered "I don't understand you" to perfectly
+  normal lines. The cause: the 3D view fills the graphics card (as little as ~200 MB of 8 GB left), so a local AI
+  model runs much slower (one reply took 25 s instead of the usual 2 s). After 9 s A-Life answered with its own
+  line, and when A-Life didn't understand the line either, that line was "I don't understand you". Now, when the
+  AI is only slow and A-Life doesn't understand the line, they take a moment ("Hm... give me a second"), and the AI's
+  line still follows if it comes within 30 s. Lines A-Life does understand still get its answer as before.
+- Fix: a chat command typed in front of a line ("/say hi", "/s hi") was sent to the NPC as part of what you said
+  ("say hi"). It's taken off now; "/shout", "/yell" and "/y" count as shouting.
+- Tip for Viewpoint players with a local AI: use a smaller model (line 1 of bridge\model.txt) or cloud AI, or turn
+  down Viewpoint's heaviest settings (shadows, far view) so the model fits on the card.
+- Fix: small models sometimes put their reasoning or the prompt's rules into what an NPC says ('...through."} 12 words
+  max. This is a single response.'). Thinking blocks, leftover JSON and sentences about the reply itself are taken
+  out before the line is shown.
+
+v0.6.21 (Beta) - WORD ON THE ROAD
+- People who travel now tell you about the roads. Traders who come to your place (with or without Jeem) and groups
+  who answer your radio call tell you who holds the chokepoints near them ("Tellers say the Ridge Boys hold the
+  bridge near Riverside, they rob people there"), and whether they paid a toll or got robbed on the road this past week.
+- It goes in your journal (0.6.9) as what you were told, from whom and when, never live numbers. The journal also
+  knows roughly where that outpost is (the place they named).
+- Each thing is told once a day at most, so calling out on the radio doesn't flood your notes.
+- Traders at your place without Jeem (0.6.18) now also tell you about their own group and pass on rumours, the same
+  as Jeem caravans always did.
+
+v0.6.20 (Beta) - AUTOMATIC BUG REPORTS (OPTIONAL, OFF BY DEFAULT)
+- The AI helper can now send the health report (0.6.16) to the mod author by itself whenever a feature switches
+  itself off after an error. You don't have to find and post the files.
+- Off by default. On first start the helper writes Zomboid/Lua/alifeai_report.txt. Set enabled=true and fill in
+  url= (the report address from the Workshop page or Discord) to turn it on.
+- What's sent: the health report (which features turned off, when and why, and how long the mod's handlers take)
+  plus the last 300 lines of console.txt (console_lines= changes that; 0 = none). Your Windows user name and home
+  folder are replaced with <user> / <home> first.
+- A report goes out only when the list of features that turned off has changed, and at most 3 a day
+  (max_per_day=).
+- Without the AI helper nothing changes: send Zomboid/Lua/ALifeChatPlus_health.txt and console.txt by hand.
+
+v0.6.19 (Beta) - CHOKEPOINTS
+- Chokepoints are worked out from the map's road data:
+  - bridges: roads that cross a river, from the map's own zone data (roads, plus the river traced through its flow
+    markers). The vanilla map has this data; most modded maps don't, so they get generated data after 1.0.
+  - the only road into a town: a road that, if held, cuts a town (or a corner of the map) off from the rest
+  - crossroads: towns where 3 or more roads meet, whose loss would split the road network
+  - river crossings A-Life's own road graph marks
+  Hand-placed chokepoints can be added (for map authors): ALifeChokepoints = { { x =, y =, label =, score = } }.
+- Outposts (0.6.5) can now hold these too, not only police stations, army sites and the like: a house by the
+  bridge, the last building on the only road into town. A group picks whichever is worth more to it, counting the
+  distance from home.
+- Traders passing a held chokepoint, both trade runs between groups and caravans walking home with their goods:
+  - friends of the holders (or anyone they're not hostile to) pay a toll, about a tenth of what they carry (the best
+    of it). It goes into the outpost's stash.
+  - warbands and slavers rob them outright, unless they're on good terms. The goods go to the outpost's stash, and
+    the group that was robbed remembers it.
+- Debug: with -debug, right-click > "A-Life (debug): mark chokepoints on map" puts every chokepoint on your map, so
+  they can be checked against the real roads.
+- Performance: worked out once per session (about 35 ms on the vanilla map), and again only if A-Life's road graph
+  changes.
+- Sandbox: "Chokepoints" (on by default).
+
+v0.6.18 (Beta) - CARAVANS WITHOUT JEEM
+- Caravans no longer need Jeem. Without a Jeem base (Jeem not installed, or you don't have a base there), they come
+  to your trading post, or to your A-Life base if you haven't made a post.
+- The same rules as always: real people from a real group, goods out of their real stash, the real walk (or drive)
+  to get to you. Radio calls for traders, market days and groups that come on their own to your trading post all
+  work this way.
+- They arrive in daylight only, stop a few tiles short on the side they came from, and wait about 10 hours
+  (16 on market day). You get a note when they're there.
+- Trade face to face: talk to them ("want to trade?") and bargain. The goods are real items in their packs. What
+  you buy is theirs to sell; what you pay is really handed over.
+- When they leave they walk off down the road (0.6.17). What they didn't sell, plus what you paid, lands in their
+  stash once they're home. A fair trade is good news for their group. Kill one and their group hears about that
+  too. Rob them and they drop what they carry. Nothing is made from nothing.
+- If you walk away while they're waiting, their packs are remembered and they still have the goods when you come back.
+- Fix (0.6.17): A-Life can refuse to unload someone it keeps loaded. They used to try to leave forever; now they
+  give up after a few tries and stay.
+- Sandbox: "Caravans without Jeem" (on by default).
+
+v0.6.17 (Beta) - PEOPLE ACTUALLY LEAVE
+- When someone goes somewhere, they really go. Covers: traders heading home after a visit, radio help and hunters
+  going back, someone you send to search for a missing person, a group setting out to trade at another base, the
+  traders' walk home after a trip that came to nothing, and a whole household moving on.
+- Walking off: if you're there, they walk away down the road (toward where they're going) and only vanish once you
+  can't see them any more, or they're far enough away. Never in front of you. If something attacks them, A-Life
+  takes over as usual and they carry on afterwards.
+- On the road: while they travel they are somewhere along the way, moved on every game hour (on a road where A-Life
+  knows one). Not at home and not already at the other end. Go there and you can meet them; they carry on.
+- Getting there: when the travel time is up they are where they went. Searchers come back to camp when they said
+  they would. Traders who went home from your base walk the whole way back now (before, they were home instantly).
+- Never put on the road right next to you (they would pop into view).
+- Sandbox: "People really leave" (on by default).
+
+v0.6.16 (Beta) - HEALTH REPORT
+- Feature-off note: every system in the mod switches itself off for the session when it hits an error, instead of
+  crashing. Until now that only showed up in console.txt. Now you get a short note on screen the first time each one
+  goes off, telling you what to send.
+- Health report: Zomboid/Lua/ALifeChatPlus_health.txt, rewritten once a minute (and right after a feature goes off):
+  - which features turned themselves off, at what game hour, and the full reason
+  - every event handler and background tick handler in the mod, timed: calls and milliseconds per 5 seconds
+    (session average and the last 5 seconds) and the slowest single call, most expensive first
+  A one-line cost summary also goes to the console every 5 minutes. Testers: send this file with console.txt.
+- Sandbox: "Health report" (on by default). Off: no note, no file. Timing still costs only two clock reads per call.
+
+v0.6.15.1 (Beta) - FIXES
+- Fix: missing people (0.6.15) turned itself off on its first check ("Object tried to call nil in msTick"): it used a
+  Lua function Project Zomboid doesn't have. It works now.
+- Fix: a hitch every 5 seconds in camps with Jeem residents (~35 ms each): the bite check built the camp list twice
+  per scan, and with residents that walks every NPC in the world. The camp list is now built once and shared for a
+  few seconds by everything that asks (refreshed at once when someone joins or leaves).
+- Fix: sandbox labels with a "%" in them (radio range, chances, farm watering and more) tripped the game's text
+  formatter and spammed the console; they say "percent" now. Translation lines use {1} instead of %1 for the same
+  reason.
+
+v0.6.15 (Beta) - MISSING PEOPLE
+- When one of your people (a settler) dies out of sight (on a run, on the road, anywhere you weren't), nobody knows
+  at first. No X on the map. About half a day later someone at camp comes to you: "Nobody's seen Jorge since
+  yesterday. Last we saw, Jorge was heading northeast, toward Muldraugh." Your only basemate? Then it's your own
+  memory of where they went. Never exact: a direction and the nearest town.
+- You decide:
+  - I'll go look: you jot the rough area on your map (needs a pen or pencil). Get within 15 tiles and you find them.
+  - Send someone to look: they're out for the real road time there and back plus a few hours searching (no chores
+    meanwhile). If they find them, they tell you exactly where and you can mark it. They can come back with nothing.
+  - They're gone: you stop looking.
+- Close friends don't grieve "word reached you" until they're found or given up on: the camp doesn't know either.
+- Every card says in one line how it works.
+- New sandbox option: Missing people (off = you learn of the death right away, like before).
+
+v0.6.14 (Beta) - WHAT THINGS ARE WORTH
+- Every item has its own worth, worked out from the game's own item data: food by calories (more for food that
+  keeps), drinks and fuel by how much they hold, medicine by what it does, ammo by its rounds, guns and weapons by
+  damage, tools by what they are, clothing by protection and warmth, skill books high, junk a token. A real item is
+  worth less worn, half-used or half-empty; rotten food is worth nothing. Same scale as the Jeem Extension's prices
+  (a tin of beans ~2.6, a bandage 2.5, an axe 10, antibiotics 12, a hunting rifle ~27).
+- What it's worth to a group depends on what they're short of: a starving group pays double for food, a group with no
+  medicine pays more for yours, a group drowning in ammo pays less for more of it.
+- One number drives everything:
+  - trading with caravans: their goods are priced item by item, and your things are valued item by item (in any
+    Jeem trade), times what that group needs (for our caravans)
+  - Airport supply flights
+  - trade runs between groups: fair by worth to each side, not 6 for 6
+  - raids: raiders take food and the most valuable things they can carry off (moved, never made)
+  - how rich a group is (rich / comfortable / getting by / scraping by / destitute): in the journal and in what
+    their people say
+- New sandbox option: Item worth (off = one price per kind, like before).
+
+v0.6.13 (Beta) - POLISH
+- Fix: the sandbox options added in 0.6.4 to 0.6.12 showed raw names on the sandbox page (Build 42.21 reads
+  Sandbox.json; they were only in the old .txt). All 36 lines are in now.
+- Living Factions: if A-Life: Living Factions is also enabled, a console line every load and a one-time notice
+  recommending you disable it. NPC Overhaul already runs living factions, without spawning loot or people; both
+  together double up. Nothing is changed for you.
+- Translations groundwork: the 0.6 menus (A-Life window tabs, Radio, trading post, market days, supply flights,
+  Journal buttons) and both notices now read from Translate/<language>/IG_UI.json (keys IGUI_ALCP_*), with English
+  built in, so a missing line never shows a raw key. A translator only adds the lines they translate.
+- New Workshop page.
+
+v0.6.12 (Beta) - THE AIRPORT COMES ALIVE (end of the 0.6 branch)
+- Supply flights: the Airport keeps a radio watch on a restricted channel. A call-out on a radio that reaches
+  Louisville gets a curt answer (they never say where they are). Then: put what you're offering in your trading post
+  and, on the radio, "Restricted channel: request a supply flight". The helicopter comes (it's loud: the dead hear it
+  a long way off), takes what's in the post and leaves their goods in it, at their price: dear when they're well
+  supplied, fairer to friends when they're short. What they give is what they really stripped from Louisville; what
+  you give goes into their real stores (food feeds them). Not there when it lands: they leave and think less of you.
+  One flight every few days; they can say no.
+- Abductions: when the Airport is short of food and hands, lone people near Louisville go missing: taken to the
+  Airport to work for it (real people, re-homed, eating from its supplies). The groups around notice, and their
+  traders bring you the rumor (journal).
+- Followers follow: someone who said yes to "follow me" (or is in your party, or a companion) is no longer pulled
+  away by daily life (rest, water, chores), camp jobs or work zones. Inside your base they used to wander off to do
+  chores mid-follow.
+- Followers and cars: when A-Life seats a follower in your car they're left alone (they used to pop in and out of the
+  car, a hazard to drive with). When you get out and they're still sitting in a car, they're told to climb out too
+  (they used to stay stuck in it). Nobody in a vehicle is given chores or camp jobs.
+- Fix: the market day and supply-flight options never showed on the radio menu (load order: they were hooked before
+  the radio code loaded). They're hooked once the game starts now.
+- New sandbox options: Airport supply flights, Airport abductions.
+
+v0.6.11 (Beta) - VEHICLES
+- Groups drive when they really have a vehicle and the fuel for the trip; otherwise they walk. When you're near one of
+  their bases, the real vehicles parked there (a working engine and a gas tank) are looked at: the best one is theirs.
+  Nothing is made.
+- Fuel is real: a trip burns fuel for the road distance there and back, and gas cans from their stash top up the tank
+  (and are used up). Next time you're near, the real truck's tank shows what they burned.
+- Caravans, fighters you call for and hunters drive at driving pace (the travel-time setting from 0.6.6); nomads leave
+  their vehicle behind. If the car's gone when you come back (you took it, it burned, the dead wrecked it), they've
+  lost it.
+- The car itself can't be moved while nobody's near it (the game doesn't let mods move a vehicle that isn't loaded),
+  so a group that drives to you parks out of sight and walks in.
+- Gas cans are their own kind of goods now (fuel): caravans carry and trade them.
+- Radio: when nobody answers your call, it says once why (they'd need a two-way radio of their own, on and in range).
+- New sandbox option: NPC vehicles.
+
+v0.6.10 (Beta) - ONE WINDOW, TABS
+- Everything you look at lives in one A-Life window: People (relationships), Party, Journal, Camp (the camp board)
+  and Settings, as tabs in its header. Switching a tab swaps the page in place, in the same spot on screen, so
+  there's only ever one A-Life window open.
+- One way in: right-click "A-Life..." (also in the A-Life radial), the sidebar buttons (Relationships opens People,
+  Party opens Party), or a key you set in Mod Options ("A-Life window"; press again to close). It reopens on the tab
+  you used last, where you left it.
+- The separate right-click entries for Places, Party and Relationships fold into it. Setting "hubWindow" off brings
+  the old separate windows back. A person's own page (opened from People) still opens on its own.
+
+v0.6.9 (Beta) - TRADE AND BLOOD, PART 10: THE FACTION JOURNAL
+- The Places window is now your Journal. It used to show every group's real numbers, live, from anywhere. Now it shows
+  what you've learned about each group, who told you and how long ago, and it can be out of date or wrong:
+  - your own visit: what you saw (kept up to date while you're there)
+  - their traders and their fighters: how many they are at home, how they're doing, what they had
+  - the radio: who they are and roughly where
+  - rumors: traders talk about a neighbor they care about (a friend or an enemy), true when it was said
+  A group that fell or moved away still shows as you last knew it until someone tells you otherwise.
+- "Notes" lists everything you've written down about a group, newest first.
+- "Mark on map" writes the place onto your own world map in your hand: a note you can move or erase like your own.
+  It needs a pen or pencil. Where you've been, it's exact; a place you only know from the radio or a rumor goes down
+  as a rough guess with a "?".
+- Old saves: places you'd visited keep what you saw on your last visit.
+- New sandbox option: faction journal (off = the old live Places window).
+
+v0.6.8 (Beta) - TRADE AND BLOOD, PART 9: TRADING POST AND MARKET DAYS
+- Your name in the world: caravans now come only from groups that know your place: close enough to have seen it,
+  raised on the radio, been to it, visited by you, or told by a group they trade with. Word spreads along the trade
+  runs and between friends.
+- Trading post: right-click a container at your base > "Make this our trading post". What's in it is your visible
+  stockpile: groups that know you send caravans on their own (traders most often), more often the better it's
+  stocked. Every caravan still walks the real road time.
+- Market days, set in game on the radio: Radio > Announce a market day > pick the day (tomorrow, in 2 or 3 days, in a
+  week) and the time (morning, noon, afternoon), once or every week. Every group in range that knows you and has goods
+  to spare says so and sets out to arrive on time (the farther ones leave earlier). One visit at a time at a base, so
+  they come one after another, keeping it short while others wait. A weekly market keeps its regulars coming without
+  another call until you call it off.
+- Your settlers trade too: a caravan visit while your people are home lifts camp morale for a day, and that group
+  warms to you a little.
+- Fix: daily dice rolls (outposts, trade runs, robberies, the trading post, word spreading, NPC base attacks, and the
+  group goals and politics) were badly mixed: a group's rolls drifted together day after day, so a "10% a day" event
+  could miss for months and then hit many days in a row. They're properly random now.
+- New sandbox options: trading post, market days (on/off; the market day itself is set in game).
+
+v0.6.7 (Beta) - TRADE AND BLOOD, PART 8: RADIO, ALLIES AND BOUNTIES
+- Radio: with a two-way radio that's on (a walkie-talkie on you, or a ham radio within 2 tiles), right-click or the
+  A-Life radial > Radio. "Call out" reaches every group within your radio's real transmit range that keeps a radio
+  (walkie-talkies reach a little way, ham radios far). Groups that don't hate you answer with who they are, which way
+  and roughly how far. Groups you've raised you can call again.
+- Ask for traders: if they can spare people and goods, a caravan sets out for your base (real people, real goods,
+  real road time) and they tell you roughly when to expect it.
+- Ask for help (groups that like you): 2-3 of their fighters set out for you, walking the real road time. When they
+  get close they come in from out of sight and join your party for a day: they follow you and fight, whether you're
+  holding your base or going after someone. Then they go home. Real people: if they die, they're dead. Once every
+  three days per group.
+- Bounties: a group that hates you (one that fights for a living, or any group that hates you badly enough) sends
+  hunters: real members, walking the real road time, coming at you from out of sight. Each wave is bigger than the
+  last, up to what the group can spare. Make peace and it stops.
+- Hurt a caravan and anyone who gets away carries the news home: their group's standing with you drops when they get
+  there. Kill them all and nobody ever knows... but that group's caravans stop coming for a week.
+- New sandbox options: radio calls, radio range %, share of groups with a radio, help from allies, bounties.
+
+v0.6.6 (Beta) - TRADE AND BLOOD, PART 7: CARAVANS
+- With the Jeem Extension's trader visits on, the traders at your gate are real people now. A real group nearby sends
+  real members of its own (never its leader, never everyone) carrying a real share of its stash. Before, Jeem made up
+  new people for every visit and rolled their goods from a list.
+- What you buy is gone from that group. What you pay them goes into their stash (it used to be deleted), and
+  whatever they don't sell goes home with them. When the visit ends they walk home instead of being taken off the map.
+- They carry what their group has: farmers sell food, crafters tools, traders a bit of everything. They keep enough
+  food at home for themselves first.
+- No group within reach with people and goods to spare: nobody comes. As the world bleeds dry, traders get rarer.
+- Travel takes real time: the road distance on A-Life's road graph (straight line x1.3 without one) at walking pace.
+  A caravan sets out, walks, and gets to your gate hours later. If it arrives at night or nobody's home it waits
+  nearby; after two days it goes home. Goods take the walk back too. Nomads now use the same road distances.
+- Off screen, groups trade with each other: a trading group sends its surplus to a friendly group that lacks it and
+  gets what that group has spare (moved, never made). A warband near the road may rob the run, and the robbed group
+  won't forget.
+- New sandbox options (NPC Overhaul: Factions): Dark content, Nomads, Outposts, Caravans, caravan range, walking
+  pace, driving pace (driving needs vehicles, coming in 0.6.9).
+- Safety: if anything in the Jeem hooks fails, caravans fall back to Jeem's own traders for that session (logged once).
+
+v0.6.5 (Beta) - TRADE AND BLOOD, PART 6: NOMADS AND OUTPOSTS
+- Nomads: a group that's starving and has stripped everything around its house no longer just scatters. It packs up
+  what it really has (its stash, its people, its A-Life squads) and walks the roads toward a part of the map that
+  still has unlooted buildings, a day or a few away, and settles there. Same name, same beliefs, same friends and
+  enemies; the old house is left behind, empty. On the road they don't forage; they eat what they carry.
+- A group with unlooted buildings still around it doesn't move: starving there isn't the land's fault, so it
+  scatters like before. Groups never vanish down the road in front of you, and never settle near you.
+- Outposts: a big group (6+ people, fed and steady) sends 2-3 of its own people to hold a smaller base at a place
+  that matters: a police station, an army post, a fire station, a clinic, a gas station, a hardware store, a
+  warehouse. They take a real share of the stash with them (a couple of days of food each, a box of ammo).
+- The main base sends food when its outpost runs short (only from its own surplus). An outpost about to starve is
+  called home: its people and stash go back. If the main base falls, the outpost holds on alone; if it moves, the
+  outpost follows. A group never raids or takes over its own outpost.
+- The AI knows when its group is on the road, moved here, or is holding an outpost.
+- New settings: "Nomads" and "Outposts" (both on).
+- Performance: the search for a new home runs once, when a group would otherwise give up; an outpost search at most
+  once a week per big group; and only one search an in-game hour across the whole world.
+
+v0.6.4 (Beta) - TRADE AND BLOOD, PART 5: SPECIALIZATION
+- As the world runs dry, groups drift into what they're good at: farmers, crafters, traders or a warband. It comes
+  from who their people were (the same backgrounds camp roles use), their place (barns and fields, out in the
+  country), what's in their stash (tools, materials) and how they act (raiders, traders, raids made).
+- Checked once a week; a group only changes when something else is clearly better, so one new face doesn't flip it.
+  A group with nothing special stays plain survivors.
+- What it does, with nothing made: farmers forage and hunt more from their land (more in the country), crafters
+  fortify faster, a warband raids like raiders and fights a little harder, traders keep the peace with neighbors.
+- New setting "Dark content", off by default: with it on, a leader-run raider warband can turn slaver. For now
+  that's who they are and how they talk; taking captives comes with 0.7.
+- The AI knows how their group lives now.
+- Fix (helper): the chat engine never started for players who have "python" but not the "py" launcher; the helper
+  log said "The system cannot find the file specified" (a PowerShell quirk turned the command into the letter "p").
+  The helper and Setup also now skip the Microsoft Store's fake python.exe and install real Python when that's all
+  there is. A failed start now shows as failed with the reason instead of retrying forever.
+
+v0.6.3 (Beta) - TRADE AND BLOOD, PART 4: STRENGTH AND GOALS
+- A group's strength is what it really is: its people, how armed and fed they are (their real stash), how dug in,
+  and their spirits. No tiers, nothing refills. Lose people, ammo or food and they're weaker.
+- New goals from what they have: a group out of ammo goes looking for it; a strong group sets its sights on a weak
+  or starving neighbor (never an ally) and tries to take it over.
+- Takeovers happen while nobody's watching, as a contest with real chance in it: defenders count for more, a
+  starving group may just give in, and a smaller group can hold (the attacker pays for trying). Taken over, a
+  group's people and stash become the winner's: the same people, nothing made. Over months a few big groups form.
+- "Find medicine" and "find ammunition" only count as done when it's really in their stash (before, medicine
+  turned up on a dice roll).
+- The AI knows where their group stands: the strongest around, stronger than most, weaker than the rest.
+
+v0.6.2 (Beta) - TRADE AND BLOOD, PART 3: EXPEDITIONS
+- Your residents' scavenging trips (the Jeem Extension's missions, from its faction window) now bring home exactly
+  what they carried: things they took out of real buildings, which stay stripped. Before, they came back with
+  made-up supplies, 0-10 rounds each, a 1-in-10 pistol each and 2-4 items each from a fixed list, and what they
+  really carried was lost.
+- A trip that happens without an A-Life squad (A-Life's list was full) loots real buildings around your base, one
+  per person who comes back.
+- The haul goes into your stores by kind, the way Jeem delivers loot; the faction window lists what they brought.
+- Safety: if something fails part-way through a return, it's never run twice (no doubled people or loot). Same fix
+  for 0.6.0's scavenging.
+
+v0.6.1 (Beta) - TRADE AND BLOOD, PART 2: THE LEDGER
+- NPC bases now live on what's really in their stash: food, water, medicine, ammo, tools and building materials.
+  They eat the real food their scavengers brought home (it's gone from the stash afterwards), so nothing is counted
+  twice and nothing is eaten that isn't there. Older saves keep the food they had.
+- Their stash decides how they act: desperate groups raid even if they never did, groups out of ammo avoid fights
+  (and fight worse when they must). Raids between bases and help between allies move real food from one to the other.
+- A base's goals push how hard they forage. They no longer make food appear.
+- The AI knows how they're doing: out of ammo, no medicine, well tooled.
+- Radial menu: opened from the vehicle menu or Smart Radial Menu, it now lands on the person next to you.
+- One-time notice (once per world) if your loot settings will empty the world faster than intended. Nothing is
+  changed for you.
+
+v0.6.0 (Beta) - TRADE AND BLOOD, PART 1: THE WORLD BLEEDS DRY
+- New rule for the whole world: nothing spawns loot. Every item is one the game put in the world, and loot that's
+  taken never comes back.
+- A-Life's own off-screen scavenging used to fill NPC packs from a fixed list (beans, bandages, ammo...) without
+  any house losing anything. Now a scavenging group takes from 1 to 3 real buildings near where it went, and those
+  buildings are stripped for good: when you get there, the shelves are bare, doors open, windows broken. Nothing near
+  to loot = they come back empty. Buildings you've been in, your base, safehouses and NPC bases are never touched.
+- Which buildings were stripped is never shown. You find out by walking in, or by being told.
+- NPC bases no longer make food from nothing (it was about a day's food a day for everyone at home). Food comes in
+  from what their scavengers bring home, plus a little foraging and hunting (less in town, much less in winter).
+  Out of food in a bad season, they starve out. New bases start with what their people carry. Existing bases keep
+  the food they have.
+- The Airport scavenges real buildings around it and reaches further out as the near ones run dry. It starts with
+  what its soldiers carry, not 20 days of food.
+- Settings: "World bleeds dry" (off = A-Life's own scavenging), "NPC bases forage", "Console: name the buildings
+  NPCs strip" (off by default, it's a spoiler).
+- Recommended for this playstyle: vanilla Diminished Loot and Looted Buildings at None, A-Life's "Previously
+  scavenged building rate" at 0 (keep the feature itself on: it adds the open doors and bodies).
+
+v0.5.11 (Beta) - THE RADIAL MENU + FIXES (closes the 0.5 branch)
+- New: THE RADIAL MENU. The right-click menu had grown to a dozen "A-Life Talk: ..." lines. Now right-click shows one
+  entry, "A-Life", and it opens a radial with everything sorted:
+  - The person next to you: Talk straight on the ring; gifts, follow, relationship, bonds, prisoners, tribute in
+    their own slice.
+  - Camp and Work zones, exactly as before (every submenu, every greyed-out reason: click it to read why).
+  - Windows: Places, Party, Relationships, Factions, sidebar buttons.
+  - Long lists page with More. Back goes up a level.
+  - It's the same menu underneath (the radial is built from the right-click menu's own entries), so nothing is
+    missing and nothing new can be left out.
+- Vehicle menu: an "A-Life" slice in vanilla's vehicle radial (V / D-pad up), in or next to a vehicle.
+- Controller: D-pad up with no vehicle or animal near opens the A-Life radial. Tilt and press A in submenus.
+- Smart Radial Menu: if it's installed, A-Life plugs into it (Mods > A-Life: here / next to me, Relationships,
+  Party, Places, Factions). SRM keeps the D-pad.
+- Hotkey: Options > Mods > A-Life NPC Overhaul > "A-Life radial menu" (unbound by default).
+- Want the old long menu back? Settings: "Right-click: one A-Life entry..." off.
+- Fix: the Camp menu now recognizes a base you made only with the Jeem Extension's Bases tool ("You need a base
+  first" while standing in your Jeem base). An A-Life base (safehouse / mark / BaseHeat) still comes first. Also
+  fixes work zones and settlers for Jeem-only bases. Setting: "Camp: a base made with Jeem's Bases tool counts".
+- Fix: right-clicking anywhere filled the console with "tried to call nil in getHutch" stack traces (the animal
+  menu asked every object on the square for a hutch). It now only asks hutches, like vanilla.
+- Fix: 10 log / perf lines (and the AI request's number encoding) used string.format("%.2f"), which throws in
+  Project Zomboid's Lua. They now build decimals by hand (ALifeFmtDec).
+- That's the 0.5 branch done. Next up: 0.6, Trade and Blood.
+
+v0.5.10 (Beta) - CONTENT UPDATE: THE CAMP BOARD
+- New: THE CAMP BOARD (Camp > Camp board). One window with the whole camp at a glance, refreshing while it's open:
+  - The camp: the day, the alarm, food in your stores and about how many days of dinners that is, tonight's dinner,
+    water left at the water spot, the rules in force (and your rule for the bitten).
+  - Every person: their job, what they're doing right now, how they're holding up (content / getting by / fed up /
+    close to leaving: words, never numbers), and what matters (bitten, bleeding, grieving someone, saw you break a
+    rule, has the watch tonight).
+  - Today: what happened at camp.
+- The last 0.5 content update: next up is 0.6, Trade and Blood.
+
+v0.5.9 (Beta) - CONTENT UPDATE: ANIMALS
+- New: THE SHEPHERD. Give someone the Shepherd role ("look after the animals"), then right-click your hutches and
+  troughs > Camp > Animals > Tend this. A vet or a farmer is a natural; some flatly refuse to shovel muck.
+  - Eggs: they empty the nest boxes (vanilla's own egg removal) and carry the eggs to your fresh-food drop point.
+  - Water: a trough under half gets topped up from the farm's water spot, real water out of the barrel, poured the
+    way vanilla fills a trough. Dry barrel: they say so.
+  - Feed: an empty trough gets animal feed from the feed store you mark (Camp > Animals > Animal feed here).
+  - Not done: milking and shearing.
+- Sandbox: Animal care on/off. 124 options.
+
+v0.5.8 (Beta) - CONTENT UPDATE: GRIEF
+- New: WHEN ONE OF YOUR OWN DIES. A card: they died (and how), who took it hardest. "Hold a funeral at dusk" or
+  "No time for that". The kind, devout and loyal appreciate the funeral; skip it and they remember, the grieving most.
+- The funeral: that evening everyone gathers at the memorial (or the fire), the person closest to them says a few
+  words, and the evening's talk is about them. Mourners who came carry it lighter afterwards.
+- Grief weighs on morale: the closer they were, the more (from the mod's existing grief: who mourns whom, fading
+  over days). Less after a funeral.
+- New: THE MEMORIAL (Camp > Memorial). Lists your dead and the day they died. A week, a month, a hundred days and a
+  year on, someone remembers out loud, the evening gathers at the memorial, and the AI knows what day it is.
+- Fix: a mercy kill (a known bite) now also gets the funeral card (camp death handlers all run now).
+- Sandbox: Grief at camp on/off. 123 options.
+
+v0.5.7 (Beta) - CONTENT UPDATE: EVENINGS (and the missing pieces)
+- New: EVENINGS BY THE FIRE (Camp > Evenings > Gather here). After dinner (19:00-22:00) everyone off duty sits in a
+  ring around the spot you mark and winds down.
+  - With the AI: the NPC-to-NPC talk comes more often there, and each of them knows what happened at camp today
+    (dinner, the alarm, a bite, the harvest, a rule you broke), so that's what they talk about. Or a story from before.
+  - Without the AI: they say lines built from the same day ("Good food tonight. Somebody tell the cook.").
+  - Gossip goes round the fire: rules you broke travel. An evening together lifts morale a little.
+- New: SICK BAY + TRIAGE (Camp > Medical). The hurt rest at the sick bay instead of working. Medics go to the worst
+  first (bleeding, then broken bones, then pain), walk over to them, and restock bandages and splints from your meds
+  drop points when they run out. Camp > Medical lists who's hurt, worst first.
+- The bitten: whatever you decide follows you. Put someone down and the hard ones respect it while the soft ones
+  (and their close friends) resent it; quarantine is the reverse. "Let them choose" isn't held against you.
+- Walk-outs: when someone has had enough, a card: Talk them down (works better if they like you) / Let them go.
+- Armory: keep a weapon for someone (inventory right-click a weapon > Camp: keep for...): only they take it, and
+  they take it even over a "better" one. Ammo rule: all fighters or guards only. Fighters fix a weapon under 60%
+  with duct tape or glue from the armory.
+- Alarm: optional bell. Everyone hears it. So does everything dead within 60 tiles. (Off by default.)
+- Sandbox: Sick bay, Evenings (on, from, until), Armory ammo rule + repairs, Alarm bell. 122 options.
+
+v0.5.6.1 (Beta) - FIX
+- Farm duty: watering now takes the water out of the barrel (or plumbed sink, well, trough) you marked, the same way
+  vanilla does: 200 ml per watering "use", up to 8 L a trip. A barrel running low waters what it can; a dry one
+  gets "The water's dry here. Crops'll have to wait for rain." and they check again in an hour.
+
+v0.5.6 (Beta) - CONTENT UPDATE: MOMENTS
+- New: DECISION CARDS. When something needs your call, a card pops up in the middle of the screen and the game
+  pauses (the same way vanilla's Survival Guide pauses it). One at a time; others wait their turn.
+  - Someone is bitten: Quarantine them / Put them down / Let them choose, for that person (your standing camp
+    rule is preselected and doesn't change). Nothing happens to them until you decide.
+  - The watch or a patrol spots a horde or armed strangers: "To your posts!" sounds the alarm, "I'll handle it"
+    doesn't (and they won't ask again for a few minutes).
+- New: SIDE POPUPS. Everyday camp news (dinner served, gear taken, patrol calls, rules broken, alarm and all clear)
+  shows as small popups stacked at the right edge instead of floating text over your head. They never pause, fade
+  after a few seconds, and a click dismisses one.
+- Sandbox (1. General): Big moments: Pause the game / Show without pausing / Off (the camp decides on its own, as
+  before). Side popups on/off. Side popups: seconds on screen.
+- 115 sandbox options.
+
+v0.5.5 (Beta) - CONTENT UPDATE: THE ARMORY
+- New: THE ARMORY (right-click a gun locker, crate or shelf > Camp > Armory > Armory here). Your fighters (the
+  people who man the posts on the alarm: guards, plus whoever's fit to fight, per the alarm setting) take from it:
+  the best weapon that beats what they hold (guns over melee, then the hardest hitter), up to 2 boxes of ammo that
+  fit their gun, and armor for any slot they have free (up to 2 pieces). They say what they took.
+  - Once a day on their own; "gear up" / Camp > Armory > Gear up now sends them again; and when the alarm sounds,
+    fighters stop at the armory on the way to their post if there's anything there for them.
+  - Equipping goes through A-Life's own hand-over code, the same as handing them a weapon yourself. If they can't
+    use something, it goes back on the rack. Cooks, medics and everyone else leave the armory alone.
+- Sandbox (5. Your base and camp): Armory on/off, fighters take ammo, fighters take armor.
+- 112 sandbox options.
+
+v0.5.4 (Beta) - CONTENT UPDATE: THE BITTEN
+- New: THE BITTEN (Camp > The bitten). A-Life already infects NPCs: a bite starts a clock, and when it runs out
+  they die and get back up. Now your camp lives with it.
+  - Some confess right away. Scared or proud people may hide it. A medic at the base finds a hidden bite within
+    the hour; without one, the fever gives them away later. Or ask: "are you bitten?" / "show me your arm".
+  - Your camp rule decides what happens: Quarantine them (they walk to the quarantine room you mark and wait),
+    Put them down (it falls to you), or Let them choose (the brave ask you to do it; the rest take the room).
+  - Someone always has an opinion: the hard ones want it done now, the soft ones want to wait.
+  - Killing someone the camp knows is bitten is a mercy, not murder: your "harmless people" rule isn't broken.
+    Killing someone whose bite nobody knew about still counts against you.
+  - A known bite frightens everyone (morale). The bitten in quarantine ignore the camp alarm.
+  - With the AI, the bitten know they'll turn, and the ones hiding it lie about it.
+- Sandbox (5. Your base and camp): The bitten on/off, starting rule, some hide it.
+- 109 sandbox options.
+
+v0.5.3 (Beta) - CONTENT UPDATE: THE CAMP COOK
+- New: CAMP MEALS. Give someone the Cook role and mark a kitchen (right-click your stove > Camp > Kitchen > Cook
+  here). Every evening (18:00 by default) the cook goes to the kitchen and makes dinner for everyone at the base,
+  you included, from your food stores: fresh-food drop points first, then keeping food, then the kitchen's own
+  container. The food closest to spoiling goes first. Rotten food is never used.
+  - A good cook stretches the food further; a hopeless one wastes some. Camp > Kitchen shows how much dinner takes.
+  - A hot meal lifts everyone's morale for a day (more from a good cook). A thin meal less. No food, no dinner:
+    people go to bed hungry and it shows.
+  - Be within 15 tiles when dinner's served and you eat too (less hunger, a little happier).
+  - No cook, or meals off in the sandbox: nobody eats from your stores, same as before.
+- Sandbox (5. Your base and camp): Camp meals on/off, dinner time, how much the camp eats (Hearty / Normal / Light).
+- 106 sandbox options.
+- Under the hood: camp jobs are now plug-ins, so new jobs (like this one) can be added without touching the others.
+
+v0.5.2 (Beta) - CONTENT UPDATE: THE ALARM AND THE FARM
+- New: CAMP ALARM (Camp > Alarm). Mark up to 6 posts and a safe room. Sound the alarm from the menu or by
+  voice ("sound the alarm", "to your posts"), or let the night watch / a patrol raise it when they spot a horde
+  or armed strangers. Fighters run to the posts (spread over them), everyone else gets into the safe room, and
+  every other job stops: patrols, hauling, building, grave digging. The lights in the base go out and come back
+  on at all clear (only the ones that were on). "All clear" / "stand down" ends it, or it ends itself after 30
+  quiet game minutes. A direct order ("follow me") still beats the alarm, and anyone in a real fight still
+  fights or flees on A-Life's own judgment.
+- New: FARMER ROLE + FARM DUTY (Camp > Roles > Farmer, or "you're our farmer" / "tend the crops"). Farmers
+  water crops at your base that run dry, fetching water from the spot you mark (Camp > Farm > Water from here),
+  and pick what's ripe. The food goes to your fresh-food drop point, seeds stay by the field. Yields, seeds and
+  regrowing crops (strawberries) are vanilla's own, scaled by how good the farmer is: a farmer by trade picks
+  more than a car salesman. They stand beside the plots, never on them.
+  Not modelled yet: water isn't taken out of the barrel.
+- Sandbox (5. Your base and camp): Camp alarm on/off, the watch raises it, who goes to the posts (guards only /
+  guards and anyone fit to fight / everyone but cooks and medics), lights out, all clear after quiet (0 = only
+  when you say). Farm duty on/off, water crops below (40%), farmers harvest.
+- 103 sandbox options.
+
+v0.5.1 (Beta) - CONTENT UPDATE: ANYONE CAN RUN THE AI
+- New: CLOUD AI. Use OpenRouter or any OpenAI-compatible service (OpenAI, Groq, DeepSeek, Mistral, LM Studio...)
+  with your own key. No GPU, no Ollama. Run "Set up cloud AI.cmd" in the bridge folder: it creates
+  Zomboid\Lua\alifeai_cloud.txt (url, key, model) and opens it. The key lives there, never in the mod folder,
+  never in any log.
+  - Spending guard: by default only replies to YOU use the cloud (background=off); NPC-to-NPC chatter, gossip,
+    summaries and radio stay free. max_per_hour caps requests (default 150, shared by both AI helpers).
+  - A model that refuses a line, a rejected key, no credits, no internet: NPCs use A-Life's own line and the
+    corner note says what's wrong. Nothing breaks character.
+  - Local Ollama works exactly as before (no cloud file = no change).
+- New: NPC LANGUAGE (sandbox: Talk and AI > NPC language). Auto answers in whatever language you type, or pick
+  one of 13 (Spanish, Portuguese, French, German, Italian, Polish, Russian, Ukrainian, Turkish, Chinese,
+  Japanese, Korean). Needs the AI. Push-to-talk follows a picked language from the next game start.
+  Lines in another language are no longer swallowed by the "didn't catch that" fallback.
+- New: ORIENTATION IN ROMANCE. Everyone is drawn to the other sex, the same sex, or both (fixed for life; shares
+  are sandbox options, 7% / 10% by default). Someone who can't be drawn to you stays a friend and lets you down
+  kindly. NPC couples follow the same rule. Romance also grows faster through hardship shared (danger survived,
+  being patched up, a death gone through together), and NPC couples with matching personalities fall easier.
+  Couples that already exist are left alone.
+- New: FORTIFY YOUR BASE (Camp > Fortify). Pick a stockpile container, press Start: your people board the
+  windows, raise a log palisade and hang a gate, using the same real building NPC bases do. Builders do it if you
+  have any. "Only your materials" (default) means they build from your stockpile and never take anything else.
+  Only while you're around. "fortify the base" / "stop fortifying".
+- Changed: "AI connected (cloud)" when the cloud AI is on.
+- 4 new sandbox options (NPC language, orientation shares, fortify x2). 95 in total.
+- Console: [ALifeOrient] installed (...), [ALifeLanguage] NPC language: <code>, [ALifeCamp] fortify: hooked into
+  NPC base building, and in alifetalk_bridge_log.txt: "Cloud AI: <model> at <url>" / "Cloud AI answered the test".
+
+v0.5.0.1 (Beta) - hotfix
+- Fix: "Object tried to call nil in pcall" error from ALifeLLMTalk_Habits.lua line 259. When someone wanted
+  to go fish or fetch water, the check for water tiles used a call Project Zomboid 42.21 no longer has.
+  It now picks a call that works in your game version. If none works, water habits switch off quietly
+  for that session (one line in console.txt). Not caused by 0.5.0: this was older code.
+- Console: "[ALifeLLMTalk] habits: water check uses PropertyContainer...." (or "...water habits off this session")
+
+v0.5.0 (Beta) - MAJOR UPDATE: CAMP LIFE
+- New: EVERYTHING IN THE SANDBOX. 90 options on 6 pages ("NPC Overhaul: 1. General" to "6. Work zones and
+  graves"): talk and AI, relationships, factions and world, your base and camp, work zones. A world made
+  before 0.5.0 keeps using Zomboid\Lua\alifetalk_settings.txt for anything it has no sandbox value for.
+  The sandbox wins for the world it was set in; the in-game Settings window still changes a session.
+- New: CAMP ROLES. Right-click the ground > Camp > Roles, or say it ("you're our cook", "be our medic",
+  "you're our guard", "be our builder", "you're off duty"). Everyone starts as General (no benefits).
+  How well someone does a job comes from who they were before and who they are; some refuse a job outright
+  (a scared salesman won't stand guard).
+  - Cook: a decent meal lifts the whole base, while there's food to cook.
+  - Medic: patches up hurt housemates with the bandages and splints they carry.
+  - Guard: walks the patrol and takes the night watch first.
+  - Builder: sorts building materials first, and the base feels like it's going somewhere.
+- New: MORALE (never a number). Roles, recent deaths and your own rule-breaking now feed the unrest people at
+  your base already felt about food, danger, housemates and you. A good stretch shows too: people say so.
+  Low for too long: they walk out, and the volatile can turn on you.
+- New: CAMP RULES (Camp > Rules): no killing prisoners, no killing people who aren't a threat, no stealing
+  from other groups, everyone shares food. Break your own rule and the people who saw it think less of you,
+  by who they are. The ones who weren't there may hear about it later.
+- New: PATROL. Camp > Patrol: mark up to 5 points. Guards walk them in order and call out zombies and
+  strangers (with a direction). "walk the route" puts anyone on it, "stop patrolling" takes them off.
+- New: NIGHT WATCH. At night one person (a guard first) stays up by the base and warns you; if you're asleep
+  they try to wake you for a horde (and strangers, by the setting). "take the night watch" picks who.
+- New: HAUL & SORT. Camp > Haul & sort: mark a collect area, then set drop points on containers per category
+  (spoiling food, food that keeps, meds, clothes, weapons, ammo, tools, building materials, everything else).
+  Up to 5 drop points per category: they fill the nearest one with room, then the next. Spoiling food goes
+  to fridges and freezers first. All full: they stack the rest beside the last one and say so.
+  "sort the supplies" / "stop sorting".
+- 11 new sandbox options (Patrol, Night watch, Haul & sort, Morale, Camp rules).
+- Fix: "__le not defined for operand" error once a day (ALifeLLMTalk_UI.lua:40). Two different functions
+  were both called bandOf; one replaced the other, so the daily band check crashed and bands formed and
+  fell apart in the same moment ("came together" / "are gone - nobody left"). Bands work again.
+- Fix: with the AI off, unhappy people at your base never said anything. They grumble out loud again.
+- Fix: "recursive require()" warning for ALifeLLMTalk_Classify.lua at load.
+- Console: [ALifeCamp] loaded v0.5.0 (A-Life module registered, talk on, N patrol points, N collect areas)
+
+v0.4.1 (Beta)
+- Fix: work zones did nothing and logged an error over and over ("Object tried to call nil in wzEvaluate").
+  Project Zomboid's Lua has no next(), and the work zone module used it on every check. Bodies now get moved.
+- Fix: base building had the same bug. NPC bases never finished a wall, gate or boarded window, and wood they
+  chopped or salvaged stayed in their pockets instead of going to the stockpile.
+
+v0.4.0 (Beta)
+- New: WORK ZONES. Right-click the ground > Work zones: mark two corners, then pick where the bodies go:
+  - Drop bodies here (pile): a ground tile.
+  - Drop bodies in this <container>: a dumpster or any container. When it's full they pile the rest beside it
+    and say so.
+  - Burn site here: its own option, refused within 5 tiles of walls, fences, trees, containers, vehicles or
+    anything built. Bodies pile up and the pile is lit only once every body that was in the area when the batch
+    started is on it. New bodies go into the next batch. They need a lighter and petrol (on them, or in any
+    container in your base), never light it with zombies within 30 tiles or in rain or wind, and one person
+    watches it burn out.
+  - Pause, resume or remove a zone from the same menu. "Show work zones" outlines them.
+- People who live at your base (settlers and Jeem residents at home) do the work, up to 2 per zone. Bodies are
+  moved with the game's own corpse pick-up/drop, so they keep their clothes and loot.
+- Squeamish people (by personality) refuse to touch the bodies; some others grumble while they work.
+- Say it: "clear the bodies" / "get rid of the bodies" / "burn the bodies" ... and "leave the bodies" to stop.
+- Graves: when someone from your base dies, a worker finds a shovel (their own, then containers out to 50 tiles),
+  carries the body to a spot by the house and buries it under a filled grave. The shovel goes back where it came
+  from. No shovel: they lay the body out there and say they need one; it's buried once a shovel turns up.
+- While you're away, bodies keep getting cleared (6 per worker per hour), settled when you come back, never
+  within 25 tiles of you. Burn sites burn while you're away.
+- The AI now tells you when it works: the first time the helper is up and healthy each session you get a
+  green "AI connected" message over your head. Problems still show in the top-left corner.
+- Sandbox page renamed to A-Life NPC Overhaul, with 10 new Work zone / Burn site / Graves options.
+- Console: [ALifeWorkZones] loaded v0.4.0 (A-Life module registered, talk on, N zones)
+           [ALifeStatus] AI ready   (when the optional AI is connected)
+
+v0.3.4 (Beta)
+- Renamed from A-Life Chat Plus to A-Life NPC Overhaul. Same mod ID (ALifeChatPlus), nothing to reinstall,
+  saves are safe.
+- The AI is optional, so the mod no longer nags when the AI helper isn't running: no on-screen note and no
+  corner reminder. Typed commands work without it. Real problems while the helper IS running (failed
+  install, missing model, crashed bridge) are still shown.
+
+v0.3.3.1 (Beta)
+- Hotfix: 0.3.3 shipped with a typo in the chat bridge (alifetalk_bridge.py line 1260) that stopped the AI
+  chat engine from starting ("SyntaxError: invalid syntax"). Fixed. Run "Restart AI helper.cmd" after updating.
+- Fix: the new soft classifier read almost every sentence as a greeting ("hi" matched inside "this", "hey"
+  inside "they") and forced "What was that?" on any line it didn't recognize, which broke normal conversation.
+  It now matches whole words only, small talk always goes to the AI, and "didn't catch that" is only for
+  one- or two-word lines nothing understood.
+
+v0.3.3 (Beta)
+- Soft classifier for weaker local models (3B/4B): slang and typos are normalized before NPCs read them.
+- Unclear lines get a forced clarifying gist, so NPCs ask "What was that?" instead of making things up.
+- Bridge prompt: strict unknown policy and gist obedience so weak models stay on the rails.
+- Console lines [ALifeTalkLLM] soft classify / weak classify for tuning. Talk layer 0.5.2.11.
+
+v0.3.2 (Beta)
+- New: NPC bases build with real materials. People living in a Chat Plus base:
+  - chop trees near the base (the tree is really gone) for logs, with an axe
+  - saw logs into planks at their stockpile, with a saw
+  - in the evening, take doors off other houses for hinges and a doorknob, with a screwdriver
+  - board their ground-floor windows (planks + nails), raise a log palisade around the house (logs), and hang a
+    gate in it (planks, hinges, doorknob)
+- Everything comes out of and goes into the base's stockpile container. You can see it, and you can steal it.
+- No tool, no job. Missing tools or nails go on their want list, and they'll mention it when you talk to them.
+- Work you don't see happens day by day and shows up when you come back: stumps, missing doors, walls up,
+  materials in the stockpile. Never within 25 tiles of you, never in your base or a safehouse.
+- Pre-seeded bases no longer get free boards on their windows. They board them with planks they made.
+- Wood doesn't run out at the doorstep: they start within 30 tiles, and when that's bare they go on supply
+  runs out to 100, 200, then 300 tiles. Far wood is carried home a couple of logs at a time, so far wood
+  means slow walls.
+- Everything they gather is carried home in their own hands first, then put in the stockpile.
+- They also strip wooden tables, chairs, shelves and fences in empty places for planks and nails (with a
+  hammer or a saw). Anything with a container in it is left alone.
+- Work you don't see only uses trees, doors and furniture a scan has actually found standing. A base you've
+  never been near doesn't build until you've passed by once. If something they counted is gone when you come
+  back (you took it), it comes back off their ledger. No logs from nowhere.
+- When there's nothing left to cut even 300 tiles out, they say they need wood.
+
+v0.3.1 (Beta)
+- New: the Airport faction (sandbox option, off by default). On the start day you choose, 10 soldiers are founded
+  at the Louisville airport with one leader. They stay home and only make short trips into Louisville.
+- They live on what they scavenge from Louisville and nothing else. Louisville runs dry over time; at zero food
+  they starve, and every death is permanent. Wipe them out and they're gone for that save.
+- Their supplies set their mood: well stocked = not interested in trade; low = hard on strangers, patient with
+  people who've dealt fairly with them. (Trades and the helicopter come in 0.3.2.)
+- They talk short and direct, and never say where they're based or who they answer to.
+- Fix: "AI helper isn't running" even after Setup. An old copy of the helper (from an earlier version) could keep
+  running and block the new one, so Setup did nothing. The helper now stops old copies when it starts. New
+  "Restart AI helper.cmd" in the bridge folder, and a log at Zomboid\Lua\alifeai_helper_log.txt.
+- Sandbox page "A-Life Chat Plus": on/off, start day, and airport X/Y (0 = found from the map's room names).
+
+v0.2.6 (Beta, first Workshop release)
+First public test release. See the Workshop description or INSTALL.txt for the full feature list.
+New in this build:
+- Chat fix: in some single-player games vanilla chat throws "hasCapability of non-table: null" when you press Enter, so the box stayed open and nothing showed over your head. The mod now closes the box and shows what you said over your head when that happens.
+- "Nobody is close enough to hear you" note on screen when you type or speak and no NPC is in earshot (before, it did nothing, which looked like the chat was broken).
+- Fix: the dead-body check and the pickup car scan errored on 42.21 (vehicle/object lists changed). They now read the lists the 42.21 way.
+- Talk key is now changeable: edit bridge\ptt_key.txt (CapsLock, Mouse4, Mouse5, RightCtrl, F1-F12, any letter). Holding it under 0.75 seconds is ignored, so taps and typing do nothing (the old tap = "Okay." is gone).
+- Easy setup: Setup.cmd installs Ollama, the AI model, and a hidden helper that starts the AI and voice with the game and stops them when it closes.
+- The game tells you what failed (top-left corner + over your head), with the reason.
+- Driving: "get in", "get out", "take us to <town, place>". Only where the map is loaded.
+- Pickups over the walkie using a real car seen near the NPC (no spawned cars).
+- Groups recognize and grieve their dead, or react if they turned.
+- Prisoner work: "work the garden" waters your plants if they fear you.
+
+
+v0.3.3 (weak-model understanding)
+- Soft classifier (ALifeLLMTalk_Classify.lua): maps common survivor speech to intent/tone/GIST before the LLM.
+- Unknown lines get a forced clarifying GIST so 3B/4B models stop defaulting to empty "hm?" / "what?".
+- Bridge prompt: strict unknown policy + GIST obedience for small models.
+- Console: [ALifeTalkLLM] soft classify / weak classify lines for tuning word lists.

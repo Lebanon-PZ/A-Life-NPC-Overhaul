@@ -1,0 +1,10 @@
+# whitelist: mod only
+/*
+!/.gitignore
+!/README.md
+!/LICENSE
+!/Contents/
+!/preview.png
+__pycache__/
+*.pyc
+*.zip

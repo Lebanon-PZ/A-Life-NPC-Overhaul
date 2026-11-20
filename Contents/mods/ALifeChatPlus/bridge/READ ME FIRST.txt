@@ -1,0 +1,33 @@
+A-LIFE NPC OVERHAUL - THE AI FOLDER
+===================================
+The AI is optional. The mod works without it.
+
+FIRST TIME
+  Setup.cmd                 Double-click once. Installs Ollama + a model and a small
+                            helper that starts the AI with the game and stops it after.
+  Set up cloud AI.cmd       Instead of Setup.cmd, if you'd rather use a cloud AI with
+                            your own key (no graphics card needed). The AI tab in game
+                            has the same form.
+
+SOMETHING'S WRONG
+  Restart AI helper.cmd     The game says the helper isn't running, or the AI stopped
+                            answering. This is the one to try first.
+  Stop AI (free memory).cmd Turns the AI OFF and frees the memory. It STAYS off (the
+                            helper won't restart it) until you run the next one.
+  Turn AI back on.cmd       Turns the AI on again. Same switch as in the game's AI tab.
+                            The helper also frees memory by itself when the game closes.
+
+ONLY IF THE HELPER IS OFF (you turned it off, or Windows blocks it)
+  Start manually (if the helper is off).cmd   Starts the AI and voice by hand.
+  Start AI Bridge.cmd                         Starts only the AI, in a window you can watch.
+  Start Voice (push to talk).cmd              Starts only the voice part.
+
+FILES YOU CAN EDIT (Notepad)
+  model.txt       First line = the AI model. Others are listed inside.
+  ptt_key.txt     The key you hold to talk out loud.
+  prompts.txt     The AI's instructions. Read live: save and the next line uses it.
+
+Everything else here (.ps1, .py, .vbs) is the helper itself. Leave it alone.
+
+BUG REPORT
+  In game: AI tab > Doctor check, then send Zomboid\Lua\alifeai_doctor.txt.

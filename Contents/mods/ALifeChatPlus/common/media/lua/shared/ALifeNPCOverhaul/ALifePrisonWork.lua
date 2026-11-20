@@ -64,6 +64,11 @@ function W.order(record, shell, player, stop)
     local ok, x, y, z = pcall(function() return shell:getX(), shell:getY(), shell:getZ() end)
     if not ok or P().yourBaseAt(player, x, y) == nil then return pick(W.LINES.notbase) end
     local day = math.floor(hours() / 24)
+    if c.leading then   -- working, not following: drop the follow order
+        c.leading, c.leadUntil = nil, nil
+        local O = ProjectALife and ProjectALife.TalkOrders
+        if O and type(O.writeOrdered) == "function" then pcall(O.writeOrdered, record.uid, nil) end
+    end
     c.work = { kind = "garden", x = math.floor(x), y = math.floor(y), z = math.floor(z or 0),
         day = day, done = (c.work and c.work.day == day) and c.work.done or 0 }
     if ALifeMemory then pcall(ALifeMemory.add, record, "the stranger made you work their garden as a prisoner") end

@@ -2200,6 +2200,13 @@ function M.dispatch(act, player, listener, text, now, r)
         local ok, words = talk.walkWith(player, listener, act)
         if ok and act == "WALK_WITH_ME" and M.followStart then pcall(M.followStart, listener, player) end
         if ok and act == "WALK_STOP" and M.followEnd then pcall(M.followEnd, listener.record.uid) end
+        -- "wait here": a party member holds (else the party renews their follow order and they walk right back)
+        if ok and act == "WALK_STOP" and M.partyCommand and M.partyMembers then
+            local uid = tostring(listener.record.uid)
+            for _, m in ipairs(M.partyMembers(player) or {}) do
+                if tostring(m) == uid then pcall(M.partyCommand, uid, "hold", player); break end
+            end
+        end
         if ok then
             local line = (r.text ~= "" and r.text) or words
             M.say(listener.shell, player, line)

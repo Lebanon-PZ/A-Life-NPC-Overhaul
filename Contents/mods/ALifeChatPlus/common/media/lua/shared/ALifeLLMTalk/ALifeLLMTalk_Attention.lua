@@ -227,6 +227,12 @@ local function steeredBy(uid, l)
     if M.paused and M.paused[uid] then return "pause-listen" end
     if P and fn(P, "orderedBy") and P.orderedBy(uid) ~= nil then return "order " .. tostring(P.orderedBy(uid)) end
     if M.terr and M.terr[uid] then return "territory" end
+    -- A-Life is walking them to / from a car seat: a hold here cancels its path ("directive_changed" error + retry)
+    local DO = rawget(_G, "ALifeDriveOrders")
+    if DO and DO.passengerPhase then
+        local okP, ph = pcall(DO.passengerPhase, uid)
+        if okP and (ph == "approach" or ph == "exit_pending" or ph == "outside" or ph == "walkaway") then return "car " .. tostring(ph) end
+    end
     return nil
 end
 -- write / refresh A-Life's own talk hold (memory.talkHoldUntilMs: DecisionLoop.talkStop + ModuleTalkPresence keep them

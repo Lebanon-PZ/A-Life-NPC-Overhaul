@@ -179,6 +179,8 @@ function M.softPreprocess(text, alifeIntent)
     if soft then
         -- 1.0.1: only commands/requests (tiers 1-2) may set an intent; small talk stays with the AI
         if alifeWeak and soft.intent and soft.tier <= 2 then intent = soft.intent end
+        -- "stop following me": A-Life reads it as GO_AWAY (rude); the stop/wait command bucket is what was meant
+        if intent == "GO_AWAY" and soft.id == "WAIT" then intent = soft.intent end
         tone = soft.tone
         act = soft.act
         gistForce = soft.gist

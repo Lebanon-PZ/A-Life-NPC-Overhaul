@@ -75,6 +75,19 @@ local function addPower(context, player, uid)
             local t = context:addOption(ALifeTr("IGUI_ALCP_Menu_Tie_prisoner", "Tie prisoner up"), player, function(p) P.tie(p, uid) end)
             tipFor(t, "Uses rope. Tied, they cannot work and rarely get loose.")
         end
+        if cap.cell ~= nil then
+            context:addOption(ALifeTr("IGUI_ALCP_Menu_Unconfine", "Let out of cell"), player, function(p) P.unconfine(p, uid) end)
+        else
+            local k = context:addOption(ALifeTr("IGUI_ALCP_Menu_Confine", "Confine to this room"), player, function(p) P.confine(p, uid) end)
+            tipFor(k, "Their cell. They stay in it; leaving your base is an escape attempt. Inside your base only.")
+        end
+        if cap.leading then
+            local s = context:addOption(ALifeTr("IGUI_ALCP_Menu_Stop_leading", "Hold prisoner here"), player, function(p) P.stopLead(p, uid) end)
+            tipFor(s, "They stop and stand with hands up.")
+        else
+            local l = context:addOption(ALifeTr("IGUI_ALCP_Menu_Lead_prisoner", "Lead prisoner (follow me)"), player, function(p) P.lead(p, uid) end)
+            tipFor(l, "They walk after you. At your base they stop on their own.")
+        end
         context:addOption("Release prisoner (held " .. days .. " days)", player, function(p) P.release(p, uid) end)
     elseif P.surrenderedTo(record, key) then
         local ok, why = P.canTake(player, record)

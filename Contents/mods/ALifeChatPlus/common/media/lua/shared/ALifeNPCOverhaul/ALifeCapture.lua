@@ -61,7 +61,12 @@ C.DEFAULTS = {
     prisonerAnywhere = true,    -- take a surrendered person prisoner where they stand (false = only inside your base)
     prisonerLeashTiles = 30,    -- a prisoner out of your base stays held while you are this close
     prisonerRope = true,        -- taking a prisoner costs rope (they are tied up); off = no rope, no tying
-    prisonerRopeCount = 1,      -- ... how many Base.Rope
+    prisonerLead = true,        -- a prisoner taken outside your base walks after you (hands tied); off = they stand there until you lead them
+    prisonerFeed = true,        -- a confined prisoner eats/drinks what is in containers inside their cell (real items, used up)
+    prisonerEatAt = 60,         -- ... hunger/thirst level (0-100) at which they eat/drink
+    prisonerFullAt = 20,        -- ... they eat/drink until hunger/thirst is down to this (0-100)
+    prisonerNeglectEscape = 15, -- ... extra % a day to run once they have gone hungry/dry half a day
+    prisonerRopeCount = 1,     -- ... how many Base.Rope
     prisonerTiedEscape = 2,     -- ... % per day a TIED prisoner gets loose (untied ones use the old escape chance)
     prisonerCodeOrange = true,  -- ... an escape pops a priority 'Code Orange' message
     prisonerFindH = 24,         -- ... game hours you have to find someone who ran

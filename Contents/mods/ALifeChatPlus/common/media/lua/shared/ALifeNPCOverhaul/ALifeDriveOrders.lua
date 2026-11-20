@@ -645,6 +645,10 @@ function D.install()
     pcall(Data.intent, "DRIVE_TO", 92, "you drive|drive us to|drive me to|take us to|take me to|you take the wheel|drive us|get us to")
     pcall(Data.intent, "DRIVE_GET_IN", 88, "get in|get in the car|hop in|jump in|get in the truck")
     pcall(Data.intent, "DRIVE_GET_OUT", 88, "get out|get out of the car|hop out|out of the truck|exit the car|exit the truck|exit the vehicle|leave the car|leave the truck|climb out|step out of the car|get out of the vehicle|get out of the truck|out of the car|get off the car")
+    -- A-Life's TalkSocial counts an uncategorised intent as "info": asking again inside the cooldown = "repeat", then
+    -- "annoyed", then standing drops. Get in / get out / drive are orders tied to where the car is, not questions.
+    local rows = ProjectALife.TalkSocialRows
+    if rows ~= nil and type(rows.put) == "function" then pcall(rows.put, "order", "DRIVE_TO DRIVE_GET_IN DRIVE_GET_OUT") end
     local function h(kind)
         return function(record, shell, player, context, now, text)
             local ok, line = pcall(D.ask, kind, record, shell, player, text or "")

@@ -231,6 +231,246 @@ local function keepSurrendered(uid, record, shell, player)
     return true
 end
 
+-- Lead: end the hands-up pose and give A-Life's own follow order (renewed by holdTick). Root cause of "he just stands
+-- there with his hands up": keepSurrendered kept re-posing him, so a follow order never got to run.
+local function leadOrder(uid, record, player, c)
+    local Orders = ProjectALife and ProjectALife.TalkOrders
+    local talk = ProjectALife and ProjectALife.Talk
+    local speech = ProjectALife and ProjectALife.Speech
+    if Orders == nil or talk == nil or speech == nil or type(Orders.writeOrdered) ~= "function" then return false end
+    local now = nowMs()
+    if c.leadUntil ~= nil and c.leadUntil - now > 60000 then return true end   -- still plenty left
+    if Orders.states ~= nil and Orders.states[uid] ~= nil and type(Orders.release) == "function" then
+        pcall(Orders.release, uid, "led", true)
+    end
+    local key = speech.playerKey(player)
+    local untilMs = now + ((Orders.settings and Orders.settings.followMs) or 120000)
+    local ok = pcall(function()
+        Orders.writeOrdered(uid, { kind = "follow", playerKey = key, untilMs = untilMs })
+        if type(talk.tolerate) == "function" then talk.tolerate(record, key, untilMs) end
+    end)
+    if ok then c.leadUntil = untilMs end
+    return ok
+end
+
+function P.lead(player, uid)
+    local c = P.state().cap[uid]
+    if c == nil or c.key ~= B().keyOf(player) then return false, "not_yours" end
+    local record, shell = readRecord(uid), shellFor(uid)
+    if record == nil or shell == nil then return false, "not_here" end
+    c.leading, c.work, c.leadUntil = true, nil, nil
+    if not leadOrder(uid, record, player, c) then c.leading = nil; return false, "lead_failed" end
+    notify(player, (c.name or "They") .. " walks after you.", true)
+    return true
+end
+
+function P.stopLead(player, uid)
+    local c = P.state().cap[uid]
+    if c == nil or c.key ~= B().keyOf(player) then return false, "not_yours" end
+    c.leading, c.leadUntil = nil, nil
+    local record = readRecord(uid)
+    if record ~= nil then keepSurrendered(uid, record, shellFor(uid), player) end
+    notify(player, (c.name or "They") .. " stands still, hands up.", true)
+    return true
+end
+
+-- Cell: the room the prisoner stands in (inside your base) becomes their cell. Room outline = Jeem's own
+-- BaseAreas.roomBounds (inclusive tiles, checked against 42.20/42.21 by Jeem). Inside the cell they are left to A-Life's own
+-- behaviour (hands down, rest, eat what you leave). Outside it but in your base: A-Life's `leave` order walks them back.
+-- Outside your base = escape attempt (same timer as the leash). Whole base = the allowed area (Joe, Nov 19).
+function P.roomOf(shell)
+    local j = J()
+    if shell == nil or j == nil or j.BaseAreas == nil or type(j.BaseAreas.roomBounds) ~= "function" then return nil end
+    local ok, x1, y1, x2, y2, z = pcall(function()
+        local sq = shell:getCurrentSquare()
+        local room = sq and sq:getRoom() or nil
+        if room == nil then return nil end
+        local a, b, c, d = j.BaseAreas.roomBounds(room:getRoomDef())
+        return a, b, c, d, math.floor(sq:getZ())
+    end)
+    if not ok or x1 == nil then return nil end
+    return { x1 = x1, y1 = y1, x2 = x2, y2 = y2, z = z or 0 }
+end
+
+function P.inCell(cell, x, y, z)
+    if type(cell) ~= "table" or x == nil then return false end
+    if z ~= nil and math.floor(z + 0.5) ~= (cell.z or 0) then return false end
+    return x >= cell.x1 and x < cell.x2 + 1 and y >= cell.y1 and y < cell.y2 + 1
+end
+
+function P.confine(player, uid)
+    local c = P.state().cap[uid]
+    if c == nil or c.key ~= B().keyOf(player) then return false, "not_yours" end
+    local shell = shellFor(uid)
+    if shell == nil then return false, "not_here" end
+    local x, y = posOf(shell)
+    if P.yourBaseAt(player, x, y) == nil then return false, "not_in_base" end
+    local cell = P.roomOf(shell)
+    if cell == nil then return false, "no_room" end
+    c.cell, c.leading, c.leadUntil, c.work, c.outSince = cell, nil, nil, nil, nil
+    local Orders = ProjectALife and ProjectALife.TalkOrders
+    if Orders ~= nil then   -- end the hands-up / follow: they live in the cell now
+        if Orders.states ~= nil and Orders.states[uid] ~= nil and type(Orders.release) == "function" then pcall(Orders.release, uid, "confined", true) end
+        if type(Orders.writeOrdered) == "function" then pcall(Orders.writeOrdered, uid, nil) end
+    end
+    notify(player, (c.name or "They") .. " is locked in this room.", true)
+    return true
+end
+
+function P.unconfine(player, uid)
+    local c = P.state().cap[uid]
+    if c == nil or c.key ~= B().keyOf(player) then return false, "not_yours" end
+    if c.cell == nil then return false, "already" end
+    c.cell, c.outSince = nil, nil
+    local record = readRecord(uid)
+    if record ~= nil then keepSurrendered(uid, record, shellFor(uid), player) end
+    notify(player, (c.name or "They") .. " is out of the cell, hands up.", true)
+    return true
+end
+
+-- Meals: real items only. Jeem keeps hunger/thirst for every NPC (memory.jimmyNeeds); strangers (a prisoner is one) carry two
+-- rations and are capped below the drain (they never die of it). A confined prisoner eats and drinks what is in containers
+-- INSIDE the cell: food (Food, hunger change < 0, not rotten/burnt) and clean water (FluidContainer with Fluid.Water). The item
+-- is used up, the meal goes through Jeem's own queue (Needs.server.queue). Nothing is spawned, nothing is shown as a number.
+-- Neglect (starving/dry at the cap) is counted in hours (c.neglect); daily() makes escape likelier. No bathrooms (Joe).
+local function cellItems(cell, visit)
+    local cellObj = type(getCell) == "function" and getCell() or nil
+    if cellObj == nil or cell == nil then return end
+    if (cell.x2 - cell.x1 + 1) * (cell.y2 - cell.y1 + 1) > 600 then return end   -- not a room: a field
+    for x = cell.x1, cell.x2 do
+        for y = cell.y1, cell.y2 do
+            local ok = pcall(function()
+                local sq = cellObj:getGridSquare(x, y, cell.z or 0)
+                if sq == nil then return end
+                local objs = sq:getObjects()
+                for i = 0, objs:size() - 1 do
+                    local o = objs:get(i)
+                    local n = o:getContainerCount()
+                    for k = 0, n - 1 do
+                        local inv = o:getContainerByIndex(k)
+                        local items = inv:getItems()
+                        for q = 0, items:size() - 1 do
+                            if visit(items:get(q), inv) then return end
+                        end
+                    end
+                end
+            end)
+            if not ok then return end
+        end
+    end
+end
+
+-- one food item from the cell: its own hunger value (Food:getHungChange is negative; x100 = Jeem points, scale unverified), used up.
+-- returns the points it took off, or 0 when there is nothing.
+local function eatFrom(cell)
+    local found = nil
+    cellItems(cell, function(item, inv)
+        if instanceof(item, "Food") and item:getHungChange() < 0 and not item:isRotten() and not item:isBurnt()
+                and not item:getScriptItem():isCantEat() then
+            found = { item = item, inv = inv, pts = math.abs(item:getHungChange()) * 100 }
+            return true
+        end
+        return false
+    end)
+    if found == nil then return 0 end
+    if not pcall(function() found.inv:Remove(found.item) end) then return 0 end
+    return found.pts
+end
+
+-- one swallow of clean water (0.25 L = DRINK_PTS thirst points; Jeem: a 0.5 L bottle ~ 50), taken from the bottle's fluid.
+local DRINK_L, DRINK_PTS = 0.25, 25
+local function drinkFrom(cell)
+    local took = 0
+    cellItems(cell, function(item)
+        local fc = item:getFluidContainer()
+        if fc ~= nil and fc:contains(Fluid.Water) and not fc:contains(Fluid.TaintedWater) and fc:getAmount() >= 0.1 then
+            local have = fc:getAmount()
+            local sip = math.min(DRINK_L, have)
+            fc:adjustAmount(math.max(0, have - sip))   -- absolute amount, as vanilla uses it
+            took = DRINK_PTS * sip / DRINK_L
+            return true
+        end
+        return false
+    end)
+    return took
+end
+
+-- checked every ~10 game minutes: hungry (>= prisonerEatAt) they eat item after item until sated (hunger <= prisonerFullAt),
+-- each item worth its own hunger value; thirsty, they drink until quenched. Four items / swallows a check at most.
+local function mealTick(uid, c, record)
+    local now = hours()
+    if c.mealH ~= nil and now - c.mealH < 1 / 6 - 0.0001 then return end
+    c.mealH = now
+    local m = type(record.memory) == "table" and record.memory or nil
+    local needs = m and type(m.jimmyNeeds) == "table" and m.jimmyNeeds or nil
+    if needs == nil then return end
+    local eatAt = tonumber(P.setting("prisonerEatAt", 60)) or 60
+    local fullAt = tonumber(P.setting("prisonerFullAt", 20)) or 20
+    local j = J()
+    local q = j and j.Needs and j.Needs.server and j.Needs.server.queue or nil
+    local hunger, thirst = tonumber(needs.hunger) or 0, tonumber(needs.thirst) or 0
+    local ateAny, drankAny = false, false
+    if P.setting("prisonerFeed", true) and type(q) == "function" then
+        if hunger >= eatAt then
+            local n = 0
+            while hunger > fullAt and n < 4 do
+                local pts = eatFrom(c.cell)
+                if pts <= 0 then break end
+                n = n + 1
+                hunger = hunger - pts
+                ateAny = true
+                pcall(q, { uid = uid, hunger = -pts, mealAt = now })
+            end
+        end
+        if thirst >= eatAt then
+            local n = 0
+            while thirst > fullAt and n < 4 do
+                local pts = drinkFrom(c.cell)
+                if pts <= 0 then break end
+                n = n + 1
+                thirst = thirst - pts
+                drankAny = true
+                pcall(q, { uid = uid, thirst = -pts })
+            end
+        end
+    end
+    local hungry = (tonumber(needs.hunger) or 0) >= 85 and not ateAny
+    local dry = (tonumber(needs.thirst) or 0) >= 85 and not drankAny
+    -- neglect counts game hours (this check runs every 1/6 h)
+    if hungry or dry then c.neglect = (c.neglect or 0) + 1 / 6 else c.neglect = math.max(0, (c.neglect or 0) - 1 / 6) end
+end
+
+local loseCaptive
+-- hourly-ish check of one confined prisoner (called from holdTick). true = handled.
+local function cellTick(uid, c, record, shell, player)
+    local x, y, z = posOf(shell)
+    if x == nil then return true end
+    local zok, zz = pcall(function() return shell:getZ() end)
+    if P.inCell(c.cell, x, y, zok and zz or nil) then
+        c.outSince, c.seen = nil, hours()
+        pcall(mealTick, uid, c, record)
+        return true
+    end
+    local inBase = P.yourBaseAt(player, x, y) ~= nil
+    if inBase then
+        c.seen, c.outSince = hours(), nil   -- loose in the base: walked back to the cell
+    else
+        c.outSince = c.outSince or hours()
+        if hours() - c.outSince > (tonumber(P.setting("prisonerAwayMin", 30)) or 30) / 60 then
+            loseCaptive(uid, c, "escaped")
+            return true
+        end
+    end
+    local Orders = ProjectALife and ProjectALife.TalkOrders
+    if Orders ~= nil and type(Orders.writeOrdered) == "function" then
+        local cell = c.cell
+        local key = ProjectALife.Speech and ProjectALife.Speech.playerKey and ProjectALife.Speech.playerKey(player) or nil
+        pcall(Orders.writeOrdered, uid, { kind = "leave", x = math.floor((cell.x1 + cell.x2) / 2) + 0.5,
+            y = math.floor((cell.y1 + cell.y2) / 2) + 0.5, playerKey = key, untilMs = nowMs() + 15000 })
+    end
+    return true
+end
+
 -- player setting (ALifeCapture.DEFAULTS holds the defaults + file keys); explicit nil checks, a false setting stays false
 function P.setting(key, default)
     local C = ALifeCapture
@@ -308,6 +548,7 @@ function P.take(player, uid)
         P.state().cap[uid].tied, P.state().cap[uid].rope = true, n
     end
     keepSurrendered(uid, record, shell, player)
+    if P.setting("prisonerLead", true) then P.lead(player, uid) end   -- taken = they walk after you
     B().change(key, uid, -6, 15, 0, { player = player, record = record })
     witnessCost(key, player, 3)
     notify(player, nameOf(record) .. " is your prisoner" .. (P.state().cap[uid].tied and ", hands tied" or "") .. ". " .. factionTitle(record.factionId) .. " will think twice.", true)
@@ -338,7 +579,7 @@ function P.tie(player, uid)
     if ropeCount(player) < n or not takeRope(player, n) then return false, "no_rope" end
     c.tied, c.rope, c.work = true, n, nil
     local record = readRecord(uid)
-    if record ~= nil then keepSurrendered(uid, record, shellFor(uid), player) end
+    if record ~= nil and not c.leading then keepSurrendered(uid, record, shellFor(uid), player) end
     notify(player, (c.name or "They") .. " is tied up again.", true)
     return true
 end
@@ -362,7 +603,7 @@ function P.release(player, uid)
     return true
 end
 
-local function loseCaptive(uid, c, why)
+function loseCaptive(uid, c, why)   -- forward-declared above cellTick
     P.state().cap[uid] = nil
     local player = ALifeSide.campPlayer()
     if why == "escaped" then
@@ -486,10 +727,13 @@ local function holdTick()
             loseCaptive(uid, c, "died")
         else
             local shell = shellFor(uid)
-            if shell ~= nil then
+            if shell ~= nil and c.cell ~= nil and c.work == nil then
+                cellTick(uid, c, record, shell, player)   -- confined: cell rules replace hands-up / leash
+            elseif shell ~= nil then
                 local x, y = posOf(shell)
                 if P.yourBaseAt(player, x, y) ~= nil then
-                    if c.work == nil then keepSurrendered(uid, record, shell, player) end   -- working: hands down
+                    if c.leading and c.work == nil then leadOrder(uid, record, player, c)   -- led: keeps following until you hold them
+                    elseif c.work == nil then keepSurrendered(uid, record, shell, player) end   -- working: hands down
                     c.seen = hours()
                 else
                     -- outside your base: held while you stay close; you leave them alone too long and they slip off
@@ -497,7 +741,8 @@ local function holdTick()
                     local leash = tonumber(P.setting("prisonerLeashTiles", 30)) or 30
                     local near = px ~= nil and x ~= nil and math.abs(px - x) <= leash and math.abs(py - y) <= leash
                     if near then
-                        if c.work == nil then keepSurrendered(uid, record, shell, player) end
+                        if c.leading then leadOrder(uid, record, player, c)
+                        elseif c.work == nil then keepSurrendered(uid, record, shell, player) end
                         c.seen = hours()
                     elseif c.seen ~= nil and hours() - c.seen > (tonumber(P.setting("prisonerAwayMin", 30)) or 30) / 60 then
                         loseCaptive(uid, c, "escaped")
@@ -558,6 +803,7 @@ local function daily()
         local chance = math.max(P.ESCAPE_MIN, P.ESCAPE_BASE - P.ESCAPE_PER_GUARD * guardsAt(c.base))
         if c.tied then chance = tonumber(P.setting("prisonerTiedEscape", 2)) or 2 end   -- hands tied: rarely gets loose
         if c.work ~= nil then chance = chance + 10 end      -- hands down, working: easier to slip away
+        if (c.neglect or 0) >= 12 then chance = chance + (tonumber(P.setting("prisonerNeglectEscape", 15)) or 15) end   -- starved/dry half a day: desperate
         local r = B().row(c.key, uid, false)
         if r ~= nil and B().stageOf(r.f) >= 3 then chance = math.floor(chance / 2) end
         if roll100() < chance then loseCaptive(uid, c, "escaped") end

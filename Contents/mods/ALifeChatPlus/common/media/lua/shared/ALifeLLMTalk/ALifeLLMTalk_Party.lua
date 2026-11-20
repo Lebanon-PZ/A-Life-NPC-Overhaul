@@ -288,6 +288,7 @@ end
 M.partyWords = {
     base = { "go to the base", "go back to base", "head to the base", "go home", "head home", "back to base", "wait at the base", "go to base" },
     dismiss = { "you're dismissed", "you are dismissed", "dismissed", "you can go", "go your own way", "leave the party", "part ways", "we're done here" },
+    unfollow = { "stop following", "quit following", "stop tagging along", "don't follow me", "dont follow me", "no longer follow", "stop walking with me" },
     aggressive = { "go aggressive", "weapons free", "kill everything", "be aggressive" },
     defensive = { "stay defensive", "defend yourself", "defensive" },
     passive = { "don't fight", "stay out of fights", "hold fire", "be passive", "avoid fights" },
@@ -316,6 +317,9 @@ function M.partyCommand(uid, cmd, player)
             return true
         end
         return false
+    elseif cmd == "unfollow" then
+        -- "stop following me": they stop for good (the party kept renewing the follow order, so they never did)
+        return M.partyLeave(uid, player, "told to stop following", pick({ "Okay, okay. I'll keep my distance.", "Fine. I'll stay here.", "Alright. Not following." }, uid .. hours()))
     elseif cmd == "dismiss" then
         return M.partyLeave(uid, player, "dismissed", pick({ "Alright. Take care of yourself.", "Okay. You know where to find me.", "Fine by me. Stay alive." }, uid .. hours()))
     elseif cmd == "aggressive" or cmd == "defensive" or cmd == "passive" then
@@ -372,9 +376,14 @@ function M.partyOnWords(player, text, loud, hearers)
     if M.settings.party == false then return end
     local low = string.lower(tostring(text or ""))
     local cmd = nil
-    for _, k in ipairs({ "base", "dismiss", "aggressive", "defensive", "passive" }) do
+    for _, k in ipairs({ "base", "dismiss", "unfollow", "aggressive", "defensive", "passive" }) do
         local meant = false
-        if k == "base" or k == "dismiss" then meant = M.partyWordsMeant(low, M.partyWords[k], player) else meant = anyWord(low, M.partyWords[k]) end
+        if k == "base" or k == "dismiss" then meant = M.partyWordsMeant(low, M.partyWords[k], player)
+        elseif k == "unfollow" then
+            -- aimed at them, not a question, not about someone else ("stop following that car / him")
+            meant = anyWord(low, M.partyWords[k]) and not string.find(low, "?", 1, true)
+                and not anyWord(low, { " him", " her", " them", " that", " those", " the ", " why", " if " })
+        else meant = anyWord(low, M.partyWords[k]) end
         if meant then cmd = k; break end
     end
     if cmd == nil then return end

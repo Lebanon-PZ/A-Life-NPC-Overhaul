@@ -28,10 +28,7 @@ sys.dont_write_bytecode = True  # pre-1.0: no __pycache__ in the mod folder (it 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from alifetalk_memory import Memory, SUMMARY_SCHEMA, Embedder  # noqa: E402
 import alifetalk_prompts as PROMPTS  # noqa: E402  0.8.12: prompt text + AI rules from prompts.txt / alifeai_prompts.txt, live
-try:
-    from alifetalk_report import Reporter  # noqa: E402  (0.6.20: optional bug reports, off by default)
-except Exception:  # noqa: BLE001
-    Reporter = None
+# pre-1.0: bug reports moved to the helper (alifeai_report.ps1): they go out with the AI off too
 
 VERSION = "0.8.11.2"  # 0.8.11.2: fail replies carry why=, fight info (zombies, youHelp, trust)
 PLAYER_MODES = ("reply", "radio", "gift")
@@ -3346,20 +3343,8 @@ def run(args):
     story_todo = {}
     push_path = os.path.join(d, PUSH)
     last_embed = 0.0
-    reporter = None
-    if Reporter is not None:
-        try:
-            reporter = Reporter(d, log=log)
-        except Exception as e:  # noqa: BLE001
-            log("bug reports unavailable:", e)
     while True:
         now = time.time()
-        if reporter is not None:
-            try:
-                reporter.tick(now)
-            except Exception as e:  # noqa: BLE001
-                log("bug report check failed:", e)
-                reporter = None
         if watch is not None and watch.should_exit():
             log("Project Zomboid is closed - bridge exiting." if watch.seen else "Project Zomboid never started - bridge exiting.")
             try:

@@ -2,6 +2,23 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- New: automatic bug reports reach the mod's Discord (#automated-bug-reports, a forum: each report is its own post).
+  Before, the 0.6.20 sender never got through (Discord rejected its message format), only ran with the AI on, and
+  was only switched on by hand-editing a file. Now the helper sends (bridge/alifeai_report.ps1), with the AI on or off,
+  no Python needed: a short message plus health.txt and console.txt, Windows name and folders removed, at most 3 a day,
+  only when the list of features that turned off changes. alifetalk_report.py removed.
+- New: the game asks once per PC, 20 s into the first game after this update: "Help fix bugs?" Yes / No (pauses in
+  single player; MP clients answer for their own PC). Yes without the helper running = a letter on how to start it.
+  Switch any time: AI tab > "Bug reports: on/off". Settings: bugReportAsk (on), bugReportAskSec (20).
+- New: "Report a bug" button, for errors that don't turn a feature off: right-click / A-Life radial "Report a bug
+  (A-Life)" (setting bugReportMenu, on), first button on the Help page, AI tab. Optional note, then the helper sends
+  note + health report + last 2000 console lines (works with automatic reports off; 10 a day). A letter says sent /
+  why not. Helper not running: a popup says how to start it, or how to post console.txt on the Discord by hand.
+- Doctor check now includes the health report and the bug report settings (address hidden).
+- Report address: bridge/report_url.txt (swap it in an update if it's abused); a player's own url= in
+  Zomboid/Lua/alifeai_report.txt wins. Also in that file: console_lines, max_per_day, manual_per_day,
+  manual_console_lines.
+
 - Code tidy (no gameplay change). One mod version (ALifeSide.MOD_VERSION in AA_Side) for every ready line and the
   AI Doctor report: before, ready lines printed each file's own old version (0.5.10 to 1.6.0) and the Doctor said
   0.9.0. The bridge protocol version (ALifeLLMTalk_Main M.VERSION) stays separate.

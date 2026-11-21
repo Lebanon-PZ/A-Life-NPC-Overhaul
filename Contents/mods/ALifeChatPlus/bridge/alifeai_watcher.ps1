@@ -103,6 +103,14 @@ $pyTried = $false; $pyInstall = $null
 # when the mod updates, restart on the new helper (no Setup re-run needed)
 $selfPath = $MyInvocation.MyCommand.Path
 $selfStamp = (Get-Item $selfPath).LastWriteTimeUtc
+# pre-1.0: automatic bug reports to the author's Discord (opt-in; the game asks once). AI on or off.
+$script:repOk = $false
+try { . (Join-Path $here "alifeai_report.ps1"); $script:repOk = $true } catch { HLog ("bug reports unavailable: " + $_.Exception.Message) }
+function Tick-Report([string]$ai) {
+  if (-not $script:repOk) { return }
+  try { [void](Send-ManualReport $script:lua $script:here $script:HelperVer $ai) } catch { HLog ("manual bug report failed: " + $_.Exception.Message) }
+  try { [void](Send-BugReport $script:lua $script:here $script:HelperVer $ai) } catch { HLog ("bug report check failed: " + $_.Exception.Message) }
+}
 function Restart-IfUpdated {
   try { $now = (Get-Item $script:selfPath).LastWriteTimeUtc } catch { return }
   if ($now -ne $script:selfStamp) {
@@ -240,6 +248,8 @@ function Write-Doctor {
   try { foreach ($m in (Invoke-RestMethod "http://127.0.0.1:11434/api/tags" -TimeoutSec 2).models) { $out.Add("installed: " + $m.name + " " + [math]::Round($m.size / 1GB, 1) + " GB") } } catch {}
   try { foreach ($m in (Invoke-RestMethod "http://127.0.0.1:11434/api/ps" -TimeoutSec 2).models) { $out.Add("loaded: " + $m.name + " size " + [math]::Round($m.size / 1GB, 1) + " GB, on GPU " + [math]::Round($m.size_vram / 1GB, 1) + " GB") } } catch {}
   foreach ($n in @("OLLAMA_MAX_LOADED_MODELS", "OLLAMA_NUM_PARALLEL", "OLLAMA_FLASH_ATTENTION", "OLLAMA_KV_CACHE_TYPE")) { $out.Add($n + "=" + [Environment]::GetEnvironmentVariable($n, "User")) }
+  Sec "health report (ALifeChatPlus_health.txt)"; foreach ($l in (Tail (Join-Path $script:lua "ALifeChatPlus_health.txt") 120)) { $out.Add($l) }
+  Sec "bug reports (alifeai_report.txt)"; foreach ($l in (Tail (Join-Path $script:lua "alifeai_report.txt") 40)) { if ($l -match '^\s*url\s*=\s*\S') { $out.Add("url=(hidden)") } elseif ($l -and -not $l.StartsWith("#")) { $out.Add($l) } }
   Sec "gpu"; foreach ($l in (Tail (Join-Path $script:lua "alifeai_gpu.txt") 5)) { $out.Add($l) }
   Sec "last job"; foreach ($l in (Tail (Join-Path $script:lua "alifeai_setup_status.txt") 20)) { $out.Add($l) }
   Sec "helper log"; foreach ($l in (Tail $script:helperLog 60)) { $out.Add($l) }
@@ -358,12 +368,14 @@ while ($true) {
     # a new session tries your own model again
     try { Remove-Item -LiteralPath (Join-Path $lua "alifeai_model_fallback.txt") -Force -ErrorAction SilentlyContinue } catch {}
     $gpuPeak = 0; $gpuSum = 0; $gpuN = 0
+    Tick-Report "closed"
     Start-Sleep 5; continue
   }
   # AI turned off: stop everything once, start nothing, keep answering the game's commands
   if (AiOff) {
     if ($bridge -or $voice -or $talk) { Stop-All }
     Log-Off
+    Tick-Report "off"
     $st = [ordered]@{ power = "off"; helper = $HelperVer; model_name = $model }
     $st.autostart = if (Test-Path -LiteralPath (AutostartLink)) { "on" } else { "off" }
     Status $st
@@ -476,6 +488,7 @@ while ($true) {
   $st.helper = $HelperVer; $st.model_name = $model
   $st.autostart = if (Test-Path -LiteralPath (AutostartLink)) { "on" } else { "off" }
   Status $st
+  Tick-Report "on"
   # 0.8.12: the AI tab's commands get picked up within a second
   for ($i = 0; $i -lt 5; $i++) { Check-Cmd; Start-Sleep 1 }
 }

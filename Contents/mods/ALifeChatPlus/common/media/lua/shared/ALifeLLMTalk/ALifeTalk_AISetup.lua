@@ -7,6 +7,7 @@ require "ALifeNPCOverhaul/AA_Side"
 local Events, ALifeHealth = ALifeSide.hooks("ui", "ALifeTalk_AISetup") -- pre-1.0 MP: one side switch (docs/PLAN-MP.md)
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 require "ALifeNPCOverhaul/ALifeAISetup"
+require "ALifeNPCOverhaul/ALifeBugReports"
 local M = ALifeLLMTalk
 local A = ALifeAISetup
 if type(M) ~= "table" or type(A) ~= "table" then return end
@@ -392,8 +393,15 @@ end
 ----------------------------------------------------------------------------------------------------------------
 function K.actions(menuAt)
     local s = A.last
+    -- pre-1.0: bug reports (per PC: everyone gets the switch, host or not)
+    local bug, bugSend = nil, nil
+    if type(ALifeBugReports) == "table" and fn(ALifeBugReports, "button") then pcall(function() bug = ALifeBugReports.button() end) end
+    if type(ALifeBugReports) == "table" and fn(ALifeBugReports, "sendButton") then pcall(function() bugSend = ALifeBugReports.sendButton() end) end
     if type(s) ~= "table" or not s.host then
-        return { { label = tr("BtnRefresh", "Refresh"), tip = tr("TipRefresh", "Ask the host again."), fn = function() K.ask() end } }
+        local l = { { label = tr("BtnRefresh", "Refresh"), tip = tr("TipRefresh", "Ask the host again."), fn = function() K.ask() end } }
+        if bugSend then l[#l + 1] = bugSend end
+        if bug then l[#l + 1] = bug end
+        return l
     end
     local steps = {}
     for _, st in ipairs(A.steps(s)) do steps[st.id] = st end
@@ -418,6 +426,8 @@ function K.actions(menuAt)
             tip = tr("TipMode", "Local: the AI runs on your PC (Ollama). Cloud: an online AI you pay for with your own key. Off: nothing is started or asked, even after a restart; people use A-Life's own lines. Switching restarts the AI."),
             fn = function(win, btn) K.modeMenu(menuAt(win, btn)) end })
     end
+    if bugSend then add(bugSend) end
+    if bug then add(bug) end
     if s.power == "off" then return list end
     if up and steps.ollama.state == "bad" then
         add({ label = tr("BtnGetOllama", "Get Ollama"), accent = true,

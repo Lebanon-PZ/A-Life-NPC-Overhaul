@@ -872,6 +872,15 @@ function HelpPage:actions()
     return out
 end
 function HelpPage.guideActions()
+    local out = {}
+    -- pre-1.0: "Report a bug" up front (ALifeBugReports)
+    if type(ALifeBugReports) == "table" and fn(ALifeBugReports, "sendButton") then
+        pcall(function() out[#out + 1] = ALifeBugReports.sendButton() end)
+    end
+    for _, a in ipairs(HelpPage.guideBase()) do out[#out + 1] = a end
+    return out
+end
+function HelpPage.guideBase()
     return {
         { label = tr("BtnTips", "Show the tips again"), fn = function() for _, id in ipairs({ "now", "people", "camp", "trade", "radio", "welcome", "hoverkey", "noai" }) do M.uiSet("tip." .. id, false) end; if M.momToast then M.momToast(tr("TipsBack", "Each tab shows its tip again the next time you open it.")) end end },
     }

@@ -2,6 +2,38 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- New: the People list (Contacts tab) is grouped instead of 50 strangers in a row. Headers for the kind of group you
+  take people for: Your people, Hostile to you, Raiders, Friendly, Traders, Faithful, Keep to themselves, Can't tell
+  yet, Dead (starred people on top). Under each, the group you suspect them of running with. You only know someone's
+  group once you've talked to one of them, been introduced, or met the group itself; until then they sit under "Met
+  near <town>" and you judge them by how they act toward you. Click a header to fold it. Big groups and the dead start
+  folded; a name search or Show filter opens everything. Settings: "People list: grouped..." (on), "groups this big
+  start folded" (3), how much an unknown must like / dislike you to count as friendly / hostile (16 / -16).
+
+- Fixed: offering one thing gave away whatever was in your hands ("want some food?" with a rifle in hand gave the
+  rifle). Jeem's hand gift now only hands over the kind you named (food / gun / ammo / medicine); "take this" still
+  hands over what you hold. Setting: "Offering food, a gun... only hands over that kind" (on).
+- Fixed: an AI reply saying "sure, let's go" while the game refused the recruit. The words now match: a plain refusal.
+- Fixed: a talk loop (Stack overflow) when another mod's wrapper sent A-Life's answer back into ours. Skipped, logged once.
+- Fixed: NPC lines in the chat window showing from any distance. Past hearing range they're dropped (earshot on).
+- AI helper: the startup shortcut removes itself if the mod was unsubscribed (no Windows Script Host error). New
+  "Uninstall helper (run before unsubscribing).cmd" in bridge\ stops the helper and removes the shortcut.
+
+- Fixed: your reputation following you to a new character. After a death, the next character still had the old
+  one's titles ("the one who shot..."), fame, grudges, betrayals and faction memory, and old rumors kept spreading
+  and souring people on the new you. When Project A-Life decides you're a new character (its "reset on new
+  character" option), our side resets too: you're a stranger again. In multiplayer only that player's rumors go.
+  Already on a new character from before this fix: on load, rumors older than your character are dropped and the
+  rest resets once (your own deeds since you started stay). Setting: "A new character after you die is a stranger" (on).
+
+- New (content patch): our window lives inside Project A-Life's Journal, the way Jeem's My people does. One window,
+  A-Life's: People takes the Contacts tab, At home sits next to it, Party takes Companions, Log holds our Now and
+  Journal (a small row picks which), and Trade, Camp, Build, Radio, Chronicle and AI are tabs of their own. Overhaul
+  Settings and Help are buttons top right, next to A-Life's Settings and Esc. Jeem's My people tab reads "Base". The key, right-click A-Life..., the radial, the sidebar and every button that opened one of our pages open the
+  journal on that tab. A row too long for the journal wraps. Q / E / Esc typed into one of our text boxes stay in the
+  box. Settings: "Our tabs inside A-Life's journal" (off: our own window, as before). Older A-Life without the
+  tabbed journal: our own window.
+
 - Fixed: people walking off platforms and roofs and breaking legs. They left their planned path and stepped onto
   open air on an upper floor. They now look one stride ahead and stop at an open edge (stairs are fine) before the
   step off, then get a fresh order as usual. Settings: on/off, how far ahead, how often.

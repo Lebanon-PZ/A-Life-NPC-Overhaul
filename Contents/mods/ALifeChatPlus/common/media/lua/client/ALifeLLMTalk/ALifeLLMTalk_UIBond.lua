@@ -237,6 +237,10 @@ local newRows = {
     { "fixApology", "Apologize: says why when there's nothing to forgive; no false cooldown" }, -- 0.5.2.7
     { "uiFancy", "Relationships: card style (headers, pills, bars) like the Personality page" }, -- 0.5.2.7
     { "uiWrap", "Relationships lists: long lines wrap (rows grow), full text on hover" }, -- 0.5.2.7
+    { "peopleGroups", "People list: grouped by the kind of group you take them for (raiders, friendly...) and the group you suspect them of running with" }, -- pre-1.0
+    { "peopleFoldAt", "People list: groups this big start folded", { 2, 3, 5, 10 } }, -- pre-1.0
+    { "peopleFriendAt", "People list: how much someone of a group you don't know must like you before you call them friendly", { 8, 16, 30 } }, -- pre-1.0
+    { "peopleFoeAt", "People list: how much someone of a group you don't know must dislike you before you call them hostile", { -8, -16, -30 } }, -- pre-1.0
     { "partnerLossTrauma", "Losing a partner / family / close friend is a major trauma (scaled by closeness, who's left)" }, -- 0.5.2.7
     { "lossTalk", "Grieving people bring the dead up on their own (mentions, reminders, anniversaries)" }, -- 0.5.2.7
     { "likesSaidOnly", "A like is learned only when they really say it (not when you ask)" }, -- 0.5.2.8

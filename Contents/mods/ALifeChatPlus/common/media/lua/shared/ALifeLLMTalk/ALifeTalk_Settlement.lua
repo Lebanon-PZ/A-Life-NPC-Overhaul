@@ -150,6 +150,7 @@ do
         { "ledgeLookTiles", "Ledge guard: how far ahead (tiles) they look for an edge", { 0.5, 1, 2 } },
         { "ledgeCheckMs", "Ledge guard: how often (ms) it looks; lower is safer but costs more", { 50, 150, 500 } },
         { "givenStays", "What you hand someone stays on their body when they die (not thinned like their own loot)" },
+        { "offerMatch", "Offering food, a gun, ammo or medicine only hands over that kind from your hands (not whatever you hold)" },
         { "scoutMarkTiles", "Camp: how rough a scout's mark is (tiles)", { 25, 50, 100 } },
     }
     if type(M.settingRows) == "table" then

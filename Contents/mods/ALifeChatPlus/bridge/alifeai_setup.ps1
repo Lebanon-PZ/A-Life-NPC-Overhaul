@@ -65,8 +65,11 @@ $startup = [Environment]::GetFolderPath("Startup")
 $lnk = Join-Path $startup "A-Life Chat Plus helper.lnk"
 $ws = New-Object -ComObject WScript.Shell
 $s = $ws.CreateShortcut($lnk)
-$s.TargetPath = "wscript.exe"
-$s.Arguments = '"' + (Join-Path $here "alifeai_hidden.vbs") + '"'
+$vbs = Join-Path $here "alifeai_hidden.vbs"
+# self-cleaning: if the mod was unsubscribed (vbs gone), the shortcut deletes itself instead of showing a Windows Script Host error
+$s.TargetPath = "cmd.exe"
+$s.Arguments = '/c if exist "' + $vbs + '" (start "" wscript.exe "' + $vbs + '") else (del /f /q "' + $lnk + '")'
+$s.WindowStyle = 7
 $s.WorkingDirectory = $here
 $s.Save()
 Start-Process wscript.exe ('"' + (Join-Path $here "alifeai_hidden.vbs") + '"')

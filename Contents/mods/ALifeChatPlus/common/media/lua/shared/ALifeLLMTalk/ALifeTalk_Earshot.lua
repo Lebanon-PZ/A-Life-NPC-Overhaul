@@ -123,6 +123,23 @@ function K.install()
         end
         return orig(shell, text, color, kind, uid)
     end
+    -- 0.9.6+: the chat window too. Lines mirrored to chat without passing Speech.display (sayLine, chimes, ambient,
+    -- reshows) used to show from any distance. Drop them past hearing range (never rewrites text: display already did).
+    local chat = pa.NpcChat
+    if type(chat) == "table" and type(chat.mirror) == "function" and not K.chatWrapped then
+        K.chatWrapped = true
+        local origMirror = chat.mirror
+        chat.mirror = function(shell, text, color, kind, uid)
+            if M.settings.earshot ~= false and M.settings.immersive ~= false and shell ~= nil then
+                local d = distTo(shell)
+                if d ~= nil then
+                    local _, hear = K.range(kind)
+                    if d > hear then K.metrics.hidden = K.metrics.hidden + 1; return false end
+                end
+            end
+            return origMirror(shell, text, color, kind, uid)
+        end
+    end
     K.installed = true
     print(TAG .. " ready v" .. K.VERSION .. ": speech bubbles follow earshot (clear " .. tostring(select(1, K.range())) .. " / heard " .. tostring(select(2, K.range())) .. " tiles)")
     return true

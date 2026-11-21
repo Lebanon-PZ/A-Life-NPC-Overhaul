@@ -36,10 +36,10 @@ do
         "fastReplyPoll", "replyFirst", "preemptStock", "speechOnce", "reshowDedupe", "yieldBusy", "cleanMarkup", "bridgeVersionWarn", "whyNot",
         "talkWhilePaused", "windowTalk", "talkPauseKey", "talkAutoPause", "nameDiscovery", "outfitTalk", "weatherTalk", "weirdFear", "threats" })
     put("Interface and immersion", { "opinionPopup", "pairPopup", "pageFirst", "sideButtons", "farProfiles", "farLook", "hubWindow",
-        "journal", "uiFixedSize", "uiFancy", "uiWrap", "uiWeb", "unifiedDates", "pronounFix", "radialMenu", "radialPad", "radialQuick",
+        "journal", "uiFixedSize", "uiFancy", "uiWrap", "peopleGroups", "peopleFoldAt", "peopleFriendAt", "peopleFoeAt", "uiWeb", "unifiedDates", "pronounFix", "radialMenu", "radialPad", "radialQuick",
         "firstTips", "noticeLog", "immersive", "alerts", "interactionLog", "npcDialog", "deathMerge", "bondHistory", "bondThought" })
     put("Relationships and feelings", { "personaMods", "emotions", "darkPersonas", "bonds", "romance", "npcLove", "betrayal", "nemesis",
-        "grudges", "changeOverTime", "habits", "bondTiers", "bondLikes", "reputation", "rumors", "promises", "dreams", "sharedPast",
+        "grudges", "changeOverTime", "habits", "bondTiers", "bondLikes", "reputation", "repNewLife", "rumors", "promises", "dreams", "sharedPast",
         "likesSaidOnly", "fixApology", "keepKnown", "offscreenLives", "worldReactions", "activity", "notes" })
     put("Party and orders", { "party", "partyCap", "partyMax", "partyFree", "capBeds", "capFood", "capWater", "capTrust", "capSeats", "commands", "aiCommands", "cmdBaseReach", "cmdMapTrust", "thirstPerH", "wakeReach", "wakeHours", "teachHours", "teachXp", "teachReach", "teachGapH", "siphonMinutes", "siphonGiveUpMin", "keepEngineMin", "guardTiles", "playerOrders", "partyOwn", "ownBehaviour", "partyWordsStrict", "partyRides",
         "partySecondCar", "alifeCompanionLink", "recruiting" })

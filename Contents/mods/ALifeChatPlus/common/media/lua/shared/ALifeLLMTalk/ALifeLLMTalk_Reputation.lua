@@ -182,7 +182,9 @@ M.repLines = {
 }
 -- pre-1.0 MP: once per online player (people meeting THAT player); SP: the same single run as before
 function M.repTick(now)
-    if M.settings.reputation == false or not M.worldHere() then return end
+    if not M.worldHere() then return end
+    if M.repTickCatchUp then M.repTickCatchUp() end -- one check per character, then a flag read
+    if M.settings.reputation == false then return end
     M.eachPlayer(M.repTickFor, now)
 end
 function M.repTickFor(p, now)
@@ -205,4 +207,103 @@ function M.repTickFor(p, now)
 end
 regMode("reputation")
 everyMs(3000, M.repTick)
+
+-- pre-1.0: A NEW CHARACTER IS A STRANGER. Our "about you" data had no owner in single player, so after a death the
+-- next character inherited every rumor (titles, fame), grudge, betrayal and faction memory, and old rumors kept
+-- spreading and lowering opinions of the new you. A-Life already decides "new character" (CharacterReset.check on
+-- OnCreatePlayer: dead, or a fresh char id) and wipes its own opinions in CharacterReset.forget(key, player); we hook
+-- that same call, so A-Life's sandbox option Reputation_ResetOnNewCharacter switches ours too. Setting "repNewLife".
+-- Single player: all of it goes. MP server: only that player's rumors (r.pk); the rest is shared world state.
+setting("repNewLife", true)
+M.repNewLifeBuckets = { "repMet", "factionMet", "factionRep", "factionNews", "betrayal", "playerNemesis" }
+M.repNewLifeStats = { lives = 0, rumors = 0 }
+function M.repNewLife(key, player)
+    if M.settings.repNewLife == false then return false end
+    local mp = type(ALifeSide) == "table" and ALifeSide.mpServer()
+    local list = bucket("rumors")
+    local keep, dropped = {}, 0
+    for _, r in ipairs(list) do
+        local mine = (r.pk == nil and not mp) or (key ~= nil and r.pk ~= nil and tostring(r.pk) == tostring(key))
+        if mine then dropped = dropped + 1 else keep[#keep + 1] = r end
+    end
+    for i = #list, 1, -1 do list[i] = nil end
+    for i, r in ipairs(keep) do list[i] = r end
+    if not mp then
+        local data = M.store()
+        for _, name in ipairs(M.repNewLifeBuckets) do data[name] = {} end
+        M.repMet = {}
+    end
+    M.repNewLifeStats.lives = M.repNewLifeStats.lives + 1
+    M.repNewLifeStats.rumors = M.repNewLifeStats.rumors + dropped
+    log("reputation: new character (" .. tostring(key) .. "): a stranger again, " .. dropped .. " old rumor(s) dropped")
+    return true
+end
+-- catch-up for saves where the new character came before this fix (A-Life already counts it as "same"): once per
+-- character (flag on the character itself), rumors dated before this character was born (world hours - hours
+-- survived) are the old one's. Any found, or A-Life's own life counter past 1 = an earlier life: the same reset.
+M.repBornSlackH = 1
+function M.repCatchUp(player)
+    if M.settings.repNewLife == false or player == nil then return false end
+    local data = nil
+    pcall(function() data = player:getModData() end)
+    if type(data) ~= "table" or data.ALifeRepCaught then return false end
+    data.ALifeRepCaught = true
+    local R = PA().CharacterReset
+    if fn(R, "enabled") and R.enabled() == false then return false end
+    local survived = nil
+    pcall(function() survived = tonumber(player:getHoursSurvived()) end)
+    if survived == nil then return false end
+    local born = hours() - survived - M.repBornSlackH
+    local key = nil
+    pcall(function() key = PA().Reputation.playerKey(player) end)
+    local mp = type(ALifeSide) == "table" and ALifeSide.mpServer()
+    local older = false
+    for _, r in ipairs(bucket("rumors")) do
+        local mine = (r.pk == nil and not mp) or (key ~= nil and r.pk ~= nil and tostring(r.pk) == tostring(key))
+        if mine and tonumber(r.h) ~= nil and r.h < born then older = true; break end
+    end
+    if not older then
+        pcall(function()
+            local row = PA().PersonalRep.store().players[tostring(key)]
+            if type(row) == "table" and (tonumber(row.life) or 1) > 1 then older = true end
+        end)
+    end
+    if not older then return false end
+    -- only the old rumors: deeds of this character (after born) stay
+    local list = bucket("rumors")
+    local keep = {}
+    for _, r in ipairs(list) do
+        local mine = (r.pk == nil and not mp) or (key ~= nil and r.pk ~= nil and tostring(r.pk) == tostring(key))
+        if not (mine and (tonumber(r.h) or 0) < born) then keep[#keep + 1] = r end
+    end
+    M.repNewLife(key, player) -- the tables (and all of this player's rumors; the new ones go back below)
+    for i = #list, 1, -1 do list[i] = nil end
+    for i, r in ipairs(keep) do list[i] = r end
+    log("reputation: catch-up for a character made before the fix (born ~" .. math.floor(born) .. "h)")
+    return true
+end
+function M.repTickCatchUp() M.eachPlayer(function(p) pcall(M.repCatchUp, p) end) end
+function M.repHookReset()
+    local R = PA().CharacterReset
+    if not fn(R, "forget") then return false end
+    if R._alcpNewLife then return true end
+    local inner = R.forget
+    R.forget = function(key, player, ...)
+        local a, b = inner(key, player, ...)
+        local ok, e = pcall(M.repNewLife, key, player)
+        if not ok then log("new life error: " .. tostring(e)) end
+        return a, b
+    end
+    R._alcpNewLife = true
+    return true
+end
+pcall(M.repHookReset)
+-- A-Life's server files load after shared/: hook again once the world loads (before OnCreatePlayer on a reload)
+if type(Events) == "table" and Events.OnInitGlobalModData then Events.OnInitGlobalModData.Add(function() pcall(M.repHookReset) end) end
+if type(Events) == "table" and Events.OnGameStart then
+    Events.OnGameStart.Add(function()
+        local ok, hooked = pcall(M.repHookReset)
+        print("[ALifeLLMTalk_Reputation] ready v0.9.5-pre1.0: new character = stranger " .. ((ok and hooked) and "(hooked A-Life CharacterReset)" or "(unverified: A-Life CharacterReset.forget missing, off)"))
+    end)
+end
 return M

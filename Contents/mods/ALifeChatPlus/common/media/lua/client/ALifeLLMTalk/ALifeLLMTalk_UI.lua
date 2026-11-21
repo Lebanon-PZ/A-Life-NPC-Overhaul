@@ -851,6 +851,7 @@ M.settingRows = {
     { "npcLove", "NPC romance, jealousy, breakups" },
     { "notes", "NPCs leave readable notes" },
     { "reputation", "Strangers have heard of you (titles)" },
+    { "repNewLife", "A new character after you die is a stranger (old rumors, grudges and faction memory stay with the dead)" },
     { "weirdFear", "Fear of the weird (fog, Backrooms, sewers, monsters)" },
     { "lifeTopics", "Varied talk: life before, music, jokes, gossip (anti-repeat)" },
     { "settlers", "NPCs can move into your base" },

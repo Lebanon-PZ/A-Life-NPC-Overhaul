@@ -880,6 +880,7 @@ table.insert(M.requestExtras, function(req, player, listener, now)
         if ok then req.followNo = nil end
         if not ok then
             b.recruitNoH = hours() + M.rp.recruitCooldownH
+            pend.why = why
             req.followNo = why
             local keep = {}
             for _, a in ipairs(req.acts or {}) do if a ~= "WALK_WITH_ME" then keep[#keep + 1] = a end end
@@ -909,6 +910,30 @@ table.insert(M.requestExtras, function(req, player, listener, now)
     if mine then M.rpPending[uid] = pend end
     for _ in pairs(rp) do req.rp = rp; break end -- (Kahlua has no next())
 end)
+
+-- Verdict was NO but a small model said yes anyway ("sure, let's go") while the game then refused: swap in a plain
+-- refusal so the words match what happens. Only when the reply agrees and has no refusal word in it.
+local agreeWords = { "sure", "yeah", "yes", "okay", "alright", "all right", "let's go", "lets go", "lead the way", "i'm in",
+    "im in", "i'll come", "i will come", "count me in", "sounds good", "ok " }
+local refuseWords = { " no", "nah", "not ", "n't", "never", "sorry", "maybe later", "afraid", "can't", "cannot", "won't" }
+function M.replyGuard(p, text)
+    local pend = type(p) == "table" and M.rpPending and M.rpPending[tostring(p.uid)] or nil
+    if type(pend) ~= "table" or pend.recruit ~= false or type(text) ~= "string" then return text end
+    local low = " " .. string.lower(text) .. " "
+    local yes, no = false, false
+    for _, w in ipairs(agreeWords) do if string.find(low, w, 1, true) then yes = true end end
+    for _, w in ipairs(refuseWords) do if string.find(low, w, 1, true) then no = true end end
+    if not yes or no then return text end
+    local why = tostring(pend.why or "")
+    local line
+    if string.find(why, "trust", 1, true) or string.find(why, "know them", 1, true) then line = "Not yet. I don't know you well enough."
+    elseif string.find(why, "dangerous", 1, true) then line = "Too risky out there with someone I barely know."
+    elseif string.find(why, "own people", 1, true) then line = "My place is with my own people."
+    elseif string.find(why, "already", 1, true) then line = "I told you already. Still no."
+    else line = "Not right now." end
+    log("recruit guard: model agreed but verdict was no (" .. why .. ") -> " .. line)
+    return line
+end
 
 -- after the answer: carry out a successful recruitment through A-Life (walkWith) + the patch's companion mode
 if type(M.finish) == "function" and not M._rpFinishWrapped then

@@ -202,6 +202,7 @@ function M.bookSnap(rec, n)
     elseif type(rec.worldPosition) == "table" and e.x == nil then
         e.x, e.y, e.h = math.floor(rec.worldPosition.x), math.floor(rec.worldPosition.y), tonumber(m.dormantSinceHours) or hours()
     end
+    if e.mx == nil and e.x ~= nil then e.mx, e.my, e.mh = e.x, e.y, e.h end -- pre-1.0: where you first came across them (People groups)
     e.gone, e.goneH = nil, nil
     b[uid] = e
     if M.profileWant then M.profileWant(uid, nil, false) end -- 0.5.1.5: queued page snapshot (Profile.lua)

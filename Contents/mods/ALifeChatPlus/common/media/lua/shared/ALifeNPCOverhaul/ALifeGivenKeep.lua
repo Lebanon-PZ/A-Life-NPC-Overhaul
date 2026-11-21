@@ -169,8 +169,110 @@ function G.wrapDeath()
     return true
 end
 
+-- ---------------------------------------------------------------------------------------------- offer matches the hands
+-- Jeem's hand gift (HandGifts.lua, J.on "talking") hands over WHATEVER is in your hands on any OFFER_ITEM line. "You want
+-- some food?" with a rifle in hand gave the rifle away. Real life: you offer what you say. So we note the line, and when it
+-- names a kind of thing (food / gun / ammo / medicine) and the held item is another kind, nothing changes hands.
+-- A line naming nothing ("take this", "here") still hands over what you hold. Setting: offerMatch (on).
+G.DEFAULTS.offerMatch = true
+G.KEYS[#G.KEYS + 1] = "offerMatch"
+G.WANT = {
+    { kinds = { food = true }, words = { "food", "eat", "meal", "bread", "snack", "snacks", "ration", "rations", "hungry",
+        "beans", "soup", "water", "drink", "canned", "cans", "dinner", "lunch", "breakfast", "supper" } },
+    { kinds = { gun = true }, words = { "gun", "guns", "rifle", "rifles", "pistol", "pistols", "shotgun", "shotguns", "smg",
+        "revolver", "firearm", "firearms", "handgun", "carbine" } },
+    { kinds = { gun = true, melee = true }, words = { "weapon", "weapons" } },
+    { kinds = { melee = true }, words = { "bat", "knife", "axe", "machete", "crowbar", "hammer", "sword", "blade" } },
+    { kinds = { ammo = true }, words = { "ammo", "bullets", "rounds", "mags", "magazines", "shells", "cartridges" } },
+    { kinds = { medical = true }, words = { "bandage", "bandages", "meds", "medicine", "pills", "medkit", "painkillers", "antibiotics" } },
+}
+G.OFFER_MS = 8000
+local function nowMs()
+    if type(getTimestampMs) == "function" then return getTimestampMs() end
+    return os.time() * 1000
+end
+local function sameWho(a, b)
+    if a == nil or b == nil or a == b then return true end
+    local ua, ub = nil, nil
+    pcall(function() ua = a:getUsername() end)
+    pcall(function() ub = b:getUsername() end)
+    return ua ~= nil and ua == ub
+end
+-- kinds the line asks for, as a set; nil when it names none
+function G.wantedKinds(text)
+    if type(text) ~= "string" or text == "" then return nil end
+    local low = " " .. string.gsub(string.lower(text), "[^%w']+", " ") .. " "
+    local out, any = {}, false
+    for _, row in ipairs(G.WANT) do
+        for _, w in ipairs(row.words) do
+            if string.find(low, " " .. w .. " ", 1, true) then
+                for k in pairs(row.kinds) do out[k] = true end
+                any = true
+                break
+            end
+        end
+    end
+    return any and out or nil
+end
+-- Main calls this for every line A-Life reads as OFFER_ITEM
+function G.noteOffer(player, text)
+    G.offer = { player = player, wants = G.wantedKinds(text), at = nowMs(), text = text }
+end
+local function heldKind(player, item)
+    local j = J()
+    local gw = j and (j.GiftWorth or j.GiftsService)
+    if not fn(gw, "kind") then return nil end
+    local ok, k = pcall(gw.kind, item)
+    return ok and k or nil
+end
+function G.wrapHandGift()
+    local j = J()
+    local H = j and j.HandGifts
+    if not fn(H, "give") or not fn(H, "heldItem") then return false end
+    if H.acpOfferWrapped then return true end
+    local give = H.give
+    H.give = function(player, record, stance, ...)
+        local o = G.offer
+        G.offer = nil -- (one line, one handover)
+        if o ~= nil and G.setting("offerMatch") ~= false and o.wants ~= nil and sameWho(o.player, player)
+                and nowMs() - o.at <= G.OFFER_MS then
+            local okI, item = pcall(H.heldItem, player)
+            local kind = okI and item ~= nil and heldKind(player, item) or nil
+            if kind ~= nil and not o.wants[kind] then
+                G.metrics.vetoed = (G.metrics.vetoed or 0) + 1
+                log("offer vetoed: said \"" .. string.sub(tostring(o.text), 1, 50) .. "\" but hands hold " .. tostring(kind))
+                pcall(function() j.notice(player, "IGUI_ALCP_OfferMismatch") end)
+                return false
+            end
+        end
+        return give(player, record, stance, ...)
+    end
+    H.acpOfferWrapped = true
+    return true
+end
+
+-- Every typed line goes through A-Life's classifier, AI bridge or not: note the offers there (no player known on the
+-- server side: sameWho takes it then; Main's own note, which has the player, replaces this one when the AI path runs)
+function G.wrapClassify()
+    local I = PA().TalkIntents
+    if not fn(I, "classify") then return false end
+    if I.acpOfferWrapped then return true end
+    local classify = I.classify
+    I.classify = function(text, ...)
+        local intent, b, c = classify(text, ...)
+        if intent == "OFFER_ITEM" and type(text) == "string" and not (G.offer ~= nil and G.offer.text == text and G.offer.player ~= nil) then
+            pcall(G.noteOffer, nil, text)
+        end
+        return intent, b, c
+    end
+    I.acpOfferWrapped = true
+    return true
+end
+
 function G.install()
     local n = 0
+    pcall(G.wrapHandGift)
+    pcall(G.wrapClassify)
     if pcall(G.wrapDeath) and PA().DeathDrops and PA().DeathDrops.acpGivenWrapped then n = n + 1 end
     if pcall(G.wrapSheet) and PA().CompanionInventoryServer and PA().CompanionInventoryServer.acpGivenWrapped then n = n + 1 end
     local j = J()

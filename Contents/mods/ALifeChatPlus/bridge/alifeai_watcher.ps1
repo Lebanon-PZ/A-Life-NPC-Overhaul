@@ -198,8 +198,11 @@ function Set-Autostart([bool]$on) {
   if (-not $on) { if (Test-Path -LiteralPath $lnk) { Remove-Item -LiteralPath $lnk -Force -ErrorAction Stop }; return }
   $ws = New-Object -ComObject WScript.Shell
   $sc = $ws.CreateShortcut($lnk)
-  $sc.TargetPath = "wscript.exe"
-  $sc.Arguments = '"' + (Join-Path $script:here "alifeai_hidden.vbs") + '"'
+  $vbs = Join-Path $script:here "alifeai_hidden.vbs"
+  # self-cleaning if the mod is unsubscribed (same as Setup)
+  $sc.TargetPath = "cmd.exe"
+  $sc.Arguments = '/c if exist "' + $vbs + '" (start "" wscript.exe "' + $vbs + '") else (del /f /q "' + $lnk + '")'
+  $sc.WindowStyle = 7
   $sc.WorkingDirectory = $script:here
   $sc.Save()
 }

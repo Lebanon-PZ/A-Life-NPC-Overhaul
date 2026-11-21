@@ -934,6 +934,13 @@ ALifeLLMTalk._ours[M.respond] = true
 function M.respondNow(player, listener, text, now, choiceIntent)
     M.respondHit = true
     local orig = M.realRespond()
+    -- loop breaker: the "original" we call came back into us with the very same line (a wrapper chain that ends in
+    -- our own respond: console 41072, respond -> respondNow -> respond until Stack overflow). Never call it again.
+    local act = M.origActive
+    if act ~= nil and act.player == player and act.listener == listener and act.text == text and act.intent == choiceIntent then
+        if not M.loopLogged then M.loopLogged = true; log("WARNING: Talk.respond loops back into A-Life Talk (another mod's wrapper?); answer skipped, no loop") end
+        return nil
+    end
     if choiceIntent == nil and not M.inNative and M.settings.enabled then
         local okA, picked = pcall(M.readdress, player, listener, text, now or nowMs())
         if okA and picked ~= nil then listener = picked end
@@ -961,7 +968,12 @@ function M.respondNow(player, listener, text, now, choiceIntent)
     -- (ALifeTalk_StockLines.lua); only inside this call, never for barks elsewhere
     M.inStockRespond = (M.inStockRespond or 0) + 1
     local okO, a, b, c = false, nil, nil, nil
-    if orig ~= nil then okO, a, b, c = pcall(orig, player, listener, text, now, choiceIntent) else okO = true end
+    if orig ~= nil then
+        local prevAct = M.origActive
+        M.origActive = { player = player, listener = listener, text = text, intent = choiceIntent }
+        okO, a, b, c = pcall(orig, player, listener, text, now, choiceIntent)
+        M.origActive = prevAct
+    else okO = true end
     M.inStockRespond = M.inStockRespond - 1
     if not okO then error(a, 0) end
     return a, b, c
@@ -1168,6 +1180,10 @@ function M.tryDefer(player, listener, text, now, rowIntent)
             soft = pre
             if pre.intent ~= nil then intent = pre.intent end
         end
+    end
+    -- an offer: remember what it names, so Jeem's hand gift only hands over what you said (ALifeGivenKeep)
+    if intent == "OFFER_ITEM" and type(ALifeGivenKeep) == "table" and fn(ALifeGivenKeep, "noteOffer") then
+        pcall(ALifeGivenKeep.noteOffer, player, text)
     end
     if M.isNative(intent, state) then return no("A-Life's own " .. tostring(intent or "question")) end
     -- Nov 16: plain greetings never need the AI (small models answered "Hmm.... Say again?"): A-Life answers them itself
@@ -2406,6 +2422,10 @@ function M.finish(p, r)
                 M.escalate(record, shell, player, stance, 1, tostring(sIntent or ("d " .. tostring(r.d))))
             end
         else
+            if r.text ~= "" and type(M.replyGuard) == "function" then
+                local okG, t = pcall(M.replyGuard, p, r.text)
+                if okG and type(t) == "string" and t ~= "" then r.text = t end
+            end
             if r.text ~= "" then
                 M.say(shell, player, r.text)
                 said = r.text

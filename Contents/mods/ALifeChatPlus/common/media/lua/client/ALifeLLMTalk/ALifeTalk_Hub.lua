@@ -167,7 +167,7 @@ function M.hubInstallHeader()
     W.createChildren = function(self, ...)
         local r = create(self, ...)
         local t = byClass[self.Type or ""]
-        if t and M.hubOn() then
+        if t and M.hubOn() and not self.alcpEmbedded then -- (pre-1.0: inside A-Life's journal, its tabs are the tabs)
             pcall(function()
                 self.hubTab = t.id
                 self.hubTitle = self.title

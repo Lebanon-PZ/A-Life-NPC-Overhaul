@@ -2,6 +2,19 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- New (Joe): organic walls (ALifeTalk_Walls, docs/PLAN-BUILD.md). When a base is loaded the group looks at the real
+  ground (flood-fill from the yard: walls, fences, gates, windows are barriers; rooms and water solid). A fenced
+  compound with a few openings gets those openings walled (each <= orgMaxGap 8, all <= orgMaxGapTotal 48; inner cuts
+  across the yard dropped), plus one wicket gate nearest the road if the yard has no way out already. Closed in:
+  nothing. Open ground: Build's palisade box as before. Later rings further out every wallLayerDays (30) up to
+  wallLayers (2). Pieces on an edge that's already closed (wall, fence, building, water, a car) count as done, logs
+  back. Far bases: settling waits for the first look; owed box pieces the new plan doesn't use are refunded; the gate
+  is hung out of sight too; bases never seen count trees from forest zones and doors from buildings near them
+  (orgGuess, orgTreesPer100 3) until the first real scan. Big fenced sites (too big for a box) get their openings
+  walled instead of nothing; the box size cap is a setting now (wallMaxRing 140).
+  Settings: orgWalls, orgScanTiles, orgMaxGap, orgMaxGapTotal, wallLayers, wallLayerDays, wallLayerGap, wallMaxRing,
+  orgGuess, orgTreesPer100. Harness: docs/tests/test_pre1_walls.lua 37/0 (old fails). Not played.
+
 - Fixed (A-Life 1.5.3): dead NPCs dropped their spare ammo twice - real mags plus A-Life's new bonus loose rounds
   counted against the full reserve again (and in the ammo of the gun they started with, not the one they carried).
   Loose rounds now only come from what was left after the mags, for the gun they really had (ALifeBodyAmmo.handBack).

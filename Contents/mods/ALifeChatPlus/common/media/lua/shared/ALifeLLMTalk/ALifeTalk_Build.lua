@@ -618,6 +618,8 @@ function M.bdPick(b, uid, shell, h, hour, c)
                 local inX = (t.x <= (ring2.x1 or t.x)) and 1 or ((t.x > (ring2.x2 or t.x)) and -1 or 0)
                 local inY = (t.y <= (ring2.y1 or t.y)) and 1 or ((t.y > (ring2.y2 or t.y)) and -1 or 0)
                 spot = { x = t.x + 0.5 + inX, y = t.y + 0.5 + inY, z = 0 }
+                -- pre-1.0 organic walls (ALifeTalk_Walls): a piece in an opening knows which side is the yard
+                if type(t.inside) == "table" and tonumber(t.inside.x) then spot = { x = t.inside.x + 0.5, y = t.inside.y + 0.5, z = 0 } end
             end
             return { kind = "build", what = proj.kind, base = b.id, key = key, target = t, need = need, spot = spot,
                 ms = (proj.kind == "board" and cfg.boardMs) or (proj.kind == "gate" and cfg.gateMs) or cfg.wallMs,

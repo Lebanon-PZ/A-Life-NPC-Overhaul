@@ -178,6 +178,7 @@ local newRows = {
     { "foodScanRadius", "Camp food count: how far from your base's middle it looks (tiles)", { 15, 30, 50, 80 } }, -- pre-1.0
     { "foodScanFloors", "Camp food count: how many floors it looks at", { 1, 2, 4, 6 } }, -- pre-1.0
     { "foodScanMax", "Camp food count: most containers it reads in the base area (marked Food stores are always read)", { 100, 400, 800, 1500 } }, -- pre-1.0
+    { "foodGuessPerHead", "Camp food when you're away: food a person eats a day, for the guess (a cook's dinner counts instead)", { 0.5, 1, 2, 3 } }, -- pre-1.0
     { "windowTalk", "Talk window: a Say tab next to A-Life's tabs, and your chat key opens a typing box under the window; they answer in their own words" }, -- 0.8.1
     { "talkPauseKey", "Talk window: your pause key (Space) pauses the game instead of picking a row" }, -- 0.8.2
     { "talkAutoPause", "Pause while talking: the talk window pauses the game when it opens and unpauses when it closes" }, -- 0.8.2

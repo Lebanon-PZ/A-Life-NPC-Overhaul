@@ -75,7 +75,8 @@ local function camp(player)
     if type(st) == "table" and st.food then
         local per = nil
         if H.fn(M, "ckNeed") then local cooks = M.cpWithRole("cook", player); if cooks[1] then per = M.ckNeed(cooks[1], player) end end
-        lines[#lines + 1] = "Food: " .. st.food .. " in your stores" .. (per and per > 0 and (", about " .. math.floor(st.food / per) .. " days of dinners") or "")
+        if st.guess and H.fn(M, "foodGuessWords") then lines[#lines + 1] = "Food: " .. tostring(M.foodGuessWords(st)) .. " (you're away)" -- pre-1.0
+        else lines[#lines + 1] = "Food: " .. st.food .. " in your stores" .. (per and per > 0 and (", about " .. math.floor(st.food / per) .. " days of dinners") or "") end
     end
     if H.fn(M, "ckData") then
         local k = M.ckData()

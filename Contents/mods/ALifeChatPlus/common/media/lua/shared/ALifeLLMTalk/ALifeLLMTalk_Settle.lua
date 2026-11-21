@@ -99,6 +99,9 @@ setting("foodScanRadius", 30)   -- tiles from the base's middle
 setting("foodScanFloors", 4)    -- floors counted from the ground up
 setting("foodScanMax", 400)     -- containers read in the area (the marked stores are always read)
 M.foodScanSquares = 30000       -- hard stop for one count (never a long frame)
+-- pre-1.0 (Joe Nov 21): away from base you can't know what's left, so it's a guess: food eaten per person per day
+-- while you're gone (the cook's real dinner when there is a cook, else this)
+setting("foodGuessPerHead", 1)
 local function foodSetting(key, d) local v = tonumber(M.settings[key]); if v == nil or v < 1 then return d end return v end
 local function foodItem(it)
     local cat, rotten = nil, false
@@ -213,12 +216,12 @@ function M.foodScan(base, player)
     if known then known.foodKnown = type(known.foodKnown) == "table" and known.foodKnown or {} end
     out.loaded = ground > 0 and groundLoaded * 2 >= ground
     if out.loaded then
-        if known then known.foodKnown[key] = { items = out.items, containers = out.containers } end
+        if known then known.foodKnown[key] = { items = out.items, containers = out.containers, h = hours() } end
     else
         local last = known and known.foodKnown[key] or nil
         if type(last) == "table" then
             out.items, out.containers = tonumber(last.items) or out.items, tonumber(last.containers) or out.containers
-            out.remembered = true
+            out.remembered, out.seenH = true, tonumber(last.h)
         end
     end
     return out
@@ -242,7 +245,10 @@ function M.baseState(player)
     if c == nil or now - c.at > 120000 then
         c = { at = now, food = 0 }
         local okF, scan = pcall(M.foodScan, base, player)
-        if okF and type(scan) == "table" then c.food = tonumber(scan.items) or 0 end
+        if okF and type(scan) == "table" then
+            c.food = tonumber(scan.items) or 0
+            if scan.remembered then c.remembered, c.seenH = true, scan.seenH end
+        end
         pcall(function() local inv = player:getInventory(); local items = inv:getItems(); for j = 0, items:size() - 1 do if items:get(j):getCategory() == "Food" then c.food = c.food + 1 end end end)
         M.baseCache[key] = c
     end
@@ -259,10 +265,50 @@ function M.baseState(player)
             mood = mood + v
         end
     end
-    local foodPer = c.food / math.max(1, settlers + 1)
+    local bs = { x = cx, y = cy, z = 0, bounds = base, food = c.food, zombies = zs, settlers = settlers,
+        remembered = c.remembered, seenFood = c.food, seenH = c.seenH }
+    pcall(M.foodGuess, bs, player)
+    local foodPer = bs.food / math.max(1, settlers + 1)
     local safety = clamp(100 - zs * 6, 0, 100)
     local morale = clamp(math.floor(40 + math.min(25, foodPer * 2) + (safety - 50) * 0.3 + (settlers > 0 and mood / settlers / 5 or 0) + math.min(10, settlers * 2)), 0, 100)
-    return { x = cx, y = cy, z = 0, bounds = base, food = c.food, foodPer = foodPer, zombies = zs, safety = safety, settlers = settlers, morale = morale }
+    bs.foodPer, bs.safety, bs.morale = foodPer, safety, morale
+    return bs
+end
+-- pre-1.0 (Joe Nov 21): the base isn't loaded (you're away): what's left is a guess from the last count you saw and
+-- the days since. bs.food = the guess, bs.daysLeft = days until it runs out, bs.guess = true. Loaded: untouched.
+function M.foodPerDay(player, mouths)
+    if type(M.ckNeed) == "function" and type(M.cpWithRole) == "function" then
+        local ok, cooks = pcall(M.cpWithRole, "cook", player)
+        if ok and type(cooks) == "table" and cooks[1] ~= nil then
+            local okN, n = pcall(M.ckNeed, cooks[1], player)
+            if okN and tonumber(n) then return tonumber(n) end
+        end
+    end
+    local per = tonumber(M.settings.foodGuessPerHead)
+    if per == nil or per < 0 then per = 1 end
+    return mouths * per
+end
+function M.foodGuess(bs, player)
+    if type(bs) ~= "table" or not bs.remembered then return bs end
+    local seen = tonumber(bs.seenFood) or tonumber(bs.food) or 0
+    local mouths = (tonumber(bs.settlers) or 0) + 1
+    local perDay = M.foodPerDay(player, mouths)
+    local days = math.max(0, (hours() - (tonumber(bs.seenH) or hours())) / 24)
+    local left = math.max(0, seen - perDay * days)
+    bs.food, bs.guess = math.floor(left), true
+    bs.daysLeft = perDay > 0 and (left / perDay) or nil
+    bs.foodPer = bs.food / math.max(1, mouths)
+    return bs
+end
+-- "about 3 days left, at a guess" (nil = not a guess)
+function M.foodGuessWords(bs)
+    if type(bs) ~= "table" or not bs.guess then return nil end
+    local d = tonumber(bs.daysLeft)
+    if d == nil then return "can't say from here" end
+    if d <= 0 then return "probably out by now" end
+    if d < 1 then return "maybe a day left, at a guess" end
+    local n = math.floor(d + 0.5)
+    return "about " .. n .. (n == 1 and " day" or " days") .. " left, at a guess"
 end
 -- favours they owe you: gifts, help, jobs done, wounds treated (from their key memories)
 function M.favorsOwed(uid)

@@ -130,7 +130,13 @@ local function textW(t, f) local w = 8 * #tostring(t); pcall(function() w = getT
 
 -- what the widget can show (each a line, each switchable)
 M.wgLines = {
-    { id = "food", label = "Food", get = function(bs) return bs and M.qolFoodWord(bs.foodPer) end, bad = function(bs) return bs and foodBand(bs.foodPer) <= 2 end },
+    { id = "food", label = "Food", get = function(bs)
+        if not bs then return nil end
+        if bs.guess and fn(M, "foodGuessWords") then return M.foodGuessWords(bs) end -- pre-1.0: away from base, a guess
+        return M.qolFoodWord(bs.foodPer) end,
+      bad = function(bs)
+        if bs and bs.guess then local d = tonumber(bs.daysLeft); return d ~= nil and d < 2 end
+        return bs and foodBand(bs.foodPer) <= 2 end },
     { id = "people", label = "People", get = function(bs) return bs and (tostring(bs.settlers or 0) .. (bs.settlers == 1 and " person" or " people")) end },
     { id = "safety", label = "Around us", get = function(bs)
         if not bs then return nil end
@@ -195,6 +201,7 @@ function WG:readCamp()
         local okP, list = pcall(M.cpPeople, p)
         if okP and type(list) == "table" then
             bs.settlers = #list
+            if bs.guess and fn(M, "foodGuess") then pcall(M.foodGuess, bs, p) end -- the guess follows the real head count
             bs.foodPer = (tonumber(bs.food) or 0) / math.max(1, #list + 1)
         end
     end

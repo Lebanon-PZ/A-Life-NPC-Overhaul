@@ -44,7 +44,7 @@ do
     put("Party and orders", { "party", "partyCap", "partyMax", "partyFree", "capBeds", "capFood", "capWater", "capTrust", "capSeats", "commands", "aiCommands", "cmdBaseReach", "cmdMapTrust", "thirstPerH", "wakeReach", "wakeHours", "teachHours", "teachXp", "teachReach", "teachGapH", "siphonMinutes", "siphonGiveUpMin", "keepEngineMin", "guardTiles", "playerOrders", "partyOwn", "ownBehaviour", "partyWordsStrict", "partyRides",
         "partySecondCar", "alifeCompanionLink", "recruiting" })
     put("Your camp and base", { "settlers", "baseParty", "alifeBase", "residentHold", "baseRepair", "jeemAware", "jeemBase", "eventLog",
-        "seasons", "foodScanRadius", "foodScanFloors", "foodScanMax" })
+        "seasons", "foodScanRadius", "foodScanFloors", "foodScanMax", "foodGuessPerHead" })
     put("Groups, trade and the world", { "npcBases", "npcBasesMax", "npcBaseRate", "npcBaseDanger", "honestScavenge", "npcForage",
         "peopleLeave", "ownCaravans", "chokepoints", "warMap", "itemWorth", "npcVehicles", "tradingPost", "marketDays", "caravans",
         "outposts", "nomads", "darkContent", "seededBases", "seededBasesCount", "seededSpawn", "politics", "factionMemory", "territory",

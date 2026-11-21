@@ -115,6 +115,7 @@ function M.elHourly()
     local okS, bs = pcall(M.baseState, p)
     if not okS or type(bs) ~= "table" then return end
     local f = store().qolFlags
+    if bs.guess then return end -- pre-1.0: away from base the food is a guess; the log only writes what was seen
     local band = foodBand(bs.foodPer)
     if f.foodBand ~= nil and band ~= f.foodBand then
         if band == 1 then M.elAdd("stores", tr("ElogFoodLow", "Food is running low."))

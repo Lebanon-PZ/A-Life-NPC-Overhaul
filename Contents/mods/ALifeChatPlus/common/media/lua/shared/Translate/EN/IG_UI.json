@@ -930,6 +930,7 @@
   "IGUI_ALCP_Set_rations": "Camp: you can put the camp on short or half rations",
   "IGUI_ALCP_Set_foodScanFloors": "Camp food count: how many floors it looks at",
   "IGUI_ALCP_Set_foodScanMax": "Camp food count: most containers it reads in the base area (marked Food stores are always read)",
+  "IGUI_ALCP_Set_foodGuessPerHead": "Camp food when you're away: food a person eats a day, for the guess (a cook's dinner counts instead)",
   "IGUI_ALCP_Set_foodScanRadius": "Camp food count: how far from your base's middle it looks (tiles)",
   "IGUI_ALCP_Set_realCars":"NPC groups take real parked cars: get in, hotwire or use the keys, top up from a pump or another car, drive off (never a car from nothing)",
   "IGUI_ALCP_Set_realCarsBaseMargin": "Real cars: nobody takes a car in your base or this close to it (tiles)",

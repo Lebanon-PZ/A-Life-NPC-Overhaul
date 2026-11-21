@@ -6,6 +6,10 @@ pre-1.0 (work in progress toward 1.0: multiplayer)
   food in the base") while you were away. The base's squares aren't loaded then, so the count read 0. Away, the camp
   widget, morale and party cap now use the last count taken while the base was loaded; feasts and the run meal wait
   until the base is loaded again (a run meal waits a day at most).
+- New (Joe): away from base you can't see the stores, so the camp widget and camp board show a guess instead:
+  "Food: about 3 days left, at a guess", from the last count you saw, the days since and the people eating (the
+  cook's real dinner if there's a cook, else foodGuessPerHead a person a day, default 1). Under 2 days shows as a
+  warning. The camp log only writes food changes it saw.
 - Fixed (Joe): NPC chatter (banter, chimes, witness and death lines) was sent to the AI with nobody near to hear it.
   Now only when a player is within chatterHearTiles (40; 0 = no limit).
 - Fixed (Rundown): people lying hurt (A-Life downed / dragged, the pleading ones) crawled on the spot and faced the

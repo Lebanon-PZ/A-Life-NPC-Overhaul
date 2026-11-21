@@ -13,7 +13,7 @@ if type(M) ~= "table" then return end
 ALifeFortress = ALifeFortress or {}
 local F = ALifeFortress
 local TAG = "[ALifeFortress]"
-F.VERSION = "0.9.4"
+F.VERSION = ALifeSide.MOD_VERSION
 F.DEFAULTS = { fortress = true, fortressDays = 5, fortressTiles = 3000 }
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 local function hours() local h = 0; pcall(function() h = getGameTime():getWorldAgeHours() end); return tonumber(h) or 0 end

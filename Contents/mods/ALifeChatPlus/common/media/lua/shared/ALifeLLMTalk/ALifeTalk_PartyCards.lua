@@ -18,7 +18,7 @@ if type(M) ~= "table" or type(U) ~= "table" then return end
 local TAG = "[ALifePartyCards]"
 ALifePartyCards = ALifePartyCards or {}
 local K = ALifePartyCards
-K.VERSION = "0.9.0"
+K.VERSION = ALifeSide.MOD_VERSION
 U.registerSettings()
 
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end

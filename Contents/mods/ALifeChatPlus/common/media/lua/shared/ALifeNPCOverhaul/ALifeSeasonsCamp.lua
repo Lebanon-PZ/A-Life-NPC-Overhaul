@@ -16,7 +16,7 @@ local Events = ALifeSide.hooks("world", "ALifeSeasonsCamp") -- pre-1.0 MP: one s
 ALifeSeasonsCamp = ALifeSeasonsCamp or {}
 local L = ALifeSeasonsCamp
 local TAG = "[ALifeSeasons]"
-L.VERSION = "0.7.11"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = { fromHour = 17, toHour = 21, baseReach = 20, scanTiles = 25, maxContainers = 60, maxPlates = 12, unrestEase = 15,
     opinionUp = 3, hungryUnrest = 5, foundEveryDays = 30, yearDays = 300 }
 L.TOASTS = {

@@ -159,7 +159,7 @@ function D.boardPassenger(car, shell, spec)
     -- 1. the car must be in "Player drives" mode (the driver seat is yours, NPCs take passenger seats)
     if not u.player(id) then
         if c.sessions[id] or modePending(id) then
-            print(TAG .. " get in refused: car " .. id .. " is busy with an NPC drive or a mode change (" .. status() .. ")")
+            ALifeHealth.note(TAG, "get in refused: car " .. id .. " is busy with an NPC drive or a mode change (" .. status() .. ")")
             return "fail"
         end
         pcall(c.setCarMode, id, "player")
@@ -167,7 +167,7 @@ function D.boardPassenger(car, shell, spec)
     end
     -- 2. attached as a passenger (seat 1+)
     if not attach(id, spec) then
-        print(TAG .. " get in: A-Life would not attach " .. tostring(spec.uid) .. " to car " .. id .. ": " .. status())
+        ALifeHealth.note(TAG, "get in: A-Life would not attach " .. tostring(spec.uid) .. " to car " .. id .. ": " .. status())
         local st = status()
         if string.find(st, "No free passenger seat") or string.find(st, "Not enough") then return "full" end
         return "fail"
@@ -177,10 +177,10 @@ function D.boardPassenger(car, shell, spec)
     local s = crewSpec(id, spec)
     local phase = s and s.passengerPhase
     if phase == "approach" or phase == "seated" then
-        print(TAG .. " " .. tostring(spec.uid) .. " boarding car " .. id .. " as a passenger (seat " .. tostring(s.seat) .. ")")
+        ALifeHealth.note(TAG, tostring(spec.uid) .. " boarding car " .. id .. " as a passenger (seat " .. tostring(s.seat) .. ")")
         return "getin"
     end
-    print(TAG .. " get in: board order refused for car " .. id .. ": " .. status())
+    ALifeHealth.note(TAG, "get in: board order refused for car " .. id .. ": " .. status())
     return "fail"
 end
 
@@ -199,7 +199,7 @@ function D.leave(car, shell, spec)
     local s = crewSpec(id, spec)
     local took = (s ~= nil and s.passengerPhase ~= before and (s.passengerPhase == "exit_pending" or s.passengerPhase == "outside" or s.passengerPhase == "walkaway"))
         or (c.sessions ~= nil and c.sessions[id] ~= nil and c.sessions[id].exitRequested == true)
-    print(TAG .. " " .. tostring(spec.uid) .. " told to get out of car " .. id .. " mode=" .. mode .. " phase=" .. tostring(before) ..
+    ALifeHealth.note(TAG, tostring(spec.uid) .. " told to get out of car " .. id .. " mode=" .. mode .. " phase=" .. tostring(before) ..
         "->" .. tostring(s and s.passengerPhase) .. " took=" .. tostring(took) .. " (" .. status() .. ")")
     if not took then return "fail" end -- 0.9.x pre-1.0: never "Okay, I'm out" when A-Life ignored it
     return "getout"
@@ -217,7 +217,7 @@ function D.startJob(car, spec, route, player)
     local id = car:getId()
     D.jobs[id] = { car = car, spec = spec, route = route, player = player, stage = "exit",
         untilMs = nowMs() + D.JOB_MS, nextMs = 0, asked = {} }
-    print(TAG .. " drive job for car " .. id .. " started (" .. #route .. " route points)")
+    ALifeHealth.note(TAG, "drive job for car " .. id .. " started (" .. #route .. " route points)")
 end
 
 local function finishJob(id, why)
@@ -452,15 +452,15 @@ function D.secondCar(player, playerCar, left)
             if c.sessions[id] ~= nil then
                 D.convoy = { id = id, car = v, lead = playerCar, crumbs = {}, lastX = playerCar:getX(), lastY = playerCar:getY(),
                     state = "follow", nextMs = 0, fails = 0 }
-                print(TAG .. " second car: " .. #list .. " taking car " .. id .. " (" .. tostring(v:getScriptName()) .. "), "
+                ALifeHealth.note(TAG, "second car: " .. #list .. " taking car " .. id .. " (" .. tostring(v:getScriptName()) .. "), "
                     .. tostring(list[1].uid) .. " driving" .. (#left > #list and (", " .. (#left - #list) .. " still no seat") or ""))
                 pcall(ProjectALife.Speech.say, left[1].shell, pick(D.LINES.second), { face = player })
                 return true
             end
-            print(TAG .. " second car: car " .. id .. " refused boarding: " .. status())
+            ALifeHealth.note(TAG, "second car: car " .. id .. " refused boarding: " .. status())
             pcall(c.detachCrew, id)
         else
-            print(TAG .. " second car: car " .. id .. " refused the crew: " .. status())
+            ALifeHealth.note(TAG, "second car: car " .. id .. " refused the crew: " .. status())
         end
     end
     if #cands == 0 then print(TAG .. " second car: no usable car within " .. D.SECOND_TILES .. " tiles; " .. #left .. " wait outside") end
@@ -659,7 +659,7 @@ function D.install()
     end
     Talk.choiceHandlers.DRIVE_TO, Talk.choiceHandlers.DRIVE_GET_IN, Talk.choiceHandlers.DRIVE_GET_OUT = h("drive"), h("in"), h("out")
     if ProjectALife.TalkIntents then ProjectALife.TalkIntents.cache = {} end
-    print(TAG .. " ready v0.7.11 (party rides, second car; get in: Player drives mode; drive: NPC drives / riders; checked against A-Life)")
+    print(TAG .. " ready v" .. ALifeSide.MOD_VERSION .. " (party rides, second car; get in: Player drives mode; drive: NPC drives / riders; checked against A-Life)")
     return true
 end
 

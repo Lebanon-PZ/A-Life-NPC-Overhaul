@@ -31,7 +31,7 @@ if ALifeSide == nil then require "ALifeNPCOverhaul/AA_Side" end
 local Events, ALifeHealth = ALifeSide.hooks("world", "ALifeTalkPatch")
 if P.loaded then return P end
 P.loaded = true
-P.VERSION = "1.4.3"
+P.VERSION = ALifeSide.MOD_VERSION
 
 P.settings = {
     calm = {
@@ -2277,7 +2277,7 @@ local function ownLog(msg, key, gapMs)
         if now < (P.own.logAt[key] or -1e12) then return end
         P.own.logAt[key] = now + (gapMs or 30000)
     end
-    print("[ALifeTalkPatch][Own] " .. tostring(msg))
+    ALifeHealth.note("[ALifeTalkPatch][Own]", msg)
 end
 P.ownLog = ownLog
 local function nameOfRec(r)
@@ -2975,7 +2975,7 @@ function P.installPartyAway()
             local now = nowMs()
             if now - (P.partyAwayLogAt or -1e12) >= 600000 then
                 P.partyAwayLogAt = now
-                print("[ALifeTalk][Party] kept your A-Life group: you were only far away (A-Life would have ended it as 'desert')")
+                ALifeHealth.note("[ALifeTalk][Party]", "kept your A-Life group: you were only far away (A-Life would have ended it as 'desert')")
             end
             return false
         end
@@ -3019,7 +3019,7 @@ function P.partyDesertRefund()
             end)
         end
         if not okW then pcall(Op.adjust, r, pl, back, "You were only away; no hard feelings.") end
-        print("[ALifeTalk][Party] restored " .. who(r.uid, r) .. "'s opinion: the -8 for 'leaving them' came from being far away")
+        ALifeHealth.note("[ALifeTalk][Party]", "restored " .. who(r.uid, r) .. "'s opinion: the -8 for 'leaving them' came from being far away")
     end
     return #list
 end

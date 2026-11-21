@@ -173,10 +173,10 @@ function O.order(def, record, player, text)
     if id == nil then
         if why == "no_grudge" then return pick(O.LINES.no_grudge) end
         if why == "nobody_free" or why == "busy" then return pick(O.LINES.busy) end
-        print(TAG .. " " .. def.kind .. " refused by Jeem: " .. tostring(why))
+        ALifeHealth.note(TAG, def.kind .. " refused by Jeem: " .. tostring(why))
         return pick(O.LINES.cant)
     end
-    print(TAG .. " " .. def.kind .. " started (" .. #uids .. " people): " .. tostring(id))
+    ALifeHealth.note(TAG, def.kind .. " started (" .. #uids .. " people): " .. tostring(id))
     return pick(#uids > 1 and O.LINES.go_group or O.LINES.go)
 end
 

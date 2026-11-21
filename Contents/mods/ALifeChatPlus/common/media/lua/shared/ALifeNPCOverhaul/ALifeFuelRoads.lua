@@ -16,7 +16,7 @@ local Events = ALifeSide.hooks("world", "ALifeFuelRoads") -- pre-1.0 MP: one sid
 ALifeFuelRoads = ALifeFuelRoads or {}
 local L = ALifeFuelRoads
 local TAG = "[ALifeFuelRoads]"
-L.VERSION = "0.7.5"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = {
     dayRamp = 0.01, dayCap = 0.6,          -- +1% worth a day, at most +60% from time alone
     dryWeight = 1.5, minCars = 3,          -- +150% at "every car is dry"; needs at least 3 cars to judge

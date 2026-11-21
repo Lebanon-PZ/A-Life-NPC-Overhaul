@@ -502,4 +502,4 @@ end
 local function tryInstall() local ok, res = pcall(M.chkInstall); return ok and res end
 if Events and Events.OnGameStart then Events.OnGameStart.Add(function() tryInstall() end) end
 tryInstall()
-print("[ALifeChokepoints] loaded v0.6.19 (river crossings, only roads in and crossroads from the road graph)")
+print("[ALifeChokepoints] loaded v" .. ALifeSide.MOD_VERSION .. " (river crossings, only roads in and crossroads from the road graph)")

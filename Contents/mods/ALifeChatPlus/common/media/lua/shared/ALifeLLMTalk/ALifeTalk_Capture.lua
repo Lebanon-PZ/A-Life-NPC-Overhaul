@@ -20,7 +20,7 @@ local C = ALifeCapture
 ALifeTalkCapture = ALifeTalkCapture or {}
 local K = ALifeTalkCapture
 local TAG = "[ALifeTalkCapture]"
-K.VERSION = "0.8.5"
+K.VERSION = ALifeSide.MOD_VERSION
 K.metrics = K.metrics or { blackouts = 0, refused = 0, walkieDelayed = 0, talks = 0 }
 K.held, K.handsUntil, K.phase = K.held or false, K.handsUntil, K.phase
 
@@ -128,7 +128,7 @@ function K.blackout(player, x, y, z, h)
         player:setAsleep(true)
         UIManager.setFadeBeforeUI(player:getPlayerNum(), true)
         UIManager.FadeOut(player:getPlayerNum(), 1)
-        if not (type(isClient) == "function" and isClient()) then
+        if ALifeSide.world() then
             getSleepingEvent():setPlayerFallAsleep(player, math.max(1, math.floor(num(h, 1) + 0.5)))
             if IsoPlayer.allPlayersAsleep() then UIManager.getSpeedControls():SetCurrentGameSpeed(3) end
         end

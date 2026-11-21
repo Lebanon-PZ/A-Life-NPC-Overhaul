@@ -303,7 +303,7 @@ if type(Events) == "table" and Events.OnInitGlobalModData then Events.OnInitGlob
 if type(Events) == "table" and Events.OnGameStart then
     Events.OnGameStart.Add(function()
         local ok, hooked = pcall(M.repHookReset)
-        print("[ALifeLLMTalk_Reputation] ready v0.9.5-pre1.0: new character = stranger " .. ((ok and hooked) and "(hooked A-Life CharacterReset)" or "(unverified: A-Life CharacterReset.forget missing, off)"))
+        print("[ALifeLLMTalk_Reputation] ready v" .. ALifeSide.MOD_VERSION .. ": new character = stranger " .. ((ok and hooked) and "(hooked A-Life CharacterReset)" or "(unverified: A-Life CharacterReset.forget missing, off)"))
     end)
 end
 return M

@@ -2,6 +2,18 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- Code tidy (no gameplay change). One mod version (ALifeSide.MOD_VERSION in AA_Side) for every ready line and the
+  AI Doctor report: before, ready lines printed each file's own old version (0.5.10 to 1.6.0) and the Doctor said
+  0.9.0. The bridge protocol version (ALifeLLMTalk_Main M.VERSION) stays separate.
+- Code tidy: every multiplayer side check goes through ALifeSide (client / server / world / ui) instead of each file
+  reading the engine flags itself. Fixed: ALifeGrowth, ALifeLieutenant and 20 other files used ALifeSide without
+  loading it (worked only because the game happened to load it first).
+- New setting: "Console detail" (Fixes, safety and debug, on). Step-by-step console notes (trades, orders,
+  prisoners, car boarding) go through one path, ALifeHealth.note; off = console shows only ready lines and errors.
+- Fixed: the ledge guard's console note used %.1f in string.format, which Kahlua throws on.
+- The AI helper no longer leaves Python __pycache__ in the mod folder; the release check fails if any is there.
+- README: code layout (what each Lua folder owns, how MP sides work).
+
 - Fixed: people at your base playing chop / build poses with nothing getting built. Jeem's resident post kept
   everyone at their spot before our real work (build plans, camp jobs, bodies) was ever asked, and called anyone off
   duty back once they walked 8 tiles out to a plan. Free residents now do real work first: a plan to build, a camp

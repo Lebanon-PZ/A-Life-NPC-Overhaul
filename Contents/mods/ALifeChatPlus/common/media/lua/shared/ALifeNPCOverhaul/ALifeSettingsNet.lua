@@ -11,7 +11,7 @@ require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 ALifeSettingsNet = ALifeSettingsNet or {}
 local N = ALifeSettingsNet
-N.VERSION = "0.9.5"
+N.VERSION = ALifeSide.MOD_VERSION
 N.PAGE = 30
 N.CLIENT = { opinionPopup = true, pairPopup = true, sideButtons = true, perfLog = true, perfHooks = true,
     hookOnce = true, stopReAdders = true, eventAddGuard = true, eventAddMax = true, pollTicks = true, fastReplyPoll = true,

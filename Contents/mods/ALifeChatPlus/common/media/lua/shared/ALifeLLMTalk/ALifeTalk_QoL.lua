@@ -491,4 +491,4 @@ if type(ALifeRemote) == "table" then
     R.expose("bulkOrder1", 3, 4)
     R.share(M.QOL_VIEW, function() local st = store(); return { elog = st.elog, places = st.places, plOrders = st.plOrders } end)
 end
-print("[ALifeQoL] loaded v0.7.0.1 (notices, event log, why not, named places, orders, widget, quick-order bar)")
+print("[ALifeQoL] loaded v" .. ALifeSide.MOD_VERSION .. " (notices, event log, why not, named places, orders, widget, quick-order bar)")

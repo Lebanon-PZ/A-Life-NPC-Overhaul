@@ -9,8 +9,9 @@
 -- Effects in A-Life: Love raises their opinion of you, Fear and Necessity make them more likely to obey orders.
 -- Stages need double the points of the last one: 10, 30, 70, 150, 310.
 
+require "ALifeNPCOverhaul/AA_Side"
 local TAG = "[ALifeBonds]"
-local VERSION = "1.2.0"
+local VERSION = ALifeSide.MOD_VERSION
 
 ALifeBonds = ALifeBonds or {}
 local B = ALifeBonds

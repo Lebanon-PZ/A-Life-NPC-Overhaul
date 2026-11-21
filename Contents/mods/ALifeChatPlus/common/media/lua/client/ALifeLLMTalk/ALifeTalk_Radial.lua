@@ -16,11 +16,12 @@
 -- Settings: radialMenu (off = the old long right-click menu back), radialPad (D-pad up fallback).
 -- No per-frame work: everything runs on a key press, a click or a menu open.
 
+require "ALifeNPCOverhaul/AA_Side"
 require "ISUI/ISRadialMenu"
 require "ISUI/ISContextMenu"
 
 local TAG = "[ALifeRadial]"
-local VERSION = "0.7.0.1"
+local VERSION = ALifeSide.MOD_VERSION
 local R = ALifeRadial
 local M = ALifeLLMTalk
 local PAGE = 10                    -- content slices a page (plus Back / More)

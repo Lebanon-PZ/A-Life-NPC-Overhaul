@@ -24,7 +24,7 @@ require "ALifeLLMTalk/ALifeLLMTalk_Settlers"
 local M = ALifeLLMTalk
 if type(M) ~= "table" then return end
 local TAG = "[ALifeCamp]"
-local VERSION = "0.5.10"
+local VERSION = ALifeSide.MOD_VERSION
 
 local function PA() return type(ProjectALife) == "table" and ProjectALife or {} end
 local function fn(t, name) return type(t) == "table" and type(t[name]) == "function" end

@@ -315,7 +315,7 @@ function M.msInstall()
         end
     end
     if type(Events) == "table" and Events.EveryTenMinutes then ALifeHealth.add(Events.EveryTenMinutes, "ALifeTalk_Missing", function() guard("tick", M.msTick) end) end
-    print("[ALifeMissing] loaded v0.6.15 (your people who die out of sight go missing first)")
+    print("[ALifeMissing] loaded v" .. ALifeSide.MOD_VERSION .. " (your people who die out of sight go missing first)")
     return true
 end
 if not M.msInstall() and type(Events) == "table" and Events.OnGameStart then Events.OnGameStart.Add(function() M.msInstall() end) end

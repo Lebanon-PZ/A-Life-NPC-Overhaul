@@ -11,12 +11,13 @@
 -- Give up: only to an armed player in sight within reach, A-Life's own TalkOrders.surrenderCrew (then A-Life's
 -- surrender + our captives). Never at home. Against NPCs a give-up is a break (NPC vs NPC stand-offs are 0.9).
 -- Server-authoritative (SP or server). Every number is a setting (DEFAULTS).
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeFightBrain = ALifeFightBrain or {}
 local B = ALifeFightBrain
 local TAG = "[ALifeFightBrain]"
-B.VERSION = "0.8.11.1"
+B.VERSION = ALifeSide.MOD_VERSION
 B.metrics = B.metrics or { ticks = 0, groups = 0, changes = 0, vetoes = 0, gaveUp = 0, giveUpNo = 0, barks = 0, advice = 0 }
 B.groups = B.groups or {}      -- groupId -> state { mood, sinceMs, atMs, startCount, leaderUid, leaderLost, advisory, ... }
 B.parties = B.parties or {}    -- playerKey -> { atMs, low = bool }
@@ -172,7 +173,7 @@ function B.worldMin()
     return math.floor(num(h, 0) * 60 + 0.5)
 end
 function B.authoritative()
-    if type(isClient) == "function" and isClient() then return false end
+    if ALifeSide.client() then return false end
     return true
 end
 
@@ -403,7 +404,7 @@ function B.players()
     if fn(B.adapters, "players") then return B.adapters.players() end
     local out = {}
     pcall(function()
-        if type(isServer) == "function" and isServer() and type(getOnlinePlayers) == "function" then
+        if ALifeSide.server() and type(getOnlinePlayers) == "function" then
             local l = getOnlinePlayers()
             for i = 0, l:size() - 1 do out[#out + 1] = l:get(i) end
         else

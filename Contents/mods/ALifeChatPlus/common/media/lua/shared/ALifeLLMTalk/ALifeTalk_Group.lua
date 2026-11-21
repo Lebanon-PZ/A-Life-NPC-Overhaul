@@ -11,7 +11,7 @@ require "ALifeLLMTalk/ALifeLLMTalk_Main"
 
 ALifeGroupTalk = ALifeGroupTalk or {}
 local K = ALifeGroupTalk
-K.VERSION = "0.8.3"
+K.VERSION = ALifeSide.MOD_VERSION
 K.DEFAULTS = { talkGroup = true, groupChime = 90 }
 K.WORDS = { "you all", "y'all", "yall", "everyone", "everybody", "guys", "you guys", "you two", "you three", "all of you",
     "folks", "you people" }

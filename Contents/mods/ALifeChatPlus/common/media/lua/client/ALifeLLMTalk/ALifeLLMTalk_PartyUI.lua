@@ -1,5 +1,6 @@
 -- A-Life Talk 0.5.1: PARTY WINDOW: dark GECK style list of members with health, mood, opinion, activity, weapon, stance and command buttons
 -- (behind a settings toggle; every Java / A-Life call guarded; yields to danger: lines only when idle and not fighting)
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "PartyUI"; if ALifeLLMTalk.fileBegin then ALifeLLMTalk.fileBegin("PartyUI") end end -- 0.5.1.6 perf label
 local M = ALifeLLMTalk
@@ -94,7 +95,7 @@ local function alifeRow(uid)
         for _, row in ipairs(cc.rows) do if type(row) == "table" and tostring(row.uid) == uid then return row end end
     end
     local C = PA().Companions
-    if fn(C, "snapshot") and not (type(isClient) == "function" and isClient()) then
+    if fn(C, "snapshot") and ALifeSide.world() then
         local ok, row = pcall(C.snapshot, uid)
         if ok and type(row) == "table" then return row end
     end

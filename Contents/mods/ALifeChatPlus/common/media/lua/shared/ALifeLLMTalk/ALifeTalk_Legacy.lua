@@ -18,7 +18,7 @@ if type(M) ~= "table" or type(G) ~= "table" then return end
 ALifeLegacyUI = ALifeLegacyUI or {}
 local U = ALifeLegacyUI
 local TAG = "[ALifeLegacyUI]"
-U.VERSION = "0.9.2"
+U.VERSION = ALifeSide.MOD_VERSION
 U.stats = { deaths = 0, tagged = 0, zeroed = 0, asks = 0, claims = 0 }
 U.pending = U.pending or nil
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end

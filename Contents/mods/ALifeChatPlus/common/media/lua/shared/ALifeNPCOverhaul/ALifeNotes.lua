@@ -10,6 +10,7 @@
 --   at your base while you're out, from groups who know where it is: thanks, offers, or threats.
 -- The AI writes them when it's running (with each group's story and memories); plain templates otherwise.
 
+require "ALifeNPCOverhaul/AA_Side"
 local TAG = "[ALifeNotes]"
 ALifeNotes = ALifeNotes or {}
 local N = ALifeNotes
@@ -131,7 +132,7 @@ function N.putSignTile(square, text, facing, kind, extra)
     if not ok or obj == nil then return false end
     pcall(function() stamp(obj:getModData(), text, extra) end)
     if not pcall(square.AddTileObject, square, obj) then return false end
-    if type(isServer) == "function" and isServer() then pcall(function() obj:transmitCompleteItemToClients() end) end
+    if ALifeSide.server() then pcall(function() obj:transmitCompleteItemToClients() end) end
     pcall(function() square:RecalcProperties() end)
     pcall(triggerEvent, "OnObjectAdded", obj)
     return true, obj
@@ -262,7 +263,7 @@ function N.tick()
                 day = math.floor(hours() / 24) + 1 }
             N.write(kind, facts, function(text)
                 N.leaveNote(sq, kind == "group" and "Note" or "Note for the stranger", text)
-                print(TAG .. " left a " .. kind .. " note (" .. tostring(facts.group) .. ")")
+                ALifeHealth.note(TAG, "left a " .. kind .. " note (" .. tostring(facts.group) .. ")")
             end)
         end
     end
@@ -334,7 +335,7 @@ function N.baseNote(px, py, s)
                     s.lastBase = hours()
                     N.write("base", { base = base.name, known = writers[roll(#writers) + 1] }, function(text)
                         N.leaveNote(sq, "Note for " .. tostring(base.name), text)
-                        print(TAG .. " left a note at " .. tostring(base.name))
+                        ALifeHealth.note(TAG, "left a note at " .. tostring(base.name))
                     end)
                     return
                 end

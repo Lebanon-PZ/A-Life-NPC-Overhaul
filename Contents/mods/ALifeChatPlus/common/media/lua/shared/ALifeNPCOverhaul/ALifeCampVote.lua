@@ -14,12 +14,13 @@
 -- read in Jeem (3806944055) and A-Life 1.5.1: J.on / J.emit, J.Residents.residents / capacity / headcount / stores.foodCount,
 -- J.BaseAreas.base / baseAt / who / canManage, J.TraderStock.data().visits, Traders.visits.players / managers,
 -- ProjectALife.Relations.status(record, record), NpcOpinion.adjust(record, key, delta, why), Speech.contextFor.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeCampVote = ALifeCampVote or {}
 local V = ALifeCampVote
 local TAG = "[ALifeCampVote]"
-V.VERSION = "0.8.8"
+V.VERSION = ALifeSide.MOD_VERSION
 V.DEFAULTS = {
     campVote = true,       -- residents have a say in who gets in (and later who leads, who goes)
     voteLoseCost = 4,      -- how much less someone who cared likes you when you go against them

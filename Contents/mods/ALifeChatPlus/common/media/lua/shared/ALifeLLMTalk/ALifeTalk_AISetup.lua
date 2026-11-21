@@ -13,7 +13,7 @@ if type(M) ~= "table" or type(A) ~= "table" then return end
 local TAG = "[ALifeAISetupTab]"
 local K = {}
 M.aiSetupTab = K
-K.VERSION = "0.9.0"
+K.VERSION = ALifeSide.MOD_VERSION
 A.registerSettings()
 
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
@@ -104,7 +104,7 @@ function K.openFolder()
     if real and type(showFolderInDesktop) == "function" then ok = pcall(showFolderInDesktop, dir) end
     if ok then
         if fn(M, "momToast") then pcall(M.momToast, tr("FolderOpened", "Opened the AI folder. First time: double-click Setup.cmd. Already set up: Restart AI helper.cmd.")) end
-        print(TAG .. " opened " .. dir)
+        ALifeHealth.note(TAG, "opened " .. dir)
         return true
     end
     pcall(function() Clipboard.setClipboard(dir) end)
@@ -786,7 +786,7 @@ function K.firstLetterTick()
     if p then
         pcall(ALifeLetter, p, tr("FirstLetter", "A-Life NPC Overhaul: people can answer in their own words with a free AI on your PC. To set it up: right-click > A-Life... > AI tab, top to bottom. Optional: everything works without it."), 150, 200, 240)
     end
-    print(TAG .. " first-run letter: AI tab")
+    ALifeHealth.note(TAG, "first-run letter: AI tab")
 end
 
 if type(Events) == "table" and Events.OnGameStart ~= nil then Events.OnGameStart.Add(function() pcall(K.install) end) end

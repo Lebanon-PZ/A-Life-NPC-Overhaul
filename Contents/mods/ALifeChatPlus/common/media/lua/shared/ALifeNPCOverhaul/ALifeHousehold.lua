@@ -119,7 +119,7 @@ function HH.day(baseId, people)
                         if R ~= nil and type(R.leaveOnTheirOwn) == "function" then
                             pcall(R.leaveOnTheirOwn, a, "left with a friend")
                             pcall(R.leaveOnTheirOwn, b, "left with a friend")
-                            print(TAG .. " " .. nameOf(a) .. " and " .. nameOf(b) .. " left base " .. tostring(baseId) .. " together")
+                            ALifeHealth.note(TAG, nameOf(a) .. " and " .. nameOf(b) .. " left base " .. tostring(baseId) .. " together")
                             return
                         end
                     end

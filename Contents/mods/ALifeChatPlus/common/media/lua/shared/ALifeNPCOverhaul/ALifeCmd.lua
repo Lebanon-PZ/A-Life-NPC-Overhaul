@@ -5,10 +5,11 @@
 --   Handlers: ALifeCmd.onServer(name, fn(player, args)), ALifeCmd.onClient(name, fn(payload)).
 -- Args cross the network, so only plain strings / numbers / booleans (and plain tables, 3 levels deep) are sent;
 -- strings are capped. A handler that errors logs one line and is switched off for the session.
+require "ALifeNPCOverhaul/AA_Side"
 ALifeCmd = ALifeCmd or {}
 local C = ALifeCmd
 local TAG = "[ALifeCmd]"
-C.VERSION = "0.8.2"
+C.VERSION = ALifeSide.MOD_VERSION
 C.MODULE = "ALifeNPCOverhaul"
 C.server = C.server or {}
 C.client = C.client or {}
@@ -18,8 +19,8 @@ C.MAX_STR = 300
 C.MAX_KEYS = 40
 
 local function log(msg) print(TAG .. " " .. tostring(msg)) end
-local function isMPClient() return type(isClient) == "function" and isClient() == true end
-local function isMPServer() return type(isServer) == "function" and isServer() == true end
+local function isMPClient() return ALifeSide.client() end
+local function isMPServer() return ALifeSide.server() end
 
 function C.onServer(name, f) C.server[name] = f end
 function C.onClient(name, f) C.client[name] = f end

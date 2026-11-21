@@ -19,7 +19,7 @@ if type(M) ~= "table" or type(U) ~= "table" then return end
 local TAG = "[ALifeHover]"
 ALifeHover = ALifeHover or {}
 local K = ALifeHover
-K.VERSION = "0.9.0"
+K.VERSION = ALifeSide.MOD_VERSION
 K.facts, K.refused, K.near = K.facts or {}, K.refused or {}, K.near or {}
 K.metrics = { asks = 0, shown = 0, picks = 0 }
 U.registerSettings()

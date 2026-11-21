@@ -9,13 +9,14 @@
 -- Never at home. Words: ours below plus A-Life's typed intents (HANDS_UP, STOP_FREEZE, DROP_WEAPON).
 -- AI on (SP): their answer in their own voice (bridge react mode "standoff"), the fixed line if late.
 -- Server / SP (where A-Life's Talk runs). Every number is a setting.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeFightBrain"
 
 ALifeFightTalk = ALifeFightTalk or {}
 local F = ALifeFightTalk
 local B = ALifeFightBrain
 local TAG = "[ALifeFightTalk]"
-F.VERSION = "0.8.11.1"
+F.VERSION = ALifeSide.MOD_VERSION
 F.metrics = F.metrics or { heard = 0, tried = 0, yes = 0, no = 0, home = 0, gap = 0, voiced = 0 }
 F.pending = F.pending or {}
 
@@ -281,7 +282,7 @@ function F.tryHook()
     if F.hook() then return end
     if F.tries >= 600 then
         F.gaveUp = true
-        if not (type(isClient) == "function" and isClient()) then log("A-Life Talk.onPlayerText not found: talking them down off") end
+        if ALifeSide.world() then log("A-Life Talk.onPlayerText not found: talking them down off") end
     end
 end
 F.tryHook()

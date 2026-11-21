@@ -12,12 +12,13 @@
 -- Multiplayer: the AI runs on the host. Client asks "aiSetupAsk", server answers "aiSetupState" (read from the server's
 -- own Zomboid\Lua). Only the host (single player, or a player with admin power) may send "aiSetupDo"; everyone else
 -- gets a read-only card. Args are plain tables, checked again on the server.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeAISetup = ALifeAISetup or {}
 local A = ALifeAISetup
 local TAG = "[ALifeAISetup]"
-A.VERSION = "0.9.0"
+A.VERSION = ALifeSide.MOD_VERSION
 A.FILES = { status = "alifeai_status.txt", models = "alifeai_models.txt", job = "alifeai_setup_status.txt",
     cmd = "alifeai_cmd.txt", setup = "alifeai_setup.txt", game = "alifeai_doctor_game.txt" }
 -- the fixed action list (the helper has the same list and ignores anything else)
@@ -125,8 +126,8 @@ end
 -- single player: you are the host. Multiplayer: admin power (vanilla B42: getRole():hasAdminPower(); unverified on
 -- the server side of 42.21, guarded: no answer = not host)
 function A.isHost(player)
-    local client = type(isClient) == "function" and isClient()
-    local server = type(isServer) == "function" and isServer()
+    local client = ALifeSide.client()
+    local server = ALifeSide.server()
     if not client and not server then return true end
     if player == nil then return false end
     local ok, yes = pcall(function() return player:getRole():hasAdminPower() end)

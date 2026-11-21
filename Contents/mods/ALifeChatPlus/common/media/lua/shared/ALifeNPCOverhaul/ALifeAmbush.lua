@@ -18,7 +18,7 @@ ALifeAmbush = ALifeAmbush or {}
 local A = ALifeAmbush
 local B = ALifeFightBrain
 local TAG = "[ALifeAmbush]"
-A.VERSION = "0.8.11.1"
+A.VERSION = ALifeSide.MOD_VERSION
 A.metrics = A.metrics or { rolled = 0, set = 0, sprung = 0, found = 0, timedOut = 0 }
 
 A.DEFAULTS = {

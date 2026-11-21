@@ -18,10 +18,11 @@
 -- real mag into the gun; the old one stays in the pack with what was left in it. No mag in the pack: A-Life's own path
 -- (loose rounds, i.e. filling a mag). Dead: A-Life's own item thinning applies to the mags in the pack.
 -- Settings: packMags, packMagsMax, bodyAmmo, bodyAmmoMags (most mags per gun), bodyAmmoChance (% per mag), ammoWant, ammoWantMags.
+require "ALifeNPCOverhaul/AA_Side"
 ALifeBodyAmmo = ALifeBodyAmmo or {}
 local B = ALifeBodyAmmo
 local TAG = "[ALifeBodyAmmo]"
-B.VERSION = "pre-1.0"
+B.VERSION = ALifeSide.MOD_VERSION
 B.metrics = B.metrics or { plans = 0, patched = 0, wanted = 0 }
 B.DEFAULTS = {
     bodyAmmo = true,        -- the dead drop their real spare ammo for the gun they really carried

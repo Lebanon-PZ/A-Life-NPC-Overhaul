@@ -320,7 +320,7 @@ function M.hostileTickFor(player, now)
           face = hostile and "player" or nil })
 end
 
-print("[ALifeHostile] ready v0.8.11.2: hostile needs " .. tostring(M.settings.hostileSigns or 2) .. " signs, fight warnings "
+print("[ALifeHostile] ready v" .. ALifeSide.MOD_VERSION .. ": hostile needs " .. tostring(M.settings.hostileSigns or 2) .. " signs, fight warnings "
     .. (M.settings.fightWarnTalk ~= false and "on" or "off") .. ", foreign lines to the AI, input log "
     .. (M.settings.inputLog ~= false and "on" or "off"))
 

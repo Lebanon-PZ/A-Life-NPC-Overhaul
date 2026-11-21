@@ -14,7 +14,7 @@ if type(ALifeRemote) ~= "table" or type(ALifeRemote.readable) ~= "function" then
 local R = ALifeRemote
 ALifeRemoteUI = ALifeRemoteUI or {}
 local U = ALifeRemoteUI
-U.VERSION = "pre-1.0"
+U.VERSION = ALifeSide.MOD_VERSION
 -- name = { nArgs, playerAt } (playerAt = where the server puts the sender; past nArgs = not passed)
 U.READS = {
     -- a person, by uid

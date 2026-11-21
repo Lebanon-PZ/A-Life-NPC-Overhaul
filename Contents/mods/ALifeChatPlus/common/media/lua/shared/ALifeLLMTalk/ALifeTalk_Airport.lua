@@ -521,7 +521,7 @@ if type(Events) == "table" and Events.OnGameStart then
         pcall(M.apInstall)
         pcall(M.apInstallExtra)
         local sb = M.apSandbox()
-        print("[ALifeNPCOverhaul] airport loaded v0.3.1 (faction " .. (sb.on and "on" or "off") .. ", start day " .. sb.startDay
+        print("[ALifeNPCOverhaul] airport loaded v" .. ALifeSide.MOD_VERSION .. " (faction " .. (sb.on and "on" or "off") .. ", start day " .. sb.startDay
             .. ((sb.x > 0 and sb.y > 0) and (", at " .. sb.x .. "," .. sb.y) or ", airport from map") .. ")")
     end)
 end

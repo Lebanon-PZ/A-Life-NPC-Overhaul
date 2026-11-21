@@ -21,12 +21,13 @@
 -- Gate guard (9), NPC vs NPC stand-offs (11) and capture (13): see docs/PLAN-0.8.md.
 -- Server-authoritative: the wraps run where A-Life's stand-off runs (server / SP). The AI parts are single-player only
 -- (the bridge runs beside the SP game); in MP A-Life's own lines and word reading stay.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeStandoffPlus = ALifeStandoffPlus or {}
 local P = ALifeStandoffPlus
 local TAG = "[ALifeStandoffPlus]"
-P.VERSION = "0.8.5"
+P.VERSION = ALifeSide.MOD_VERSION
 P.metrics = P.metrics or { voiced = 0, late = 0, aiRead = 0, aiReadLate = 0, liesAlone = 0, liesLittle = 0, jumpy = 0, lean = 0,
     backDown = 0, pushed = 0, haggled = 0, haggleNo = 0, calmed = 0, partyOrders = 0, radioSetOff = 0, callOuts = 0, joinBoost = 0 }
 

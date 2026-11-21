@@ -7,6 +7,7 @@
 -- Lines come from the AI with each person's life story, memories and situation, so they stay in character. Nothing
 -- happens without the AI bridge running; it never interrupts a conversation you're having.
 
+require "ALifeNPCOverhaul/AA_Side"
 local TAG = "[ALifeAmbient]"
 ALifeAmbient = ALifeAmbient or {}
 local A = ALifeAmbient

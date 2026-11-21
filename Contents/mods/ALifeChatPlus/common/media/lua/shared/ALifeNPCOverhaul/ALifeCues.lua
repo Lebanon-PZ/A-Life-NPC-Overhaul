@@ -5,12 +5,13 @@
 -- A-Life's Relations / NpcOpinion / ActorRegistry live in server/, so in multiplayer only the server can read them.
 -- The server only answers for someone near the asking player (hoverRange + 5 tiles): no reading people across the map.
 -- Words come from plain tables of facts, so the same lines show in single player and multiplayer.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeCues = ALifeCues or {}
 local U = ALifeCues
 local TAG = "[ALifeCues]"
-U.VERSION = "0.9.0"
+U.VERSION = ALifeSide.MOD_VERSION
 U.DEFAULTS = {
     hoverCue = true,        -- a short line over someone's head when your mouse rests on them
     hoverKeyOnly = false,   -- only while the hover key is held (Options > Mods > A-Life NPC Overhaul)

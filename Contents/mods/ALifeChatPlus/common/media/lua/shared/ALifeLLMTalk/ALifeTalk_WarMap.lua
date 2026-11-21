@@ -347,4 +347,4 @@ local function hooks()
 end
 if Events and Events.OnGameStart then Events.OnGameStart.Add(hooks) end
 hooks()
-print("[ALifeWarMap] loaded v0.7.0 (known wars and estimated territory on your map)")
+print("[ALifeWarMap] loaded v" .. ALifeSide.MOD_VERSION .. " (known wars and estimated territory on your map)")

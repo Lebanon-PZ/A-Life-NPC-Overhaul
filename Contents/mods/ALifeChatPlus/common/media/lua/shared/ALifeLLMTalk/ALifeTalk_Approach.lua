@@ -16,7 +16,7 @@ require "ALifeLLMTalk/ALifeLLMTalk_Main"
 ALifeApproach = ALifeApproach or {}
 local K = ALifeApproach
 local TAG = "[ALifeApproach]"
-K.VERSION = "0.8.3"
+K.VERSION = ALifeSide.MOD_VERSION
 K.DEFAULTS = { talkApproach = true, approachGapH = 1.5, approachPerNpcH = 24, approachTiles = 20 }
 K.metrics = K.metrics or { started = 0, arrived = 0, lost = 0, timedOut = 0 }
 K.WALK_MS, K.LISTEN_MS = 45000, 20000

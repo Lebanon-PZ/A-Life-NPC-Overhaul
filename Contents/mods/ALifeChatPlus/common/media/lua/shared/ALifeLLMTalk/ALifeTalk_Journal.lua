@@ -259,7 +259,7 @@ function M.jnInstall()
             return r
         end
     end
-    print("[ALifeJournal] loaded v0.6.9 (the Places window is your journal: what you know, who told you, when; marked on your map by hand)")
+    print("[ALifeJournal] loaded v" .. ALifeSide.MOD_VERSION .. " (the Places window is your journal: what you know, who told you, when; marked on your map by hand)")
     return true
 end
 -- pre-1.0 MP (P5): "mark on my map" from the Places window runs on the server as you (it has the bases)

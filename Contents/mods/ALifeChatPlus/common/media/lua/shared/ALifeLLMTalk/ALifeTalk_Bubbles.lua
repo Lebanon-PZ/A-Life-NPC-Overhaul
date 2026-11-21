@@ -15,7 +15,7 @@ if type(M) ~= "table" then return end
 local TAG = "[ALifeBubbles]"
 ALifeBubbles = ALifeBubbles or {}
 local K = ALifeBubbles
-K.VERSION = "0.9.6"
+K.VERSION = ALifeSide.MOD_VERSION
 K.keep, K.shown = {}, {}
 K.metrics = { plain = 0, capped = 0, pruned = 0 }
 

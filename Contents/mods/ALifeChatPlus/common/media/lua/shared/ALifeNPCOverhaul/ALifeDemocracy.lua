@@ -11,13 +11,14 @@
 --   * No numbers: "most of them", "about half", "only a few".
 -- Store: global ModData "ALifeChatPlus_Democracy": [baseId] = { door, lastVote }.
 -- Commands (ALifeCmd): demVote { law, value } -> demResult.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 if ALifeCampVote == nil then require "ALifeNPCOverhaul/ALifeCampVote" end -- pre-1.0: loaded first by folder order before (ALifeChatPlus sorted first); now a real require
 
 ALifeDemocracy = ALifeDemocracy or {}
 local D = ALifeDemocracy
 local TAG = "[ALifeDemocracy]"
-D.VERSION = "0.9.5"
+D.VERSION = ALifeSide.MOD_VERSION
 D.MODDATA = "ALifeChatPlus_Democracy"
 D.DEFAULTS = {
     democracyLaws = true,   -- you can put laws to a vote
@@ -62,7 +63,7 @@ function D.store()
     d.by = type(d.by) == "table" and d.by or {}
     return d
 end
-local function transmit() if type(ModData) == "table" and fn(ModData, "transmit") and type(isServer) == "function" and isServer() then pcall(ModData.transmit, D.MODDATA) end end
+local function transmit() if type(ModData) == "table" and fn(ModData, "transmit") and ALifeSide.server() then pcall(ModData.transmit, D.MODDATA) end end
 function D.rowOf(baseId)
     local d = D.store()
     local r = d.by[tostring(baseId)]

@@ -81,4 +81,4 @@ if not M._ptHooked and type(Events) == "table" and Events.OnTickEvenPaused then
     end
     if type(ALifeHealth) == "table" then ALifeHealth.add(Events.OnTickEvenPaused, "ALifeTalk_PausedTalk", tick) else Events.OnTickEvenPaused.Add(tick) end
 end
-print("[ALifePausedTalk] loaded v0.7.0.2 (talk while paused)")
+print("[ALifePausedTalk] loaded v" .. ALifeSide.MOD_VERSION .. " (talk while paused)")

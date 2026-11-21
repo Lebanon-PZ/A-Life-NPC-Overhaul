@@ -27,12 +27,13 @@
 --   * MP: the rest of your faction is warned.
 -- Server-authoritative (state in global ModData); the client does what only the client can (your body: the black-out,
 -- moving you, hunger and thirst, injuries; your hands).
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeCapture = ALifeCapture or {}
 local C = ALifeCapture
 local TAG = "[ALifeCapture]"
-C.VERSION = "0.8.5"
+C.VERSION = ALifeSide.MOD_VERSION
 C.metrics = C.metrics or { taken = 0, lastStands = 0, surrenders = 0, escaped = 0, caught = 0, talkedOut = 0, ransomed = 0,
     rescued = 0, oath = 0, worked = 0, freed = 0 }
 
@@ -216,7 +217,7 @@ function C.strip(player, leaderUid)
         end)
         local ok = pcall(function() inv:Remove(it) end)
         if ok then
-            if type(isServer) == "function" and isServer() and type(sendRemoveItemFromContainer) == "function" then pcall(sendRemoveItemFromContainer, inv, it) end
+            if ALifeSide.server() and type(sendRemoveItemFromContainer) == "function" then pcall(sendRemoveItemFromContainer, inv, it) end
             if theirs ~= nil then pcall(function() theirs:AddItem(it) end) end
             taken[#taken + 1] = tostring(call(it, "getFullType"))
         end
@@ -324,7 +325,7 @@ end
 
 -- MP: the rest of your faction hears of it
 function C.warnFaction(player, s)
-    if not (type(isServer) == "function" and isServer()) or type(getOnlinePlayers) ~= "function" then return 0 end
+    if ALifeSide.ui() or type(getOnlinePlayers) ~= "function" then return 0 end
     local J = ProjectALifeJimmy
     local B = J and J.BaseAreas
     if not fn(B, "who") then return 0 end
@@ -683,7 +684,7 @@ end
 function C.players()
     local out = {}
     pcall(function()
-        if type(isServer) == "function" and isServer() and type(getOnlinePlayers) == "function" then
+        if ALifeSide.server() and type(getOnlinePlayers) == "function" then
             local l = getOnlinePlayers()
             for i = 0, l:size() - 1 do out[#out + 1] = l:get(i) end
         else
@@ -694,7 +695,7 @@ function C.players()
     return out
 end
 function C.tick()
-    if type(isClient) == "function" and isClient() then return end
+    if ALifeSide.client() then return end
     local h = C.hours()
     for _, p in ipairs(C.players()) do pcall(C.tickPlayer, p, h) end
 end

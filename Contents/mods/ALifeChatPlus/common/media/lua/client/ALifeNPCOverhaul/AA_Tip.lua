@@ -12,10 +12,11 @@
 -- Settings (in game, Settings > Interface): tipsOn, tipShowMs, tipHideMs.
 -- Performance: one table check per button per frame; the tooltip panel exists only while a tip is on screen.
 -- Vanilla's own sandbox screen and right-click menus keep vanilla's tooltips (vanilla UI, every mod shares it).
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 AA_Tip = AA_Tip or {}
 local A = AA_Tip
-A.VERSION = "pre-1.0"
+A.VERSION = ALifeSide.MOD_VERSION
 local M = ALifeLLMTalk
 if type(M) ~= "table" then M = {} end
 

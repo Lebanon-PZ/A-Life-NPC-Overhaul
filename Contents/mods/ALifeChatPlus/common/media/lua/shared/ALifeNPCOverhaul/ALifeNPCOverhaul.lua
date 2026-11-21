@@ -8,8 +8,9 @@
 --   * door talk and visitor talk get the same treatment
 -- Every hook keeps the original, calls it first, and only steps in when it failed or was weak.
 
+require "ALifeNPCOverhaul/AA_Side"
 local TAG = "[ALifeNPCOverhaul]"
-local VERSION = "1.6.0"
+local VERSION = ALifeSide.MOD_VERSION
 
 ALifeNPCOverhaul = ALifeNPCOverhaul or {}
 local CP = ALifeNPCOverhaul
@@ -443,7 +444,7 @@ local function plusClassify(text, pending, data)
         if bestId ~= id then
             CP.metrics.rescued = CP.metrics.rescued + 1
             if CP.log then
-                print(TAG .. " heard '" .. tostring(text) .. "' as " .. bestId .. " (" .. tostring(how or "weak") ..
+                ALifeHealth.note(TAG, "heard '" .. tostring(text) .. "' as " .. bestId .. " (" .. tostring(how or "weak") ..
                     ", was " .. tostring(id) .. ")")
             end
         end

@@ -20,7 +20,7 @@ ALifeFieldJobs = ALifeFieldJobs or {}
 local F = ALifeFieldJobs
 local L = ALifeCommands
 local TAG = "[ALifeFieldJobs]"
-F.VERSION = "0.8.9"
+F.VERSION = ALifeSide.MOD_VERSION
 F.off = F.off or {}
 F.jobs = F.jobs or {}
 F.metrics = F.metrics or { started = 0, done = 0, failed = 0, noise = 0, looted = 0, fed = 0, delivered = 0 }

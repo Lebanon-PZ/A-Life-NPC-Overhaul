@@ -1112,7 +1112,7 @@ if type(Events) == "table" and Events.OnGameStart then
             table.insert(M.requestExtras, function(req, player, listener, now) pcall(M.bdExtra, req, player, listener) end)
             M._bdExtraOn = true
         end
-        print("[ALifeNPCOverhaul] build loaded v0.3.2 (" .. (M.bdOn() and "on" or "off") .. ", A-Life module " .. (M._bdRegistered and "registered" or "not yet") .. ")")
+        print("[ALifeNPCOverhaul] build loaded v" .. ALifeSide.MOD_VERSION .. " (" .. (M.bdOn() and "on" or "off") .. ", A-Life module " .. (M._bdRegistered and "registered" or "not yet") .. ")")
     end)
 end
 return M

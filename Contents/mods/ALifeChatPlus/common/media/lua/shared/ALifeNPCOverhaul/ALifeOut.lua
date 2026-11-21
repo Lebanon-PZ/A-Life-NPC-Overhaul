@@ -11,7 +11,7 @@ require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 ALifeOut = ALifeOut or {}
 local O = ALifeOut
-O.VERSION = "0.9.5"
+O.VERSION = ALifeSide.MOD_VERSION
 O.cards = O.cards or {}
 O.seq = O.seq or 0
 O.CARD_TTL_H = 48

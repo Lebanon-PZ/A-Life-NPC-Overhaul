@@ -11,6 +11,7 @@
 -- Every page fits the screen, scrolls, can be resized from its bottom-right corner, and uses a bigger font on big
 -- screens. The first time you open a tab you get a short tip (Help > "Show the tips again").
 -- Performance: a page refreshes only while it's open (every 2 s); one 3D avatar at a time.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 local M = ALifeLLMTalk
 if type(M) ~= "table" then return end
@@ -912,7 +913,7 @@ function M.winInstall()
             end
         end
     end
-    print("[ALifeWindow] loaded v0.7.0.1 (one A-Life window: Now, People, Party, Camp, Trade, World, Radio, Settings, Help)")
+    print("[ALifeWindow] loaded v" .. ALifeSide.MOD_VERSION .. " (one A-Life window: Now, People, Party, Camp, Trade, World, Radio, Settings, Help)")
     return true
 end
 if not M.winInstall() and Events and Events.OnGameStart then Events.OnGameStart.Add(function() pcall(M.winInstall) end) end

@@ -24,7 +24,7 @@ if type(M) ~= "table" then return end
 ALifeTalkCommands = ALifeTalkCommands or {}
 local K = ALifeTalkCommands
 local TAG = "[ALifeTalkCommands]"
-K.VERSION = "0.8.9"
+K.VERSION = ALifeSide.MOD_VERSION
 K.off = K.off or {}
 K.metrics = K.metrics or { lines = 0, sent = 0, results = 0, buttons = 0 }
 

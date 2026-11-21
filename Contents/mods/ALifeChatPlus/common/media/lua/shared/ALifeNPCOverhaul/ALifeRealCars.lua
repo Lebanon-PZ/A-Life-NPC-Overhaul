@@ -17,10 +17,11 @@
 -- Every hook wraps A-Life's own function or uses its adapter slots, returns its result, and switches itself off if
 -- it errors. Server/SP only (A-Life's car life runs on the authority).
 
+require "ALifeNPCOverhaul/AA_Side"
 ALifeRealCars = ALifeRealCars or {}
 local R = ALifeRealCars
 local TAG = "[ALifeRealCars]"
-R.VERSION = "0.8.4"
+R.VERSION = ALifeSide.MOD_VERSION
 
 -- settings (they live with the rest of the mod's settings; these are only the defaults; A-Life's own values)
 R.DEFAULTS = {
@@ -288,7 +289,7 @@ R.HOOKS = { "options", "inBase", "carInfo", "fuelSources", "depart", "offlineEna
 function R.install()
     local pa = PA()
     if pa == nil then return 0, R.HOOKS end
-    if type(isClient) == "function" and isClient() then R.client = true; return 0, {} end -- car life runs on the server
+    if ALifeSide.client() then R.client = true; return 0, {} end -- car life runs on the server
     -- the server files that hold car life and its keys load after shared/: ask for them by name
     pcall(require, "ProjectALife/Driving/ALifeCarLifeServer")
     pcall(require, "ProjectALife/Driving/ALifeCarLifeActions")

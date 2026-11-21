@@ -1,6 +1,7 @@
 -- A-Life Talk 0.4.0: floating opinion popup. When an NPC's opinion of the player changes (talk, gift, plea, insult,
 -- overheard, A-Life deeds) a "+2" (green) / "-7" (red) and a mini relationship bar float above their head for ~3 s,
 -- then fade. Screen space: one small UIElement per popup, moved every frame to the NPC's projected head position.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 require "ALifeLLMTalk/ALifeLLMTalk_Theme"
 if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "Popup"; if ALifeLLMTalk.fileBegin then ALifeLLMTalk.fileBegin("Popup") end end -- 0.5.1.6 perf label

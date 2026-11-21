@@ -13,7 +13,7 @@ local Q = ALifeQuests
 
 ALifeTalkQuests = ALifeTalkQuests or {}
 local K = ALifeTalkQuests
-K.VERSION = "0.8.6"
+K.VERSION = ALifeSide.MOD_VERSION
 
 -- load time, before the settings file is read (else the keys reset on restart)
 function K.settings()

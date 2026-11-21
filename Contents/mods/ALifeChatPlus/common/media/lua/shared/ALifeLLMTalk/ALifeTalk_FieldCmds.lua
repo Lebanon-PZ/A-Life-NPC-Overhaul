@@ -25,7 +25,7 @@ local F = ALifeFieldJobs
 ALifeFieldCmds = ALifeFieldCmds or {}
 local FC = ALifeFieldCmds
 local TAG = "[ALifeFieldCmds]"
-FC.VERSION = "0.8.9"
+FC.VERSION = ALifeSide.MOD_VERSION
 FC.off = FC.off or {}
 FC.metrics = FC.metrics or { warned = 0, dropsSeen = 0, dropsTaken = 0, leaders = 0, places = 0, noTarget = 0 }
 
@@ -640,7 +640,7 @@ end
 -- food you drop: someone hungry nearby takes it (single player: the drop action completes here)
 ----------------------------------------------------------------------------------------------------------------
 FC.drops = FC.drops or {}
-local function isMP() return type(isClient) == "function" and isClient() == true end
+local function isMP() return ALifeSide.client() end
 local function foodKind(item)
     local food = false
     pcall(function() food = instanceof(item, "Food") end)

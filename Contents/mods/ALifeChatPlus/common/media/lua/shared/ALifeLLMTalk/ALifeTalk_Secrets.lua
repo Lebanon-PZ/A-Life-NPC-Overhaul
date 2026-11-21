@@ -16,7 +16,7 @@ if type(M) ~= "table" then return end
 ALifeSecrets = ALifeSecrets or {}
 local S = ALifeSecrets
 local TAG = "[ALifeSecrets]"
-S.VERSION = "0.9.5"
+S.VERSION = ALifeSide.MOD_VERSION
 S.DEFAULTS = { secrets = true, secretLetterChance = 8 }
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 local function PA() return type(ProjectALife) == "table" and ProjectALife or {} end

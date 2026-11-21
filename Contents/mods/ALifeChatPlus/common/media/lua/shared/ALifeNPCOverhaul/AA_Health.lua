@@ -19,6 +19,15 @@ local function now() return type(getTimestampMs) == "function" and getTimestampM
 local function hours() local h = 0; pcall(function() h = getGameTime():getWorldAgeHours() end); return tonumber(h) or 0 end
 local function on() local M = ALifeLLMTalk; return not (type(M) == "table" and type(M.settings) == "table" and M.settings.healthLog == false) end
 
+-- pre-1.0: NOTE. The one path for step-by-step console notes (a trade, an order, a prisoner taken, why a car refused).
+-- Setting logDetail (default on: testers' console.txt keeps them); off = console shows only ready lines and errors,
+-- which stay plain print() everywhere.
+function HL.note(tag, msg)
+    local M = ALifeLLMTalk
+    if type(M) == "table" and type(M.settings) == "table" and M.settings.logDetail == false then return end
+    print(tostring(tag) .. " " .. tostring(msg))
+end
+
 local function stat(label)
     local s = HL.stats[label]
     if s == nil then s = { calls = 0, ms = 0, max = 0, wCalls = 0, wMs = 0, windows = 0, lastCalls = 0, lastMs = 0 }; HL.stats[label] = s end

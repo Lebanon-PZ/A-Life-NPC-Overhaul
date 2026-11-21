@@ -17,7 +17,7 @@ local Events = ALifeSide.hooks("world", "ALifeCompanionLink") -- pre-1.0 MP: one
 ALifeCompanionLink = ALifeCompanionLink or {}
 local L = ALifeCompanionLink
 local TAG = "[ALifeCompanionLink]"
-L.VERSION = "0.7.3"
+L.VERSION = ALifeSide.MOD_VERSION
 -- our order words -> A-Life's (Rules.ORDERS in ALifeCompanionRules)
 L.ORDER_MAP = { follow = "follow", hold = "hold", guard = "hold", wait = "wait", fall_back = "retreat", cover_me = "cover_me", come = "come" }
 L.off = L.off or {}           -- hook name -> true once it failed (off for the session)

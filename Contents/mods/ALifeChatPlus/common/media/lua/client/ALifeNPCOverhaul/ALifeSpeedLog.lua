@@ -66,7 +66,7 @@ function S.install()
             return fallback(p, ...)
         end
     end
-    print(TAG .. " measuring AI reply times -> Zomboid/Lua/alifeai_speed.txt")
+    ALifeHealth.note(TAG, "measuring AI reply times -> Zomboid/Lua/alifeai_speed.txt")
     return true
 end
 

@@ -17,7 +17,7 @@ local Events = ALifeSide.hooks("world", "ALifeTasksLetters") -- pre-1.0 MP: one 
 ALifeTasksLetters = ALifeTasksLetters or {}
 local L = ALifeTasksLetters
 local TAG = "[ALifeTasksLetters]"
-L.VERSION = "0.7.8"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = { letterChance = 0.35, letterLove = 2, giveTiles = 3, keepH = 24, maxHeld = 3 }
 L.TITLES = {
     { kind = "juggernaut", title = "the one who drops the walking tanks", w = 3 },

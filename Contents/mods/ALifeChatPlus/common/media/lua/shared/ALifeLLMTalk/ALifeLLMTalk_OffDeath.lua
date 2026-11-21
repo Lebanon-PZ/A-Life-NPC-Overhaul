@@ -191,7 +191,7 @@ function M.confirmDeath(uid, src, info)
     end
     if src ~= "event" and M.logInteraction then pcall(M.logInteraction, uid, "Died while you weren't there (" .. how .. ")", nil, nil, "event") end
     M.odStats.confirmed = M.odStats.confirmed + 1
-    print("[ALifeTalk][Death] " .. (src == "event" and "death" or "off-screen death") .. " confirmed: " .. tostring(name) .. " (" .. uid .. ") - " .. tostring(src)
+    ALifeHealth.note("[ALifeTalk][Death]", (src == "event" and "death" or "off-screen death") .. " confirmed: " .. tostring(name) .. " (" .. uid .. ") - " .. tostring(src)
         .. (#twins > 0 and (" - merged " .. #twins .. " older row(s) of the same person") or ""))
     return true
 end

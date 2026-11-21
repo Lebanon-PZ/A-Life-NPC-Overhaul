@@ -165,7 +165,7 @@ function M.keepLog(msg, key, gapMs)
         if now - (M.keepLogAt[key] or -1e12) < (gapMs or 600000) then return end
         M.keepLogAt[key] = now
     end
-    print("[ALifeTalk][Keep] " .. tostring(msg))
+    ALifeHealth.note("[ALifeTalk][Keep]", msg)
 end
 local function copyT(t, depth)
     if type(t) ~= "table" or (depth or 0) > 3 then return t end

@@ -9,7 +9,7 @@ require "ALifeLLMTalk/ALifeLLMTalk_Main"
 
 ALifePace = ALifePace or {}
 local P = ALifePace
-P.VERSION = "0.8.3"
+P.VERSION = ALifeSide.MOD_VERSION
 P.DEFAULTS = { talkLength = 1, thinkBeatMs = 3000, replyPace = true }
 P.MORE_WORDS = { "story", "tell me about", "what happened", "how did it", "what was it like", "go on" }
 

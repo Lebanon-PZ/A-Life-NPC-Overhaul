@@ -79,7 +79,7 @@ function S.tick()
         local text = "A-Life NPC Overhaul: your AI model (" .. tostring(st.fallback_from) .. ") didn't load in time, so NPCs use "
             .. tostring(st.fallback) .. " for now. Why: Zomboid\\Lua\\alifeai_bridge_log.txt. It tries yours again next game."
         if player then pcall(ALifeLetter, player, text, 242, 200, 120) end
-        print(TAG .. " model fallback: " .. tostring(st.fallback_from) .. " -> " .. tostring(st.fallback))
+        ALifeHealth.note(TAG, "model fallback: " .. tostring(st.fallback_from) .. " -> " .. tostring(st.fallback))
     end
     local p = S.problem(ok and st or nil)
     -- give the helper time to start with the game before complaining
@@ -103,7 +103,7 @@ function S.tick()
             if p then pcall(ALifeLetter, player, p, 255, 120, 80, true)
             elseif S.last and S.saidReady then pcall(function() player:setHaloNote("A-Life NPC Overhaul: AI and voice ready", 120, 255, 120, 300) end) end
         end
-        print(TAG .. " " .. tostring(p or "all ok"))
+        ALifeHealth.note(TAG, tostring(p or "all ok"))
         S.last = p
     end
 end

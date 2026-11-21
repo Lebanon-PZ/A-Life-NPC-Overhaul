@@ -7,6 +7,7 @@
 --            "See all ›" -> the Close with tab
 -- Drawing: vanilla ISUIElement only. The ring is made of quads (drawPolygon, else drawTextureAllPoint with a white
 -- texture); without either it falls back to a stacked bar so the page always works.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "UIPage"; if ALifeLLMTalk.fileBegin then ALifeLLMTalk.fileBegin("UIPage") end end -- 0.5.1.6 perf label
 

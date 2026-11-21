@@ -14,12 +14,13 @@
 -- Jeem calls read in 3806944055: J.on("refugeesArrived", {visitId, baseId}), J.TraderStock.data().visits / visitOf,
 -- J.RefugeeJoin.answer(player|key, uid, yes) (also used by ALifeLieutenant; with a key only it's UNVERIFIED in game),
 -- J.BaseAreas.base / who / canManage, J.Traders.visits.players / managers.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeGateGuard = ALifeGateGuard or {}
 local G = ALifeGateGuard
 local TAG = "[ALifeGateGuard]"
-G.VERSION = "0.8.8"
+G.VERSION = ALifeSide.MOD_VERSION
 G.DEFAULTS = {
     gateGuard = true,       -- you can put someone on the gate
     gateTurnHostile = true, -- the guard sends off people who run with your enemies, without asking you
@@ -272,13 +273,13 @@ end
 if type(Events) == "table" then
     if Events.EveryHours ~= nil then
         ALifeSide.stagger("EveryHours", function()
-            if type(isClient) == "function" and isClient() then return end
+            if ALifeSide.client() then return end
             local ok, err = pcall(G.tick)
             if not ok and not G.tickErr then G.tickErr = true; log("tick error (once): " .. tostring(err)) end
         end)
     end
     local function start()
-        if type(isClient) == "function" and isClient() then return end
+        if ALifeSide.client() then return end
         local ok = pcall(G.install)
         if not G.said then
             G.said = true

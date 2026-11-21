@@ -31,7 +31,7 @@ function N.check()
     if type(M) == "table" and type(M.settings) == "table" and (M.settings.enabled == false or M.settings.honestScavenge == false) then return end
     local issues = N.lootIssues()
     if #issues == 0 then return end
-    print(TAG .. " loot settings that fight \"the world bleeds dry\": " .. table.concat(issues, "; "))
+    ALifeHealth.note(TAG, "loot settings that fight \"the world bleeds dry\": " .. table.concat(issues, "; "))
     local md = ModData and ModData.getOrCreate and ModData.getOrCreate("ALifeChatPlus.Notices") or nil
     if md == nil or md.lootSettings then return end
     md.lootSettings = true

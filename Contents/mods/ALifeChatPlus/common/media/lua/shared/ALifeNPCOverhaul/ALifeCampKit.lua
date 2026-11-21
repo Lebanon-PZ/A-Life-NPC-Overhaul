@@ -6,7 +6,7 @@
 require "ALifeNPCOverhaul/AA_Side"
 ALifeCampKit = ALifeCampKit or {}
 local K = ALifeCampKit
-K.VERSION = "pre-1.0"
+K.VERSION = ALifeSide.MOD_VERSION
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 K.fn = fn
 function K.M() return type(ALifeLLMTalk) == "table" and ALifeLLMTalk or nil end

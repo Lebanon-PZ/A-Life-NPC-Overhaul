@@ -51,7 +51,7 @@ function M.actLog(msg, key, gapMs)
         if now - (M.actLogAt[key] or -1e12) < (gapMs or 120000) then return end
         M.actLogAt[key] = now
     end
-    print("[ALifeTalk][Activity] " .. tostring(msg))
+    ALifeHealth.note("[ALifeTalk][Activity]", msg)
 end
 local function actName(uid)
     local n = nil

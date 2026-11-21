@@ -16,7 +16,7 @@ require "ALifeNPCOverhaul/ALifeCmd"
 ALifeCampWork = ALifeCampWork or {}
 local W = ALifeCampWork
 local TAG = "[ALifeCampWork]"
-W.VERSION = "0.8.8"
+W.VERSION = ALifeSide.MOD_VERSION
 W.DEFAULTS = { campWork = true }
 W.KEYS = { "campWork" }
 W.JOBS = { woodcutter = true, carpenter = true, branches = true, twigs = true, stones = true, quartermaster = true, farmer = true }

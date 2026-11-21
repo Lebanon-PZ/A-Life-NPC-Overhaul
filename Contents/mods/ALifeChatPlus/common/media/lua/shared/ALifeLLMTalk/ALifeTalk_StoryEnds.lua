@@ -20,7 +20,7 @@ if type(M) ~= "table" or type(K) ~= "table" then return end
 ALifeStoryEnds = ALifeStoryEnds or {}
 local E = ALifeStoryEnds
 local TAG = "[ALifeStoryEnds]"
-E.VERSION = "0.9.1"
+E.VERSION = ALifeSide.MOD_VERSION
 E.DEFAULTS = {
     storyInherit = 50,     -- % of a dead person's grudge against you their family carries on
     storyFamiliar = true,  -- a turned camp member sometimes drifts back toward the camp

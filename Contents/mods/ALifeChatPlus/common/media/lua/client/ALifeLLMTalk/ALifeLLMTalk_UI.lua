@@ -1,6 +1,7 @@
 -- A-Life Talk 0.4.0: relationship windows (per-NPC panel with Overview / Memories / Ties / Interactions tabs, master
 -- list with sorting + filtering), radio status bar and settings window - all on the shared dark theme
 -- (ALifeLLMTalk_Theme.lua: ALifeLLMTalkWindow, UIStyle). Read-only views of A-Life data plus our own layers.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 require "ALifeLLMTalk/ALifeLLMTalk_Theme"
 if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "UI"; if ALifeLLMTalk.fileBegin then ALifeLLMTalk.fileBegin("UI") end end -- 0.5.1.6 perf label

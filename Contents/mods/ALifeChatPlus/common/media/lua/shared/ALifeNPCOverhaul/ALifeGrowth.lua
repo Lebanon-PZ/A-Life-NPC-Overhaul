@@ -11,12 +11,13 @@
 --   * SCOUT: once a day a scout reports who's really out there: living A-Life people of other groups within scoutReach
 --     of the scout, by group, how many and which way, and whether that group is hostile to the camp. Nothing invented.
 -- Not built (no real path yet): hunter (no NPC hunting in A-Life or Jeem), trader (no trade path to make better).
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeGrowth = ALifeGrowth or {}
 local G = ALifeGrowth
 local TAG = "[ALifeGrowth]"
-G.VERSION = "0.8.8"
+G.VERSION = ALifeSide.MOD_VERSION
 G.DEFAULTS = {
     growth = true,        -- people get better at their camp job over time
     growDays = 6,         -- days of practice per skill level (x the level they're going for)
@@ -244,7 +245,7 @@ function G.playerByKey(key)
         if ok and type(list) == "table" then for _, p in ipairs(list) do if tostring(p.key) == tostring(key) then return p.player end end end
     end
     local p = nil
-    if type(isServer) ~= "function" or not isServer() then pcall(function() p = getSpecificPlayer(0) end) end -- single player only
+    if ALifeSide.ui() then pcall(function() p = getSpecificPlayer(0) end) end -- single player only
     return p
 end
 function G.day()
@@ -297,7 +298,7 @@ if type(Events) == "table" then
     if Events.EveryHours ~= nil then
         ALifeSide.stagger("EveryHours", function()
             if not G.on() then return end
-            if type(isClient) == "function" and isClient() then return end -- MP: the server does it
+            if ALifeSide.client() then return end -- MP: the server does it
             local okT, errT = pcall(G.teach, 1)
             if not okT and not G.teachErr then G.teachErr = true; log("teach error (once): " .. tostring(errT)) end
             local d = math.floor(G.hours() / 24)

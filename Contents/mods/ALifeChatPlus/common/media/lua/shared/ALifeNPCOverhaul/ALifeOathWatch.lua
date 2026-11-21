@@ -15,7 +15,7 @@ local Events = ALifeSide.hooks("world", "ALifeOathWatch") -- pre-1.0 MP: one sid
 ALifeOathWatch = ALifeOathWatch or {}
 local L = ALifeOathWatch
 local TAG = "[ALifeOathWatch]"
-L.VERSION = "0.7.10"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = { oathLove = 5, oathOpinion = 80, swearTiles = 5, guardTiles = 2.5, biteTiles = 1.6, nights = 30, lookMul = 2, poseMs = 30000 }
 L.OATH_LINES = { "Whatever comes, I'm with you. I swear it.", "You have my word. I'm not going anywhere. Not ever.",
     "I swear it. As long as I'm breathing, I've got your back." }

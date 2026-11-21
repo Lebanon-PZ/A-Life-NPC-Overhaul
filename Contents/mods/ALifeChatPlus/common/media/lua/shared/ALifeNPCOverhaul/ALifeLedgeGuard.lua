@@ -8,10 +8,11 @@
 -- Verified calls: IsoGridSquare:TreatAsSolidFloor / HasStairs (vanilla DebugChunkState + PolygonalMap2), getGridSquare,
 -- IsoGameCharacter getForwardDirectionX/Y, isMoving, isClimbing, isDead, getPathFindBehavior2, setPath2, setMoving.
 -- All numbers are player settings (ledgeGuard, ledgeLookTiles, ledgeCheckMs).
+require "ALifeNPCOverhaul/AA_Side"
 ALifeLedgeGuard = ALifeLedgeGuard or {}
 local L = ALifeLedgeGuard
 local TAG = "[ALifeLedgeGuard]"
-L.VERSION = "pre-1.0"
+L.VERSION = ALifeSide.MOD_VERSION
 L.DEFAULTS = {
     ledgeGuard = true,     -- stop NPCs before they step onto a square with no floor
     ledgeLookTiles = 1.0,  -- how far ahead (tiles) they look
@@ -98,7 +99,7 @@ end
 
 function L.tick()
     if not L.on() then return end
-    if type(isClient) == "function" and isClient() then return end
+    if ALifeSide.client() then return end
     local now = nowMs()
     if now < num(L.nextMs, 0) then return end
     L.nextMs = now + math.max(50, num(L.setting("ledgeCheckMs"), 150))
@@ -120,7 +121,7 @@ function L.tick()
                 L.stop(shell)
                 L.metrics.stops = L.metrics.stops + 1
                 if L.metrics.stops <= 20 or L.metrics.stops % 50 == 0 then
-                    log(string.format("stopped %s at the edge (%.1f,%.1f,z%d) #%d", uid, shell:getX(), shell:getY(),
+                    log(string.format("stopped %s at the edge (%s,%s,z%d) #%d", uid, ALifeFmtDec(shell:getX(), 1), ALifeFmtDec(shell:getY(), 1), -- pre-1.0: no %.1f (Kahlua throws)
                         math.floor(shell:getZ() + 0.05), L.metrics.stops))
                 end
             end

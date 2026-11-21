@@ -18,10 +18,10 @@ if type(M) ~= "table" or type(K) ~= "table" then return end
 ALifeMemberUI = ALifeMemberUI or {}
 local U = ALifeMemberUI
 local TAG = "[ALifeMemberUI]"
-U.VERSION = "0.9.2"
+U.VERSION = ALifeSide.MOD_VERSION
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 local function playerOf() local p = nil; pcall(function() p = ALifeSide.you() end); return p end
-local function isMP() return type(isClient) == "function" and isClient() end
+local function isMP() return ALifeSide.client() end
 local function toast(t) if fn(M, "momToast") then pcall(M.momToast, t) end end
 local function letter(t) if type(ALifeLetter) == "function" and playerOf() then pcall(ALifeLetter, playerOf(), t, 200, 200, 160) end end
 local function send(name, args) local p = playerOf(); if p and fn(ALifeCmd, "send") then pcall(ALifeCmd.send, p, name, args or {}) end end

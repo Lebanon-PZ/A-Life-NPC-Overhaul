@@ -16,12 +16,13 @@
 -- Store: global ModData "ALifeChatPlus_Legacy": [key] = { name, title, heir, heirName, baseId, h, x, y, z, owner, old }.
 -- Commands (ALifeCmd): legacyDied (the client saw you die; the server checks), legacyAsk / legacyKin -> legacyState.
 -- Multiplayer: only when no other living player of that key... and no other member of the faction is online.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeLegacy = ALifeLegacy or {}
 local G = ALifeLegacy
 local TAG = "[ALifeLegacy]"
-G.VERSION = "0.9.2"
+G.VERSION = ALifeSide.MOD_VERSION
 G.MODDATA = "ALifeChatPlus_Legacy"
 G.DEFAULTS = {
     legacy = true,          -- the camp goes on after you die
@@ -75,7 +76,7 @@ function G.store()
     d.by = type(d.by) == "table" and d.by or {}
     return d
 end
-local function transmit() if type(ModData) == "table" and fn(ModData, "transmit") and type(isServer) == "function" and isServer() then pcall(ModData.transmit, G.MODDATA) end end
+local function transmit() if type(ModData) == "table" and fn(ModData, "transmit") and ALifeSide.server() then pcall(ModData.transmit, G.MODDATA) end end
 function G.keyOf(player)
     if type(player) == "string" then return player end
     local j = J()

@@ -18,7 +18,7 @@ local Events = ALifeSide.hooks("world", "ALifeSaboteur") -- pre-1.0 MP: one side
 ALifeSaboteur = ALifeSaboteur or {}
 local L = ALifeSaboteur
 local TAG = "[ALifeSaboteur]"
-L.VERSION = "0.7.14"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = { raidedH = 72, windowDays = 30, chance = 0.35, newLines = 8, tellEveryH = 30, noticeAt = 2, leaveAt = 5,
     scanTiles = 30, maxContainers = 60, turnChance = 0.35, reach = 5000, baitDays = 3 }
 L.AMMO = { "Bullets", "ShotgunShells" }

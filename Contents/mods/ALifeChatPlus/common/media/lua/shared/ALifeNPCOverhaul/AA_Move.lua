@@ -43,4 +43,4 @@ function M.body(shell, x, y, z)
     return ok
 end
 
-print("[ALifeMove] loaded v0.7.0.8 (long NPC moves tell A-Life's watchdog)")
+print("[ALifeMove] loaded v" .. tostring(type(ALifeSide) == "table" and ALifeSide.MOD_VERSION or "?") .. " (long NPC moves tell A-Life's watchdog)")

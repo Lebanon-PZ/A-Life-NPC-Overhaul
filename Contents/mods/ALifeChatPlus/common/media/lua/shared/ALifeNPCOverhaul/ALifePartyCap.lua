@@ -18,7 +18,7 @@ require "ALifeNPCOverhaul/ALifeCellCars"
 ALifePartyCap = ALifePartyCap or {}
 local L = ALifePartyCap
 local TAG = "[ALifePartyCap]"
-L.VERSION = "0.8.2"
+L.VERSION = ALifeSide.MOD_VERSION
 L.metrics = L.metrics or { checks = 0, synced = 0 }
 L.cache = L.cache or { at = -1e12, cap = nil, met = nil }
 

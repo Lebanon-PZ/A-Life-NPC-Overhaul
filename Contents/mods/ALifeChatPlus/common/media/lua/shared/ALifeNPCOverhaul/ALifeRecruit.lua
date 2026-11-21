@@ -158,14 +158,14 @@ function RC.ask(kind, record, shell, player, text)
     local base = RC.baseFor(player, record, shell)
     if base == nil then return pick(RC.LINES.no_base), "refused" end
     local score, why, no = RC.weigh(record, shell, player, text, kind)
-    print(string.format("%s %s: score %d (%s)%s", TAG, kind, score, tostring(why), no and (" -> " .. no) or " -> yes"))
+    ALifeHealth.note(TAG, string.format("%s: score %d (%s)%s", kind, score, tostring(why), no and (" -> " .. no) or " -> yes"))
     if no ~= nil then return pick(RC.LINES[no]), "refused" end
     RC.approved[record.uid] = true
     local ok, n, err = pcall(Rs.recruit, player, record.uid, base.id, false)
     RC.approved[record.uid] = nil
     if not ok or n == nil then
         local e = tostring(ok and err or n)
-        print(TAG .. " Jeem refused: " .. e)
+        ALifeHealth.note(TAG, "Jeem refused: " .. e)
         if e == "full" or e == "full_cap" or e == "no_beds" then return pick(RC.LINES.no_full), "refused" end
         return pick(RC.LINES.no_busy), "refused"
     end

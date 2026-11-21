@@ -14,7 +14,7 @@ if type(M) ~= "table" then return end
 local TAG = "[ALifeEarshot]"
 ALifeEarshot = ALifeEarshot or {}
 local K = ALifeEarshot
-K.VERSION = "0.9.6"
+K.VERSION = ALifeSide.MOD_VERSION
 K.metrics = { shown = 0, garbled = 0, hidden = 0 }
 
 local function setting(key, default)

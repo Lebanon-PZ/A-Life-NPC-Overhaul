@@ -22,7 +22,7 @@ if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "Story"; if ALifeLLMT
 ALifeGoals = ALifeGoals or {}
 local K = ALifeGoals
 local TAG = "[ALifeGoals]"
-K.VERSION = "0.9.1"
+K.VERSION = ALifeSide.MOD_VERSION
 K.DEFAULTS = {
     questCleanWant = 40,   -- % of real drinkers who want to stop
     questStoryBond = 25,   -- how much a tie mends when you walk them to family / to make it right

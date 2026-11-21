@@ -9,6 +9,11 @@
 -- (ALifeChatPlus) sorted before ALifeLLMTalk; the folder is ALifeNPCOverhaul now and sorts after it, so the order is
 -- made real here instead of relying on folder names. None of them requires anything (no loop). One that is already
 -- there (its global exists: loaded, or stood in for by a test) is left alone.
+-- pre-1.0: THE mod version, the one place it is written. Every ready line and module VERSION reads it (set before the
+-- AA_ requires below so they can read it too). Bump with mod.info / CHANGELOG. The bridge protocol version is separate
+-- (ALifeLLMTalk_Main M.VERSION).
+ALifeSide = ALifeSide or {}
+ALifeSide.MOD_VERSION = "pre-1.0"
 if ALifeHealth == nil then require "ALifeNPCOverhaul/AA_Health" end
 if ALifeTick == nil then require "ALifeNPCOverhaul/AA_Tick" end
 if ALifeTr == nil then require "ALifeNPCOverhaul/AA_Tr" end
@@ -19,10 +24,14 @@ if ALifeMove == nil then require "ALifeNPCOverhaul/AA_Move" end
 if ALifeRadial == nil then require "ALifeNPCOverhaul/AA_Radial" end
 ALifeSide = ALifeSide or {}
 local S = ALifeSide
-S.VERSION = "pre-1.0"
+S.VERSION = S.MOD_VERSION
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 local function client() return type(isClient) == "function" and isClient() == true end
 local function server() return type(isServer) == "function" and isServer() == true end
+-- pre-1.0: raw engine flags, the one place they are read. Other files use these (or world/ui) instead of their own
+-- type(isClient) checks, so every side decision can be found with one search for "ALifeSide.".
+function S.client() return client() end
+function S.server() return server() end
 function S.sp() return not client() and not server() end
 function S.mpServer() return server() end
 function S.mpClient() return client() and not server() end
@@ -226,6 +235,16 @@ do
     local have = false
     for _, k in ipairs(ALifeLLMTalk.fileKeys) do if k == "staggerMs" then have = true end end
     if not have then ALifeLLMTalk.fileKeys[#ALifeLLMTalk.fileKeys + 1] = "staggerMs" end
+end
+-- pre-1.0: logDetail (ALifeHealth.note: step-by-step console notes on/off; ready lines + errors always show)
+if ALifeLLMTalk.settings.logDetail == nil then ALifeLLMTalk.settings.logDetail = true end
+do
+    local have, row = false, false
+    for _, k in ipairs(ALifeLLMTalk.fileKeys) do if k == "logDetail" then have = true end end
+    if not have then ALifeLLMTalk.fileKeys[#ALifeLLMTalk.fileKeys + 1] = "logDetail" end
+    for _, r in ipairs(ALifeLLMTalk.settingRows) do if type(r) == "table" and r[1] == "logDetail" then row = true end end
+    if not row then ALifeLLMTalk.settingRows[#ALifeLLMTalk.settingRows + 1] = { "logDetail", "Console detail: step-by-step notes in console.txt (trades, orders, prisoners). Ready lines and errors always show" } end
+    ALifeLLMTalk.settingCatOf.logDetail = "Fixes, safety and debug"
 end
 
 -- the player on this screen (nil on a dedicated server)

@@ -38,7 +38,7 @@ if type(M) ~= "table" then return end
 ALifeSettlement = ALifeSettlement or {}
 local K = ALifeSettlement
 local TAG = "[ALifeSettlement]"
-K.VERSION = "0.8.8"
+K.VERSION = ALifeSide.MOD_VERSION
 K.metrics = K.metrics or { sent = 0, letters = 0, lts = 0, passed = 0, rivals = 0 }
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 local function log(msg) print(TAG .. " " .. tostring(msg)) end

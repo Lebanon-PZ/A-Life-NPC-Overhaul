@@ -6,9 +6,10 @@
 --   * A MEMBER of an NPC group (ALifeMember) below leader: their people take orders from their leader, not you.
 -- Leading itself isn't voted on: they follow you for love, need or fear (ALifeBonds / ALifeBondsMind).
 -- Setting leaderGate (on). The client wraps the order paths (client/ALifeLLMTalk/ALifeTalk_LeaderGate.lua).
+require "ALifeNPCOverhaul/AA_Side"
 ALifeLeaderGate = ALifeLeaderGate or {}
 local LG = ALifeLeaderGate
-LG.VERSION = "0.9.5"
+LG.VERSION = ALifeSide.MOD_VERSION
 LG.DEFAULTS = { leaderGate = true }
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 local function PA() return type(ProjectALife) == "table" and ProjectALife or {} end

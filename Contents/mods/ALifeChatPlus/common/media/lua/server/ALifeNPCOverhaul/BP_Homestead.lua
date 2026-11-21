@@ -165,8 +165,8 @@ if Events and Events.OnGameStart then Events.OnGameStart.Add(hookPlans) end
 if Events and Events.EveryHours then
     ALifeHealth.add(Events.EveryHours, "BP_Homestead", function()
         local m = H.metrics
-        print(string.format("%s hour: offers=%d boarded=%d noPlanks=%d planksGiven=%d nudges=%d",
-            TAG, m.offers, m.boarded, m.noPlanks, m.planksGiven, m.nudges))
+        ALifeHealth.note(TAG, string.format("hour: offers=%d boarded=%d noPlanks=%d planksGiven=%d nudges=%d",
+            m.offers, m.boarded, m.noPlanks, m.planksGiven, m.nudges))
     end)
 end
 print(TAG .. " loaded")

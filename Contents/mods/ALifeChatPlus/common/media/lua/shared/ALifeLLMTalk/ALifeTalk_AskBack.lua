@@ -13,7 +13,7 @@ require "ALifeLLMTalk/ALifeLLMTalk_Main"
 ALifeAskBack = ALifeAskBack or {}
 local K = ALifeAskBack
 local TAG = "[ALifeAskBack]"
-K.VERSION = "0.8.3"
+K.VERSION = ALifeSide.MOD_VERSION
 K.open = K.open or {} -- [uid] = { q, at, untilMs, record, shell, player, nudged }
 K.metrics = K.metrics or { asked = 0, answered = 0, ignored = 0, nudged = 0 }
 K.DEFAULTS = { talkAskBack = 2, askWaitSec = 30, askNudge = true }

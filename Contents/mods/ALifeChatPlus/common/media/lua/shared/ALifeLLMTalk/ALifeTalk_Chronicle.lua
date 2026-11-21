@@ -19,7 +19,7 @@ if type(M) ~= "table" or type(C) ~= "table" then return end
 ALifeChronicleUI = ALifeChronicleUI or {}
 local U = ALifeChronicleUI
 local TAG = "[ALifeChronicleUI]"
-U.VERSION = "0.9.1"
+U.VERSION = ALifeSide.MOD_VERSION
 U.list = U.list or {}
 U.stats = { added = 0, ai = 0, pages = 0, exports = 0 }
 
@@ -29,7 +29,7 @@ local function playerOf() -- pre-1.0 MP (P6): on a server the watchers write for
     if ALifeSide.mpServer() and ALifeSide.cur == nil and type(M) == "table" and type(M.homePlayer) == "function" then return M.homePlayer() end
     local p = nil; pcall(function() p = ALifeSide.you() end); return p
 end
-local function isMP() return type(isClient) == "function" and isClient() end
+local function isMP() return ALifeSide.client() end
 local function log(m) print(TAG .. " " .. tostring(m)) end
 local function tr(k, en, ...)
     if ALifeTr then return ALifeTr("IGUI_ALCP_Chron_" .. k, en, ...) end

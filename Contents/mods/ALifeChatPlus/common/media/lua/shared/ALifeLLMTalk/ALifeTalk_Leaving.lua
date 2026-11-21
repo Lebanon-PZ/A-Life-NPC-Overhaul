@@ -241,4 +241,4 @@ if not M._lvHooked then
     if type(ALifeHealth) == "table" then ALifeHealth.tickAdd("ALifeTalk_Leaving", guardedTick)
     elseif type(ALifeTick) == "table" then ALifeTick.add(guardedTick) end
 end
-print("[ALifeLeaving] loaded v0.6.17 (people walk off, travel the road, get there)")
+print("[ALifeLeaving] loaded v" .. ALifeSide.MOD_VERSION .. " (people walk off, travel the road, get there)")

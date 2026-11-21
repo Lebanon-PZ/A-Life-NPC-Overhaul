@@ -19,7 +19,7 @@ require "ALifeNPCOverhaul/ALifeNotes"
 ALifeClaimSign = ALifeClaimSign or {}
 local CS = ALifeClaimSign
 local TAG = "[ALifeClaimSign]"
-CS.VERSION = "pre-1.0"
+CS.VERSION = ALifeSide.MOD_VERSION
 CS.STORE = "ALifeNPCOverhaul.ClaimSigns"
 CS.ITEM = "ALifeChatPlus.ClaimSign"
 CS.DEFAULTS = { claimSigns = true, claimSignRadius = 45, claimSignsPerBase = 1, claimSignPad = 3, claimSignBlame = 30,

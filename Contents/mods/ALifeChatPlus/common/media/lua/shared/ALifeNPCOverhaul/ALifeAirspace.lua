@@ -21,7 +21,7 @@ local Events = ALifeSide.hooks("world", "ALifeAirspace") -- pre-1.0 MP: one side
 ALifeAirspace = ALifeAirspace or {}
 local L = ALifeAirspace
 local TAG = "[ALifeAirspace]"
-L.VERSION = "0.8.0"
+L.VERSION = ALifeSide.MOD_VERSION
 L.REFUSE_HELI = "only the Louisville National Guard flies (NPC Overhaul)"
 L.REFUSE_CAR = "A-Life's own cars are off (NPC Overhaul drives)"
 -- A-Life's car encounter switches (Settings.current); carDriveHere stays: that's a drive the player orders

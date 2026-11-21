@@ -14,7 +14,7 @@ local Events = ALifeSide.hooks("world", "ALifeRadioKnox") -- pre-1.0 MP: one sid
 ALifeRadioKnox = ALifeRadioKnox or {}
 local L = ALifeRadioKnox
 local TAG = "[ALifeRadioKnox]"
-L.VERSION = "0.7.9"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = { worldShare = 0.35, newsH = 48, newsLast = 8, guardShare = 0.25, askGapH = 24, askWindowMs = 8000 }
 L.REPLIES = { "Copy. Staying clear of that.", "Heard it too. Keep your heads down.", "Roger. Anybody hurt?", "Copy that. Thanks for the word.",
     "Understood. Don't go poking around there.", "Yeah. We saw the smoke." }

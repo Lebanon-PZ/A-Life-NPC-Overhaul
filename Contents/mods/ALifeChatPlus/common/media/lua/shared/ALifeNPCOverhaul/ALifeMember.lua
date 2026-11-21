@@ -13,12 +13,13 @@
 --     grudges as always).
 -- Store: global ModData "ALifeChatPlus_Member": [playerKey] = { gid, gname, rank, trust, h, leader, order, ... }.
 -- Commands (ALifeCmd): memberJoin { uid }, memberAnswer { yes }, memberGive { kind, n }, memberPull -> memberState.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeMember = ALifeMember or {}
 local K = ALifeMember
 local TAG = "[ALifeMember]"
-K.VERSION = "0.9.2"
+K.VERSION = ALifeSide.MOD_VERSION
 K.MODDATA = "ALifeChatPlus_Member"
 K.DEFAULTS = {
     memberJoin = true,       -- you can join an NPC group and climb its ranks
@@ -88,7 +89,7 @@ function K.store()
     d.by = type(d.by) == "table" and d.by or {}
     return d
 end
-local function transmit() if type(ModData) == "table" and fn(ModData, "transmit") and type(isServer) == "function" and isServer() then pcall(ModData.transmit, K.MODDATA) end end
+local function transmit() if type(ModData) == "table" and fn(ModData, "transmit") and ALifeSide.server() then pcall(ModData.transmit, K.MODDATA) end end
 function K.keyOf(player)
     if type(player) == "string" then return player end
     local R = PA().Reputation

@@ -34,7 +34,7 @@ SB.defs = {
 local function sideLog(msg)
     if SB.log[msg] then return end
     SB.log[msg] = true
-    print("[ALifeTalk][Side] " .. tostring(msg))
+    ALifeHealth.note("[ALifeTalk][Side]", msg)
 end
 local function visible(w)
     if w == nil then return false end

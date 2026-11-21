@@ -23,7 +23,7 @@ local Events = ALifeSide.hooks("world", "ALifeStrangers") -- pre-1.0 MP: one sid
 ALifeStrangers = ALifeStrangers or {}
 local L = ALifeStrangers
 local TAG = "[ALifeStrangers]"
-L.VERSION = "0.7.12"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = {
     scanTiles = 40, greetTiles = 6, oddDayMin = 3, oddDayMax = 20, cameoChance = 0.25, cameoGapH = 36, firstDay = 2,
     -- the rescuer

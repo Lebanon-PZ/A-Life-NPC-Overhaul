@@ -25,7 +25,7 @@ local M = ALifeLLMTalk
 local K = ALifeSettlement
 if type(M) ~= "table" or type(K) ~= "table" then return end
 local TAG = "[ALifeSettlementUI]"
-K.UI.VERSION = "0.8.8"
+K.UI.VERSION = ALifeSide.MOD_VERSION
 K.UI.metrics = K.UI.metrics or { asked = 0, cues = 0, shown = 0, logged = 0, marked = 0, unmarked = 0, status = 0 }
 local MX = K.UI.metrics
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end

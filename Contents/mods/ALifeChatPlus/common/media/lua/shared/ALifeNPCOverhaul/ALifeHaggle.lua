@@ -88,7 +88,7 @@ function HG.execute(s, record, shell, player)
     local paid = {}
     for _, e in ipairs(take) do paid[#paid + 1] = e.name end
     if ALifeMemory ~= nil then pcall(ALifeMemory.add, record, "traded with the stranger: gave " .. table.concat(names, ", ") .. " for " .. table.concat(paid, ", ")) end
-    print(TAG .. " traded " .. table.concat(paid, ", ") .. " for " .. table.concat(names, ", "))
+    ALifeHealth.note(TAG, "traded " .. table.concat(paid, ", ") .. " for " .. table.concat(names, ", "))
     return true
 end
 
@@ -199,7 +199,7 @@ function HG.gift(record, shell, player, text)
     if Orders == nil or not Orders.relocate(player:getInventory(), shell:getInventory(), e.item) then return nil end
     pcall(function() ProjectALife.NpcOpinion.note("gift", record, player) end)
     if ALifeMemory ~= nil then pcall(ALifeMemory.add, record, "the stranger gave you " .. e.name .. " for nothing") end
-    print(TAG .. " gave " .. e.name)
+    ALifeHealth.note(TAG, "gave " .. e.name)
     local lines = { "...Thank you. I mean it.", "For me? Thanks.", "That's... thanks. I won't forget it." }
     local line = lines[(type(ZombRand) == "function" and ZombRand(#lines) or 0) + 1]
     pcall(function() ProjectALife.Speech.say(shell, line, { face = player }) end)
@@ -249,7 +249,7 @@ function HG.demand(record, shell, player, context, now_, text)
     local chance = Orders.chanceFor("rob", record, shell, player, context) + 12
     local r = type(ZombRand) == "function" and ZombRand(100) or 0
     local name = tostring(item:getDisplayName())
-    print(string.format("%s demand %s: chance %d, roll %d", TAG, name, chance, r))
+    ALifeHealth.note(TAG, string.format("demand %s: chance %d, roll %d", name, chance, r))
     if r >= chance then
         pcall(function() ProjectALife.NpcOpinion.note("threat_failed", record, player) end)
         if type(Orders.refuse) == "function" then return Orders.refuse("rob", record, shell, player, context, now_) end

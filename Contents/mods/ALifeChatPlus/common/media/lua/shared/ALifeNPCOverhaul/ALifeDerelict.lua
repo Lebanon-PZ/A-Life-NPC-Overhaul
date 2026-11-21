@@ -22,10 +22,11 @@
 --    setting), and the record lives in server ModData.
 -- No per-frame work: LoadGridsquare returns at once when nothing is derelict, else one cached lookup per square.
 
+require "ALifeNPCOverhaul/AA_Side"
 ALifeDerelict = ALifeDerelict or {}
 local D = ALifeDerelict
 local TAG = "[ALifeDerelict]"
-local VERSION = "0.6.0"
+local VERSION = ALifeSide.MOD_VERSION
 D.KEY = "ALifeChatPlus.Derelict"
 D.cfg = {
     playerFar = 40,                         -- tiles: never empty an opened container closer than this to a player
@@ -62,7 +63,7 @@ local function fault(where, err)
 end
 local function PA() return type(ProjectALife) == "table" and ProjectALife or {} end
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
-local function authority() return not (type(isClient) == "function" and isClient()) end
+local function authority() return ALifeSide.world() end
 local function hours() local h = 0; pcall(function() h = getGameTime():getWorldAgeHours() end); return h end
 local function hash01(s)
     local h = 5381; s = tostring(s)

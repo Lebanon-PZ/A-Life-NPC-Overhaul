@@ -1,6 +1,7 @@
 -- A-Life NPC Overhaul pre-1.0 (MP port P2): QUALITY OF LIFE, THE SCREEN SIDE (split from ALifeTalk_QoL.lua).
 -- The notice log (what popped up on YOUR screen), the camp widget, the quick-order bar and the "Name this place"
 -- right-click. The logic they call (M.plAdd, M.uiPref, M.qolStore, ...) is in shared ALifeTalk_QoL.lua.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeTalk_QoL"
 local M = ALifeLLMTalk
 if type(M) ~= "table" then return end

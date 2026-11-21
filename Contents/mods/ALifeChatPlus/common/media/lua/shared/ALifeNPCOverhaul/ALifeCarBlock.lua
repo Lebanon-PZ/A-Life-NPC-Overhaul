@@ -13,13 +13,14 @@
 -- rewrites s.route; the driver turns across the road, then the block exit brakes. MP: the session lives on the
 -- driving client, so the car stops in its lane there. Unverified in game (needs a probe).
 -- Any group with a car. Server / SP (where car life runs). Every number is a setting.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeFightBrain"
 
 ALifeCarBlock = ALifeCarBlock or {}
 local K = ALifeCarBlock
 local B = ALifeFightBrain
 local TAG = "[ALifeCarBlock]"
-K.VERSION = "0.8.11.1"
+K.VERSION = ALifeSide.MOD_VERSION
 K.metrics = K.metrics or { chaseSeen = 0, chaseBlocks = 0, campSeen = 0, campTrips = 0, campRefused = 0, bailed = 0 }
 K.metrics.fleeTrips = K.metrics.fleeTrips or 0
 K.metrics.fleeRefused = K.metrics.fleeRefused or 0
@@ -125,7 +126,7 @@ end
 -- 0.8.11.1 swing: A-Life's live driving session (single player: same Lua state). Blockade.dismount pattern: one
 -- waypoint, navigation reset. A plain waypoint (not "dismount": the stop and the bail stay car life's).
 function K.session(car)
-    if (type(isServer) == "function" and isServer()) or (type(isClient) == "function" and isClient()) then return nil end
+    if not ALifeSide.sp() then return nil end
     local S = PA().CarLifeServer
     local owner = fn(S, "use") and S.use("owner") or nil
     local id = call(car, "getId")
@@ -411,7 +412,7 @@ function K.tryHook()
     if K.hook() then return end
     if K.tries >= 600 then
         K.gaveUp = true
-        if not (type(isClient) == "function" and isClient()) then log("A-Life car life not found: car block off") end
+        if ALifeSide.world() then log("A-Life car life not found: car block off") end
     end
 end
 K.tryHook()

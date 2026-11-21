@@ -20,7 +20,7 @@ local P = ALifeStandoffPlus
 ALifeTalkStandoff = ALifeTalkStandoff or {}
 local K = ALifeTalkStandoff
 local TAG = "[ALifeTalkStandoff]"
-K.VERSION = "0.8.5"
+K.VERSION = ALifeSide.MOD_VERSION
 K.metrics = K.metrics or { callOuts = 0, jobs = 0, done = 0, fallback = 0 }
 
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end

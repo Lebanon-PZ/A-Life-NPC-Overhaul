@@ -9,7 +9,7 @@ if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "Classify"; if ALifeL
 local M = ALifeLLMTalk
 if type(M) ~= "table" then return end
 
-M.CLASSIFY_VERSION = "1.0.1"
+M.CLASSIFY_VERSION = ALifeSide.MOD_VERSION
 
 -- Forced GIST when nothing matches (weak models must obey this)
 M.UnknownGist =
@@ -199,9 +199,9 @@ function M.softPreprocess(text, alifeIntent)
     end
 
     if stillWeak then
-        print(string.format('[ALifeTalkLLM] weak classify: "%s" -> unknown fallback', string.sub(textNorm, 1, 80)))
+        ALifeHealth.note("[ALifeTalkLLM]", string.format('weak classify: "%s" -> unknown fallback', string.sub(textNorm, 1, 80)))
     elseif soft then
-        print(string.format('[ALifeTalkLLM] soft classify: "%s" -> bucket=%s intent=%s tone=%s',
+        ALifeHealth.note("[ALifeTalkLLM]", string.format('soft classify: "%s" -> bucket=%s intent=%s tone=%s',
             string.sub(textNorm, 1, 60), soft.id, tostring(intent), tostring(tone)))
     end
 

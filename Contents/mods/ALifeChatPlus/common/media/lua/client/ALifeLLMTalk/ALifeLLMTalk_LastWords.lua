@@ -8,6 +8,7 @@
 --     on screen;
 --   * the text lingers over the body / corpse ~25 s (a small screen overlay that stays at the corpse);
 --   * friends nearby grieve out loud; the words go to their memory, the log, rumors and maybe the radio.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "LastWords"; if ALifeLLMTalk.fileBegin then ALifeLLMTalk.fileBegin("LastWords") end end -- 0.5.1.6 perf label
 require "ISUI/ISUIElement"

@@ -4,6 +4,7 @@
 -- short of, their morale, what's going around (including about you, if word has reached them). The AI writes it from
 -- their real state; it shows as radio chatter like your base's replies. Nothing about you is ever sent to them.
 
+require "ALifeNPCOverhaul/AA_Side"
 local TAG = "[ALifeRadioTraffic]"
 ALifeRadioTraffic = ALifeRadioTraffic or {}
 local RT = ALifeRadioTraffic

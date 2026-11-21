@@ -139,7 +139,7 @@ function M.sbSetOverride(k, v)
     if use == nil and sv ~= nil then use = sv[k] end -- 0.9.1: explicit (a false sandbox value stays false)
     M.sandboxApplyOne(e, use)
     if type(M.applySettings) == "function" then pcall(M.applySettings) end
-    print(TAG .. " " .. k .. " set in game: " .. tostring(v) .. " (kept with this world)")
+    ALifeHealth.note(TAG, k .. " set in game: " .. tostring(v) .. " (kept with this world)")
     return true
 end
 -- pre-1.0 (trip-ups): EVERY SWITCH YOU SAVE IN GAME STAYS. Before, only the AI tab's buttons and Immersive were kept;
@@ -190,7 +190,7 @@ function M.sbClearAll()
     end
     M.sbTouched = {}
     pcall(M.sandboxApply)
-    print(TAG .. " back to sandbox values (" .. n .. " in-game choice(s) dropped)")
+    ALifeHealth.note(TAG, "back to sandbox values (" .. n .. " in-game choice(s) dropped)")
     return n
 end
 function M.sandboxApply()
@@ -236,7 +236,7 @@ function M.setImmersive(on)
     if type(ALifeImmersion) == "table" then ALifeImmersion.enabled = on end
     local d = store()
     if d then d.immersive = on end
-    print(TAG .. " immersive " .. (on and "on" or "off") .. " (switched in game, kept with this world)")
+    ALifeHealth.note(TAG, "immersive " .. (on and "on" or "off") .. " (switched in game, kept with this world)")
     return on
 end
 -- the Settings window flips M.settings.immersive and calls applySettings: keep the rest in step
@@ -280,7 +280,7 @@ function M.sandboxWatch()
             if d and d.over[e.k] ~= nil then d.over[e.k] = nil end -- an admin change wins over the in-game choice
             if M.sandboxApplyOne(e, v) then
                 n = n + 1
-                print(TAG .. " sandbox " .. e.k .. " changed in game -> " .. tostring(v))
+                ALifeHealth.note(TAG, "sandbox " .. e.k .. " changed in game -> " .. tostring(v))
             end
         end
     end

@@ -40,7 +40,7 @@ if type(M) ~= "table" or type(G) ~= "table" then return end
 local TAG = "[ALifeGhost]"
 ALifeGhost = ALifeGhost or {}
 local K = ALifeGhost
-K.VERSION = "0.9.0.1"
+K.VERSION = ALifeSide.MOD_VERSION
 G.registerSettings()
 K.plans = K.plans or {}
 K.layouts = K.layouts or {}
@@ -65,7 +65,7 @@ local function log(m) print(TAG .. " " .. tostring(m)) end
 local function d2(ax, ay, bx, by) return (ax - bx) ^ 2 + (ay - by) ^ 2 end
 local function pos(o) local x, y, z = nil, nil, nil; pcall(function() x, y, z = o:getX(), o:getY(), o:getZ() end); return x, y, z end
 local function sqAt(x, y, z) local s = nil; pcall(function() s = getCell():getGridSquare(math.floor(x), math.floor(y), math.floor(z or 0)) end); return s end
-local function isMP() return type(isClient) == "function" and isClient() end
+local function isMP() return ALifeSide.client() end
 local function keyDown(f) local ok, v = pcall(function() return f() end); return ok and v == true end
 local function tr(k, en, ...)
     if ALifeTr then return ALifeTr("IGUI_ALCP_Ghost_" .. k, en, ...) end
@@ -662,8 +662,8 @@ function K.dismantle(o)
             local floor = sq:getFloor()
             if floor then
                 floor:setSpriteFromName("blends_natural_01_64")
-                if isClient() then floor:transmitUpdatedSpriteToServer() end
-                if isServer() then floor:transmitUpdatedSpriteToClients() end
+                if ALifeSide.client() then floor:transmitUpdatedSpriteToServer() end
+                if ALifeSide.server() then floor:transmitUpdatedSpriteToClients() end
             end
         end)
         return true

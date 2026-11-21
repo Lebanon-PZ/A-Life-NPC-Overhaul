@@ -20,7 +20,7 @@ local Events = ALifeSide.hooks("world", "ALifeInjuryBridge") -- pre-1.0 MP: one 
 ALifeInjuryBridge = ALifeInjuryBridge or {}
 local L = ALifeInjuryBridge
 local TAG = "[ALifeInjuryBridge]"
-L.VERSION = "0.7.4"
+L.VERSION = ALifeSide.MOD_VERSION
 L.WITNESS_TILES = 20
 -- opinion changes: { love for the downed person, fear for them, love for witnesses, fear for witnesses }
 L.DEEDS = {

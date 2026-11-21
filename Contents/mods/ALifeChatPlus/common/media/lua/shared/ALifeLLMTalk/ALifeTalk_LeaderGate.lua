@@ -14,7 +14,7 @@ ALifeLeaderGateUI = ALifeLeaderGateUI or {}
 local U = ALifeLeaderGateUI
 local M = ALifeLLMTalk
 local LG = ALifeLeaderGate
-U.VERSION = "0.9.5"
+U.VERSION = ALifeSide.MOD_VERSION
 U.wrapped = U.wrapped or {}
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 local function thePlayer(p)

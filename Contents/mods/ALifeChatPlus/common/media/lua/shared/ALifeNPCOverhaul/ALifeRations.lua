@@ -12,12 +12,13 @@
 -- (hunger added back after S.advance). Hunger does the rest on its own: Household's ration arguments (hungry >= 60),
 -- weakness, people walking out. No numbers shown: a letter says what the rule is and roughly how long the food lasts.
 -- Server side; wraps Jeem's R.stores.tick and J.Needs.server.advance (both looked up through their table each call).
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeRations = ALifeRations or {}
 local A = ALifeRations
 local TAG = "[ALifeRations]"
-A.VERSION = "0.8.8"
+A.VERSION = ALifeSide.MOD_VERSION
 A.DEFAULTS = {
     rations = true,      -- you can put the camp on short or half rations
     rationShort = 75,    -- % of a full meal on short rations

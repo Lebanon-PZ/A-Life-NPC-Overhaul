@@ -17,7 +17,7 @@ if ALifeCampVote == nil then require "ALifeNPCOverhaul/ALifeCampVote" end -- pre
 ALifeChronicle = ALifeChronicle or {}
 local C = ALifeChronicle
 local TAG = "[ALifeChronicle]"
-C.VERSION = "0.9.1"
+C.VERSION = ALifeSide.MOD_VERSION
 C.MODDATA = "ALifeChatPlus_Chronicle"
 C.DEFAULTS = {
     chronicle = true,       -- the camp keeps a chronicle
@@ -67,7 +67,7 @@ function C.store()
     return d
 end
 local function transmit()
-    if type(ModData) == "table" and fn(ModData, "transmit") and type(isServer) == "function" and isServer() then pcall(ModData.transmit, C.MODDATA) end
+    if type(ModData) == "table" and fn(ModData, "transmit") and ALifeSide.server() then pcall(ModData.transmit, C.MODDATA) end
 end
 C.transmit = transmit
 

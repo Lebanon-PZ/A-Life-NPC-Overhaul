@@ -8,6 +8,7 @@
 -- The separate right-click entries (Places, Party, Relationships) fold into it. Setting "hubWindow" off brings the
 -- old separate windows back. A person's own page (from People) still opens on its own.
 -- Performance: nothing runs until a window is open; the tabs are a few buttons in the header.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "Hub"; if ALifeLLMTalk.fileBegin then ALifeLLMTalk.fileBegin("Hub") end end
 
@@ -279,7 +280,7 @@ end
 local function install()
     local a = M.hubInstallHeader()
     local b = M.hubInstallMenus()
-    if a and b then print("[ALifeHub] loaded v0.6.10 (one A-Life window: People, Party, Journal, Camp, Settings as tabs)") end
+    if a and b then print("[ALifeHub] loaded v" .. ALifeSide.MOD_VERSION .. " (one A-Life window: People, Party, Journal, Camp, Settings as tabs)") end
     return a and b
 end
 if not install() and type(Events) == "table" and Events.OnGameStart then Events.OnGameStart.Add(install) end

@@ -5,13 +5,14 @@
 --   A group that gives up (brain give-up or talked down): guns down on the floor (A-Life's own TalkOrders.disarm,
 --   as A-Life's own "surrender" order does).
 -- Hooked on the fight brain's think (B.thinkGroup) and on ALifeFightTalk's give-up. Server / SP. All settings.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeFightBrain"
 
 ALifeDropLoot = ALifeDropLoot or {}
 local D = ALifeDropLoot
 local B = ALifeFightBrain
 local TAG = "[ALifeDropLoot]"
-D.VERSION = "0.8.11.1"
+D.VERSION = ALifeSide.MOD_VERSION
 D.metrics = D.metrics or { runners = 0, bags = 0, items = 0, gunsDown = 0 }
 
 D.DEFAULTS = {
@@ -53,7 +54,7 @@ function D.toFloor(shell, inv, item, i)
     if square == nil then return false end
     return pcall(function()
         inv:Remove(item)
-        if type(isServer) == "function" and isServer() and type(sendRemoveItemFromContainer) == "function" then
+        if ALifeSide.server() and type(sendRemoveItemFromContainer) == "function" then
             sendRemoveItemFromContainer(inv, item)
         end
         square:AddWorldInventoryItem(item, 0.2 + (i % 4) * 0.15, 0.3 + (i % 3) * 0.2, 0)

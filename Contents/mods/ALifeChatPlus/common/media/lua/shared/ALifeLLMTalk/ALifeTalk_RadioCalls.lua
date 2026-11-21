@@ -483,7 +483,7 @@ function M.rcInstall()
         ALifeRadial.addFiller("radio", "windows", function(...) guard("menu", M.rcFill, ...) end)
     end
     if type(Events) == "table" and Events.EveryTenMinutes then ALifeHealth.add(Events.EveryTenMinutes, "ALifeTalk_RadioCalls", function() guard("trips", M.rcTick) end) end
-    print("[ALifeRadioCalls] loaded v0.6.7 (radio: traders, help from allies; bounties)")
+    print("[ALifeRadioCalls] loaded v" .. ALifeSide.MOD_VERSION .. " (radio: traders, help from allies; bounties)")
     return true
 end
 -- pre-1.0 MP (P5): a call to one group by its id (SP: the same call; MP client: forwarded, run as the caller)

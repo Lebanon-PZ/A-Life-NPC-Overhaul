@@ -1,4 +1,5 @@
 -- A-Life Talk 0.5.1.7: Relationships window - the Bond tab (per person) + the settings rows of 0.5.1.7
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 require "ALifeLLMTalk/ALifeLLMTalk_UI"
 require "ALifeLLMTalk/ALifeLLMTalk_UIPage"

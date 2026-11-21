@@ -279,4 +279,4 @@ if not M._ovHooked then
     if type(ALifeHealth) == "table" then ALifeHealth.tickAdd("ALifeTalk_OwnCaravans", guarded)
     elseif type(ALifeTick) == "table" then ALifeTick.add(guarded) end
 end
-print("[ALifeOwnCaravans] loaded v0.6.18 (caravans without Jeem: face-to-face trade at your post or base)")
+print("[ALifeOwnCaravans] loaded v" .. ALifeSide.MOD_VERSION .. " (caravans without Jeem: face-to-face trade at your post or base)")

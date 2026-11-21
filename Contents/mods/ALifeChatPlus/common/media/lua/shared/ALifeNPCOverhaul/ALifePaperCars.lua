@@ -21,7 +21,7 @@ local Events = ALifeSide.hooks("world", "ALifePaperCars") -- pre-1.0 MP: one sid
 ALifePaperCars = ALifePaperCars or {}
 local L = ALifePaperCars
 local TAG = "[ALifePaperCars]"
-L.VERSION = "0.7.6"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = { hideTiles = 30, leaveTiles = 40, parkBack = 12, parkSide = 6, clearTiles = 4, stealTiles = 25, theftRep = -15, roadSnap = 20 }
 L.off, L.hooked = L.off or {}, L.hooked or {}
 L.metrics = L.metrics or { leftLot = 0, parkedAtPost = 0, wentHome = 0, backOnLot = 0, stolen = 0, refused = 0, unloaded = 0 }

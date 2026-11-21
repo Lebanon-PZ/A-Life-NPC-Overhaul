@@ -13,6 +13,7 @@
 -- ProjectALife.TalkInput.open. Each wrap calls the original whenever it isn't one of ours.
 -- If anything here throws, that hook switches itself off and A-Life's window carries on untouched.
 -- Setting: "windowTalk" (AI and talking, on by default).
+require "ALifeNPCOverhaul/AA_Side"
 require "ProjectALife/Talk/ALifeTalkInput"
 require "ProjectALife/Talk/ALifeTalkMenu"
 require "ProjectALife/UI2/ALifeUI2Talk"
@@ -27,7 +28,7 @@ require "ISUI/ISTextEntryBox"
 ALifeWindowTalk = ALifeWindowTalk or {}
 local L = ALifeWindowTalk
 local TAG = "[ALifeWindowTalk]"
-L.VERSION = "0.8.3"
+L.VERSION = ALifeSide.MOD_VERSION
 L.TAB = "ACP_SAY"
 L.off, L.hooked = L.off or {}, L.hooked or {}
 L.metrics = L.metrics or { opened = 0, typed = 0, picked = 0, keyOpened = 0, aiOff = 0 }
@@ -230,7 +231,7 @@ function L.serverSay(player, args)
     local uid = type(args.uid) == "string" and args.uid ~= "" and args.uid or nil
     L.targetFor[key] = uid ~= nil and { uid = uid, untilMs = nowMs() + 3000 } or nil
     local ok, sent = false, false
-    if type(isServer) == "function" and isServer() then
+    if ALifeSide.server() then
         -- multiplayer: A-Life's own server-side typed talk
         local talk = PA() ~= nil and PA().Talk or nil
         if type(talk) == "table" and type(talk.onPlayerText) == "function" then ok, sent = pcall(talk.onPlayerText, player, text, false) end

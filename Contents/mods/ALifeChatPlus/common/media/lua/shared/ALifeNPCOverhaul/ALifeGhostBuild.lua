@@ -22,12 +22,13 @@
 --     ghostStamp / ghostDelLayout (saved layouts), ghostAsk -> ghostList.
 -- The builders (walking, tools, materials, skill, XP, zombies) live in client/ALifeLLMTalk/ALifeTalk_Ghost.lua, the
 -- same A-Life behaviour-module way the camp's other jobs work.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeGhostBuild = ALifeGhostBuild or {}
 local G = ALifeGhostBuild
 local TAG = "[ALifeGhostBuild]"
-G.VERSION = "0.9.0.1"
+G.VERSION = ALifeSide.MOD_VERSION
 G.MODDATA = "ALifeChatPlus_Ghost"
 G.DEFAULTS = {
     ghostBuild = true,        -- blueprints at your base, built by the people who live there
@@ -346,7 +347,7 @@ function G.at(x, y, z)
     return nil
 end
 local function transmit()
-    if type(ModData) == "table" and fn(ModData, "transmit") and type(isServer) == "function" and isServer() then pcall(ModData.transmit, G.MODDATA) end
+    if type(ModData) == "table" and fn(ModData, "transmit") and ALifeSide.server() then pcall(ModData.transmit, G.MODDATA) end
 end
 G.transmit = transmit
 local function playerKey(p)
@@ -360,7 +361,7 @@ G.playerKey = playerKey
 -- who may change the plans: single player always; multiplayer: setting ghostLeaderOnly (the first who placed one
 -- = the base's owner) else anyone
 function G.mayEdit(player)
-    if not (type(isServer) == "function" and isServer()) then return true end
+    if ALifeSide.ui() then return true end
     if G.setting("ghostLeaderOnly") ~= true then return true end
     local d = G.store()
     return d.owner == nil or d.owner == playerKey(player)

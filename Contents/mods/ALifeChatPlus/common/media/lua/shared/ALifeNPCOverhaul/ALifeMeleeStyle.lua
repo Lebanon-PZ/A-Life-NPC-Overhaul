@@ -26,10 +26,11 @@
 -- No numbers shown (immersion): the Party tab gear line says "good with knives" at meleeStyleCue or better.
 -- MP: wraps live where A-Life's tables are (Combat / Weapons on the server, Parity on the client). Learning is stored in
 -- global ModData on the server; an MP client's parity uses the same uid roll without the learning (unverified sync).
+require "ALifeNPCOverhaul/AA_Side"
 ALifeMeleeStyle = ALifeMeleeStyle or {}
 local S = ALifeMeleeStyle
 local TAG = "[ALifeMeleeStyle]"
-S.VERSION = "pre-1.0"
+S.VERSION = ALifeSide.MOD_VERSION
 S.metrics = S.metrics or { picked = 0, swapped = 0, wounds = 0, learned = 0, parity = 0 }
 
 S.DEFAULTS = {
@@ -84,7 +85,7 @@ end
 
 -- learning store: server / SP only (an MP client reads, never writes)
 function S.store()
-    if type(isClient) == "function" and isClient() then return nil end
+    if ALifeSide.client() then return nil end
     if S.tmp then return S.tmp end
     if type(ModData) ~= "table" or not fn(ModData, "getOrCreate") then S.tmp = { p = {} }; return S.tmp end
     local s = ModData.getOrCreate("ALifeMeleeStyle")

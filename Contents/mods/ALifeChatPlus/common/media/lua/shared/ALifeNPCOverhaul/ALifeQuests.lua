@@ -26,6 +26,7 @@
 -- W.record/W.bump/W.pos), Board.reward/fail, Rows.handlers, Hook.providers, Rules.stepTick/eligible/build/siteFor,
 -- ActorRegistry.each, MissionService.shellOf, Relations.status, Captives.heldUid; item moves as A-Life's own trade
 -- (FollowBTrade.move: Remove + AddItem + send*ItemFromContainer in MP).
+require "ALifeNPCOverhaul/AA_Side"
 require "ProjectALife/Missions/ALifeTaskBoardData"
 require "ProjectALife/Missions/ALifeTaskBoardRules"
 require "ProjectALife/Missions/ALifeTaskBoardText"
@@ -35,7 +36,7 @@ require "ALifeNPCOverhaul/ALifeCmd"
 ALifeQuests = ALifeQuests or {}
 local K = ALifeQuests
 local TAG = "[ALifeQuests]"
-K.VERSION = "0.9.1.1" -- pre-1.0: real stores
+K.VERSION = ALifeSide.MOD_VERSION -- pre-1.0: real stores
 K.metrics = K.metrics or { paid = 0, paidItems = 0, owed = 0, spawnRefused = 0, giveRefused = 0, carried = 0, noCarry = 0,
     fakeHidden = 0, rare = 0, found = 0, met = 0, hints = 0 }
 
@@ -181,7 +182,7 @@ function K.valueOf(item)
 end
 
 local function sendMove(kind, container, item)
-    if type(isServer) ~= "function" or isServer() ~= true then return end
+    if not ALifeSide.server() then return end
     local f = kind == "remove" and sendRemoveItemFromContainer or sendAddItemToContainer
     if type(f) == "function" then pcall(f, container, item) end
 end

@@ -11,6 +11,7 @@
 -- under them (A-Life draws it in render, after its children; with Jeem, Jeem's draw-under hook does it).
 -- Off (setting "journalTabs"), or no A-Life journal (older A-Life, its experiment off): our own window, as before.
 -- Client only, per player.
+require "ALifeNPCOverhaul/AA_Side"
 if ALifeLLMTalk == nil then require "ALifeLLMTalk/ALifeLLMTalk_Main" end
 if ALifeLLMTalkWindow == nil then require "ALifeLLMTalk/ALifeLLMTalk_Theme" end
 if ALifeLLMTalk == nil or ALifeLLMTalk.hubTabs == nil then require "ALifeLLMTalk/ALifeTalk_Hub" end
@@ -19,7 +20,7 @@ if type(M) ~= "table" then return end
 
 ALifeJournalTabs = ALifeJournalTabs or {}
 local JT = ALifeJournalTabs
-JT.VERSION = "pre-1.0"
+JT.VERSION = ALifeSide.MOD_VERSION
 JT.PREFIX = "alcp_"
 -- A-Life's tabs ours take the place of (in their spot of the row): A-Life id -> our journal tab
 JT.replace = { contacts = "people", companions = "party", log = "log" }

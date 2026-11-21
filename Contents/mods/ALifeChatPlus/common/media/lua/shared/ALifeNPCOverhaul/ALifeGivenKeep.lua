@@ -14,10 +14,11 @@
 --     one of a type you gave (counted down per item, remembered per item so a second look at the same item agrees).
 --   * Their tally is dropped once they're dead.
 -- Setting: givenStays (on).
+require "ALifeNPCOverhaul/AA_Side"
 ALifeGivenKeep = ALifeGivenKeep or {}
 local G = ALifeGivenKeep
 local TAG = "[ALifeGivenKeep]"
-G.VERSION = "0.8.8"
+G.VERSION = ALifeSide.MOD_VERSION
 G.DEFAULTS = { givenStays = true }
 G.KEYS = { "givenStays" }
 G.MAX_TYPES = 40
@@ -287,7 +288,7 @@ end
 
 if type(Events) == "table" then
     local function start()
-        if type(isClient) == "function" and isClient() then return end -- MP: the server keeps it
+        if ALifeSide.client() then return end -- MP: the server keeps it
         pcall(G.install)
         if not G.said then
             G.said = true

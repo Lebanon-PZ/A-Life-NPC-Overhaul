@@ -15,7 +15,7 @@ if type(M) ~= "table" then return end
 ALifeRomanceDeep = ALifeRomanceDeep or {}
 local R = ALifeRomanceDeep
 local TAG = "[ALifeRomanceDeep]"
-R.VERSION = "0.9.5"
+R.VERSION = ALifeSide.MOD_VERSION
 R.DEFAULTS = { romanceDeep = true, romanceMarryDays = 60, romanceMarryLove = 70, romanceApartDays = 3, romancePartnerHeir = true }
 R.MARKS = { { d = 30, w = "a month" }, { d = 100, w = "a hundred days" }, { d = 365, w = "a year" } }
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end

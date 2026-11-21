@@ -362,7 +362,7 @@ function M.alInstall()
         end)
     end)
     if type(Events) == "table" and Events.EveryTenMinutes then ALifeHealth.add(Events.EveryTenMinutes, "ALifeTalk_AirportLife", function() guard("flight", M.alTick) end) end
-    print("[ALifeAirportLife] loaded v0.6.12 (supply flights on the restricted channel; abductions near Louisville)")
+    print("[ALifeAirportLife] loaded v" .. ALifeSide.MOD_VERSION .. " (supply flights on the restricted channel; abductions near Louisville)")
     return true
 end
 M.alInstall()

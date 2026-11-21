@@ -997,8 +997,8 @@ function M.respondBypassed(reason)
 end
 
 function M.isSP()
-    local client = type(isClient) == "function" and isClient()
-    local server = type(isServer) == "function" and isServer()
+    local client = ALifeSide.client()
+    local server = ALifeSide.server()
     return not client and not server
 end
 -- pre-1.0 MP (P2b): world logic may run here (single player or the MP server; never an MP client). Ported modules
@@ -2830,7 +2830,7 @@ function M.install()
     end
     M.installParts()
     log("v" .. M.VERSION .. " hooked ProjectALife.Talk.respond, Speech.say" .. (M.origFinish and ", ChatterDirector.finish" or ""))
-    log("ready v0.8.2.1: yieldBusy " .. (M.settings.yieldBusy ~= false and "on" or "off") .. " (hurt / fighting NPCs: A-Life's line wins, no forced or redrawn replies)")
+    log("ready v" .. ALifeSide.MOD_VERSION .. ": yieldBusy " .. (M.settings.yieldBusy ~= false and "on" or "off") .. " (hurt / fighting NPCs: A-Life's line wins, no forced or redrawn replies)")
     return true
 end
 

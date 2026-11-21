@@ -15,7 +15,7 @@ local Events = ALifeSide.hooks("world", "ALifeKingmaker") -- pre-1.0 MP: one sid
 ALifeKingmaker = ALifeKingmaker or {}
 local L = ALifeKingmaker
 local TAG = "[ALifeKingmaker]"
-L.VERSION = "0.9.5"
+L.VERSION = ALifeSide.MOD_VERSION
 L.cfg = { reach = 5000, rulerShare = 0.35, kingShare = 0.15, backBoost = 0.25, backRep = 10, breakRep = -5, askGapH = 168,
     scanTiles = 30, maxContainers = 80, wandererMul = 0.6 }
 L.off, L.hooked = L.off or {}, L.hooked or {}

@@ -15,10 +15,11 @@
 -- ownerUid, now) (called for every ghost round) and check online players within 1.5 tiles of where it landed, same
 -- storey, with a clear line (A-Life's own grazePlayer test: Gunner.sameStorey + Gunner.canReach). Server only.
 -- Every number is a setting. Off by default.
+require "ALifeNPCOverhaul/AA_Side"
 ALifeUnderFire = ALifeUnderFire or {}
 local U = ALifeUnderFire
 local TAG = "[ALifeUnderFire]"
-U.VERSION = "0.8.11.1"
+U.VERSION = ALifeSide.MOD_VERSION
 U.metrics = U.metrics or { whizz = 0, near = 0, applied = 0, skipped = 0 }
 U.recent = U.recent or setmetatable({}, { __mode = "k" }) -- player -> { count, lastMs }
 
@@ -138,7 +139,7 @@ function U.apply(body, now)
         if not U.statsFailLogged then U.statsFailLogged = true; log("stats failed (once): " .. tostring(e)) end
         return 0
     end
-    if mask > 0 and type(isServer) == "function" and isServer() and type(syncPlayerStats) == "function" then
+    if mask > 0 and ALifeSide.server() and type(syncPlayerStats) == "function" then
         pcall(syncPlayerStats, body, mask)
     end
     U.metrics.applied = U.metrics.applied + 1
@@ -207,7 +208,7 @@ function U.onGhost(shell, x, y, z, now)
 end
 function U.hookGhost()
     if U.ghostHooked then return true end
-    if not (type(isServer) == "function" and isServer()) then return false end -- SP / listen: whizz already covers it
+    if ALifeSide.ui() then return false end -- SP / listen: whizz already covers it
     local S = type(ProjectALife) == "table" and ProjectALife.Suppression or nil
     if not fn(S, "noteGhostRound") then return false end
     if S.noteGhostRound_ALifeUnderFire == nil then
@@ -234,7 +235,7 @@ function U.tryHook()
     if U.tries >= 600 then
         U.gaveUp = true
         -- an MP client never has A-Life's server files: nothing to hook there, by design
-        if not (type(isClient) == "function" and isClient()) then log("A-Life ModuleGunner.whizz not found: under fire off") end
+        if ALifeSide.world() then log("A-Life ModuleGunner.whizz not found: under fire off") end
     end
 end
 U.tryHook()

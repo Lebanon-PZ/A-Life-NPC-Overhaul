@@ -21,12 +21,13 @@
 -- Server-authoritative (MP rule 1-6): the client sends { uid, kind, ch, on, power, range }; a multiplayer server's copy
 -- of an item in a player's inventory doesn't follow its switch or battery (Jeem's note, Residents/Radio.lua), so
 -- there the client's report is used for on / power / channel; range comes from the item type on both sides.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeWalkie = ALifeWalkie or {}
 local W = ALifeWalkie
 local TAG = "[ALifeWalkie]"
-W.VERSION = "0.8.5"
+W.VERSION = ALifeSide.MOD_VERSION
 W.metrics = W.metrics or { calls = 0, reached = 0, refused = 0, drained = 0, swapped = 0, silent = 0, overheard = 0,
     checkins = 0, alerts = 0, missed = 0, swaps = 0 }
 
@@ -78,7 +79,7 @@ function W.hours()
     pcall(function() h = getGameTime():getWorldAgeHours() end)
     return num(h, 0)
 end
-function W.isMP() return type(isClient) == "function" and type(isServer) == "function" and (isClient() or isServer()) end
+function W.isMP() return not ALifeSide.sp() end
 
 -- ---------------------------------------------------------------------------------------------------- devices
 local function call(o, m, ...)
@@ -767,7 +768,7 @@ function W.missedCheckins(player) local m = W.store().missed[W.keyOf(player)]; r
 function W.players()
     local out = {}
     pcall(function()
-        if type(isServer) == "function" and isServer() and type(getOnlinePlayers) == "function" then
+        if ALifeSide.server() and type(getOnlinePlayers) == "function" then
             local l = getOnlinePlayers()
             for i = 0, l:size() - 1 do out[#out + 1] = l:get(i) end
         else
@@ -780,7 +781,7 @@ end
 
 W.lastTickH = W.lastTickH or nil
 function W.tick()
-    if type(isClient) == "function" and isClient() then return end -- the server (or single player) runs it
+    if ALifeSide.client() then return end -- the server (or single player) runs it
     local h = W.hours()
     local dt = W.lastTickH ~= nil and math.max(0, h - W.lastTickH) or 0
     W.lastTickH = h

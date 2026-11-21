@@ -11,10 +11,11 @@
 --  * no made-up supplies, rounds or guns. The haul goes into your stores the way Jeem delivers loot (by kind, into
 --    the marked containers once they're loaded), and the faction window says what they brought.
 -- Nothing per frame: runs only when a trip comes home. Off: setting honestScavenge (same switch as 0.6.0).
+require "ALifeNPCOverhaul/AA_Side"
 ALifeExpeditions = ALifeExpeditions or {}
 local E = ALifeExpeditions
 local TAG = "[ALifeExpeditions]"
-local VERSION = "0.6.2"
+local VERSION = ALifeSide.MOD_VERSION
 E.cfg = { abstractRadii = { 40, 80, 130, 190, 260 }, abstractAngles = 12 }
 E.stats = { trips = 0, carried = 0, abstract = 0, looted = 0, empty = 0 }
 local function log(m) print(TAG .. " " .. tostring(m)) end
@@ -122,7 +123,7 @@ local function wrap(Ms, name, make)
     return true
 end
 function E.install()
-    if type(isClient) == "function" and isClient() then return end
+    if ALifeSide.client() then return end
     local Ms = missions()
     if Ms == nil then log("loaded v" .. VERSION .. " (Jeem missions not found: nothing to do)"); return end
     local a = wrap(Ms, "returnHome", function(orig)

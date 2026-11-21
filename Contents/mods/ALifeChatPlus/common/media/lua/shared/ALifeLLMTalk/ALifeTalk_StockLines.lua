@@ -15,7 +15,7 @@ require "ALifeLLMTalk/ALifeLLMTalk_Main"
 ALifeStockLines = ALifeStockLines or {}
 local K = ALifeStockLines
 local TAG = "[ALifeStockLines]"
-K.VERSION = "0.8.3"
+K.VERSION = ALifeSide.MOD_VERSION
 K.metrics = K.metrics or { swapped = 0, grief = 0, bite = 0, hungry = 0 }
 K.DEFAULTS = { aiRows = true, stockState = true }
 

@@ -7,6 +7,7 @@
 -- Rows go into ALifeCommands (parser, Commands tab, AI list). Only your own people (L.isMine); they can say no
 -- (L.chance; flanking is risky: cmdRiskTrust harder). Answer: ALifeCmd "cmdResult" (L.run).
 -- Every number is a setting.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 require "ALifeNPCOverhaul/ALifeCommands"
 require "ALifeNPCOverhaul/ALifeFieldJobs"
@@ -17,7 +18,7 @@ local T = ALifePartyTactics
 local L = ALifeCommands
 local B = ALifeFightBrain
 local TAG = "[ALifePartyTactics]"
-T.VERSION = "0.8.10"
+T.VERSION = ALifeSide.MOD_VERSION
 T.jobs = T.jobs or {}
 T.metrics = T.metrics or { suppress = 0, suppressNo = 0, flank = 0, flankArrived = 0, flankGaveUp = 0 }
 
@@ -193,7 +194,7 @@ function T.tickOne(j, now)
     end
 end
 function T.tick()
-    if type(isClient) == "function" and isClient() then return end
+    if ALifeSide.client() then return end
     local now = nowMs()
     if now < (T.nextMs or 0) then return end
     T.nextMs = now + 500

@@ -53,7 +53,7 @@ function VO.installTyped()
         local t, l = VO.typedRule(text, loud)
         return original(t, l)
     end
-    print(TAG .. " typed: '!' at the start or end shouts; voice: start with 'yell' to shout")
+    ALifeHealth.note(TAG, "typed: '!' at the start or end shouts; voice: start with 'yell' to shout")
     return true
 end
 if Events ~= nil and Events.OnGameStart ~= nil then

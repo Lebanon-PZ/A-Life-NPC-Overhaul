@@ -12,10 +12,11 @@
 -- Wraps Combat.preferredWeapon (chained over any earlier wrap, e.g. ALifeTalkPatch nemesis tiers). Server / SP.
 -- Also holds followCatchUpWarp (read by ALifeTalkPatch.companionEvaluate): off = someone walking with you who falls
 -- behind walks / runs to you; they never pop in beside you.
+require "ALifeNPCOverhaul/AA_Side"
 ALifeGunSense = ALifeGunSense or {}
 local G = ALifeGunSense
 local TAG = "[ALifeGunSense]"
-G.VERSION = "pre-1.0"
+G.VERSION = ALifeSide.MOD_VERSION
 G.metrics = G.metrics or { checked = 0, held = 0, emergency = 0, noBlade = 0 }
 
 G.DEFAULTS = {

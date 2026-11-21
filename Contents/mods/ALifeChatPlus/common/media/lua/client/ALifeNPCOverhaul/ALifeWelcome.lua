@@ -13,7 +13,7 @@ local M = ALifeLLMTalk
 if type(M) ~= "table" then return end
 ALifeWelcome = ALifeWelcome or {}
 local W = ALifeWelcome
-W.VERSION = "pre-1.0"
+W.VERSION = ALifeSide.MOD_VERSION
 W.IDS = { "welcome", "hoverkey", "noai" }
 W.metrics = W.metrics or { shown = 0 }
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end

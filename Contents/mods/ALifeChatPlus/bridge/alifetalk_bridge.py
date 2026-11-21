@@ -24,6 +24,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+sys.dont_write_bytecode = True  # pre-1.0: no __pycache__ in the mod folder (it would ship with the next upload)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from alifetalk_memory import Memory, SUMMARY_SCHEMA, Embedder  # noqa: E402
 import alifetalk_prompts as PROMPTS  # noqa: E402  0.8.12: prompt text + AI rules from prompts.txt / alifeai_prompts.txt, live

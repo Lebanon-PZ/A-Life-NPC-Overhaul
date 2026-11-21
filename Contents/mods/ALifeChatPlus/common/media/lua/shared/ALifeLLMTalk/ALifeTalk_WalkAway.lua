@@ -14,7 +14,7 @@ if type(M) ~= "table" then return end
 ALifeWalkAway = ALifeWalkAway or {}
 local W = ALifeWalkAway
 local TAG = "[ALifeWalkAway]"
-W.VERSION = "0.9.5"
+W.VERSION = ALifeSide.MOD_VERSION
 W.DEFAULTS = { walkAway = true, walkAwayDay = 365, walkAwayPeople = 10, walkAwayChance = 1, walkAwayLove = 40 }
 W.GIFT_KINDS = { food = true, water = true, medicine = true, ammo = true }
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end

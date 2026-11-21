@@ -615,7 +615,7 @@ function M.cvInstall()
             return a, b2, c
         end
     end
-    print("[ALifeCaravans] loaded v0.6.6 (Jeem's traders are real people from real groups, carrying real goods)")
+    print("[ALifeCaravans] loaded v" .. ALifeSide.MOD_VERSION .. " (Jeem's traders are real people from real groups, carrying real goods)")
     return true
 end
 

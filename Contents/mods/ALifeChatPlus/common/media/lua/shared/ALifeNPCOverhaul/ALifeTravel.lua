@@ -208,7 +208,7 @@ function T.send(record, spot, town)
         Offline.applyTask(s, task, route or { from, dest }, h)
     end)
     if updated == nil then return nil, "busy" end
-    print(string.format("%s %s's group heading to %s (%d,%d)", TAG, tostring(m.squadId), tostring(spot.what), spot.x, spot.y))
+    ALifeHealth.note(TAG, string.format("%s's group heading to %s (%d,%d)", tostring(m.squadId), tostring(spot.what), spot.x, spot.y))
     return true
 end
 

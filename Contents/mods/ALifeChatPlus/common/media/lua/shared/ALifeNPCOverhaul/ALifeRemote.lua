@@ -12,7 +12,7 @@ require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 ALifeRemote = ALifeRemote or {}
 local R = ALifeRemote
-R.VERSION = "pre-1.0"
+R.VERSION = ALifeSide.MOD_VERSION
 R.VIEW_MS = 1000
 R.calls = R.calls or {}
 R.views = R.views or {}

@@ -230,7 +230,7 @@ function M.vhInstall()
         if not far and type(b) == "table" and b.status == "active" and not broken then guard("look", M.vhLook, b, h) end
         return r
     end
-    print("[ALifeVehicles] loaded v0.6.11 (groups drive their real vehicles when they have the fuel)")
+    print("[ALifeVehicles] loaded v" .. ALifeSide.MOD_VERSION .. " (groups drive their real vehicles when they have the fuel)")
     return true
 end
 if not M.vhInstall() and type(Events) == "table" and Events.OnGameStart then Events.OnGameStart.Add(function() M.vhInstall() end) end

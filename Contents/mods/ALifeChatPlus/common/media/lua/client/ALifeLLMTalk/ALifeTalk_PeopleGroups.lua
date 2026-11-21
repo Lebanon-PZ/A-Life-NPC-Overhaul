@@ -4,6 +4,7 @@
 -- Click a header to fold / unfold it. Big groups start folded (setting peopleFoldAt); a name search opens everything.
 -- Starred people get their own section on top. Sort / Show / search still work inside the groups.
 -- Who goes where: M.suspectOf (shared/ALifeLLMTalk/ALifeTalk_Suspect.lua). Setting peopleGroups=false = the old flat list.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 require "ALifeLLMTalk/ALifeLLMTalk_UI"
 require "ALifeLLMTalk/ALifeLLMTalk_UIFancy"

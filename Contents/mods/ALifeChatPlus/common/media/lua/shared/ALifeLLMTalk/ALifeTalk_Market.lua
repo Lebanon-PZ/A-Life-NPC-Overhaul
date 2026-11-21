@@ -376,7 +376,7 @@ function M.tpInstall()
     end
     M.tpInstallRadio()
     if type(Events) == "table" and Events.EveryTenMinutes then ALifeHealth.add(Events.EveryTenMinutes, "ALifeTalk_Market", function() guard("tick", M.tpTick) end) end
-    print("[ALifeMarket] loaded v0.6.8 (word of your place spreads; trading post; market days)")
+    print("[ALifeMarket] loaded v" .. ALifeSide.MOD_VERSION .. " (word of your place spreads; trading post; market days)")
     return true
 end
 M.tpInstall()

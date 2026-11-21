@@ -4,13 +4,14 @@
 -- Your own people are fooled too ("They're running!"). Once per fight, never at home (they hold there).
 -- Smart = fakeRunWho: 1 military / police only, 2 + criminals whose leader is still up, 3 everyone.
 -- Fight brain pieces: st.fake (veto row "fakerun" in ALifeFightBrain), B.thinkGroup wrapped. Server / SP. All settings.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeFightBrain"
 
 ALifeFakeRun = ALifeFakeRun or {}
 local R = ALifeFakeRun
 local B = ALifeFightBrain
 local TAG = "[ALifeFakeRun]"
-R.VERSION = "0.8.11"
+R.VERSION = ALifeSide.MOD_VERSION
 R.metrics = R.metrics or { rolled = 0, faked = 0, turned = 0, turnedClose = 0 }
 
 R.DEFAULTS = {

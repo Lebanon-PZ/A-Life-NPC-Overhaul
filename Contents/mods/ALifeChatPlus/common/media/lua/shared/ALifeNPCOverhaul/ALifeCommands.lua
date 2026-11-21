@@ -10,13 +10,14 @@
 -- Multiplayer-ready: the client sends { cmd, uids, x, y, z, noun } through ALifeCmd; the server decides.
 -- Every command can be switched off in settings ("cmd_<id>"); every number is a setting.
 -- A hook that errors logs one line and switches itself off; A-Life's own order wheel and menus are untouched.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 require "ALifeNPCOverhaul/ALifeCellCars"
 
 ALifeCommands = ALifeCommands or {}
 local L = ALifeCommands
 local TAG = "[ALifeCommands]"
-L.VERSION = "0.8.9"
+L.VERSION = ALifeSide.MOD_VERSION
 L.off = L.off or {}
 L.metrics = L.metrics or { asked = 0, done = 0, refused = 0, notYours = 0 }
 

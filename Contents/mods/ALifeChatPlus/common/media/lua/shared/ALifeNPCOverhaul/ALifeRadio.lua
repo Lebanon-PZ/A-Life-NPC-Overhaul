@@ -246,7 +246,7 @@ function RD.mission(player, base, range, def, text)
     end
     local name = (ProjectALife.Names and ProjectALife.Names.of and ProjectALife.Names.of(leader)) or "Someone"
     local who = #uids > 1 and (name .. " and " .. (#uids - 1 == 1 and "one more" or tostring(#uids - 1) .. " more")) or name
-    print(TAG .. " " .. def.kind .. " by radio (" .. #uids .. " people): " .. tostring(id))
+    ALifeHealth.note(TAG, def.kind .. " by radio (" .. #uids .. " people): " .. tostring(id))
     return { base.name .. ": " .. string.format(pick(RD.LINES.go), who) }
 end
 

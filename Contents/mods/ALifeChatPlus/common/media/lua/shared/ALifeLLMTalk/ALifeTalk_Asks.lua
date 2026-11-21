@@ -14,7 +14,7 @@ require "ALifeLLMTalk/ALifeLLMTalk_Main"
 ALifeAsks = ALifeAsks or {}
 local K = ALifeAsks
 local TAG = "[ALifeAsks]"
-K.VERSION = "0.8.3"
+K.VERSION = ALifeSide.MOD_VERSION
 K.WANTS = { "food", "water", "medicine", "ammo" }
 K.DEFAULTS = { talkWants = true, askThanks = 4, askDays = 2, askForgotCost = 1 }
 K.metrics = K.metrics or { asked = 0, brought = 0, forgotten = 0 }

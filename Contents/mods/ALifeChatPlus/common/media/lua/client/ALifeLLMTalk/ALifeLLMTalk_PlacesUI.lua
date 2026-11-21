@@ -1,6 +1,7 @@
 -- A-Life Talk 0.5.2: PLACES WINDOW: the NPC bases you know (visited, told about, heard of): name, faction, leader,
 -- members, status, mood and food, your last visit and your standing there; "Mark on map" uses A-Life's own marker.
 -- Right-click world -> "A-Life: Places...". Every Java / A-Life call guarded.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 if type(ALifeLLMTalk) == "table" then ALifeLLMTalk._file = "PlacesUI"; if ALifeLLMTalk.fileBegin then ALifeLLMTalk.fileBegin("PlacesUI") end end
 local M = ALifeLLMTalk

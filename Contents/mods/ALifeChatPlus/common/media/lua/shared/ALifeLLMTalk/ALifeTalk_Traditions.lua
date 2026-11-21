@@ -20,7 +20,7 @@ if type(M) ~= "table" or type(C) ~= "table" then return end
 ALifeTraditions = ALifeTraditions or {}
 local T = ALifeTraditions
 local TAG = "[ALifeTraditions]"
-T.VERSION = "0.9.1"
+T.VERSION = ALifeSide.MOD_VERSION
 T.DEFAULTS = {
     traditions = true,      -- the camp grows its own ways from what it keeps doing
     traditionRepeat = 3,    -- times something happens before it's "our way"

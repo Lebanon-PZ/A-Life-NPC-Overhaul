@@ -79,7 +79,7 @@ function M.settingPresetApply(id)
     end
     M.settingPresetLast = id
     if M.applySettings then pcall(M.applySettings) end
-    print(TAG .. " preset " .. id .. ": " .. n .. " settings changed")
+    ALifeHealth.note(TAG, "preset " .. id .. ": " .. n .. " settings changed")
     return n
 end
 

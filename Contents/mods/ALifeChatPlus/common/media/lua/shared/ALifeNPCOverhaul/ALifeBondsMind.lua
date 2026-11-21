@@ -16,7 +16,7 @@ require "ALifeNPCOverhaul/AA_Side"
 local Events = ALifeSide.hooks("world", "ALifeBondsMind") -- pre-1.0 MP: one side switch (world ticks where the world is; OnGameStart = OnServerStarted on a server)
 
 local TAG = "[ALifeBondsMind]"
-local VERSION = "1.4.0"
+local VERSION = ALifeSide.MOD_VERSION
 
 ALifeBondsMind = ALifeBondsMind or {}
 local M = ALifeBondsMind
@@ -224,7 +224,7 @@ function M.daily()
                 r.act = d
                 M.metrics.tipoffs = M.metrics.tipoffs + 1
                 pcall(rd.warn, player, fid, hours())
-                print(TAG .. " " .. tostring(rec.uid) .. " tipped off " .. tostring(fid))
+                ALifeHealth.note(TAG, tostring(rec.uid) .. " tipped off " .. tostring(fid))
             end
         elseif ready and (r.sv or 0) >= 3 then
             local n = steal(rec)
@@ -232,7 +232,7 @@ function M.daily()
                 r.act = d
                 M.metrics.thefts = M.metrics.thefts + 1
                 notify(player, "Something's missing from the stores...", false)
-                print(TAG .. " " .. tostring(rec.uid) .. " stole " .. n .. " item(s)")
+                ALifeHealth.note(TAG, tostring(rec.uid) .. " stole " .. n .. " item(s)")
             end
         end
         if (r.sv or 0) >= 8 then plotters[#plotters + 1] = rec end
@@ -241,7 +241,7 @@ function M.daily()
         M.metrics.coups = M.metrics.coups + 1
         for _, rec in ipairs(plotters) do turnOn(rec, key) end
         notify(player, "Your people have turned on you!", false)
-        print(TAG .. " coup: " .. #plotters .. " residents turned hostile")
+        ALifeHealth.note(TAG, "coup: " .. #plotters .. " residents turned hostile")
     end
 end
 

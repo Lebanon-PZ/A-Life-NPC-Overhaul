@@ -7,6 +7,7 @@
 --              fade after a few seconds. Click one to dismiss it.
 -- Callers: M.momCard{ id, title, text, choices = { { label, fn } ... }, default = n }   and   M.momToast(text, r, g, b)
 -- The UI lives in M.momUI so the logic runs (and is tested) without the game's UI.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
 local M = ALifeLLMTalk
 if type(M) ~= "table" then return end

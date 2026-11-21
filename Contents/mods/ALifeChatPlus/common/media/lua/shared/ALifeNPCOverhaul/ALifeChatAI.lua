@@ -10,8 +10,9 @@
 --   alifeai_alive.txt       helper heartbeat (epoch ms); no fresh heartbeat = feature sleeps
 --   alifeai_config.txt      optional: enabled=, timeoutMs=, menu=  (key=value per line)
 
+require "ALifeNPCOverhaul/AA_Side"
 local TAG = "[ALifeChatAI]"
-local VERSION = "1.2.0"
+local VERSION = ALifeSide.MOD_VERSION
 
 ALifeChatAI = ALifeChatAI or {}
 local AI = ALifeChatAI
@@ -378,7 +379,7 @@ local function compound(player, listener, text, nowArg)
     -- what the matcher couldn't place ("keep your eyes on that window") goes to the AI as the last step
     if #leftover > 0 and #plan >= 1 then plan[#plan + 1] = { text = table.concat(leftover, ", "), intent = nil } end
     if #plan < 2 then return nil end
-    print(TAG .. " " .. #plan .. " requests in one line")
+    ALifeHealth.note(TAG, #plan .. " requests in one line")
     local Talk = ProjectALife.Talk
     local function ask(step)
         if step.intent == nil then
@@ -573,7 +574,7 @@ finishUnderstand = function(job, intent, text)
     intent = intent and string.upper(string.gsub(intent, "%s", "")) or nil
     if intent ~= nil and intent ~= "NONE" and Data ~= nil and Data.intentById[intent] ~= nil then
         AI.metrics.understood = AI.metrics.understood + 1
-        print(TAG .. " understood '" .. tostring(job.text) .. "' as " .. intent)
+        ALifeHealth.note(TAG, "understood '" .. tostring(job.text) .. "' as " .. intent)
         AI.__force = true
         local ok, err = pcall(ProjectALife.Talk.respond, job.player, job.listener, job.text, now(), intent)
         AI.__force = false

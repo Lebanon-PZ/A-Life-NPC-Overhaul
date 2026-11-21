@@ -11,12 +11,13 @@
 --     plenty again -> full.
 -- When you come back, the one who ran things tells you what happened (ALifeCmd "ltReport": a letter per decision).
 -- Jeem's own auto-roster already runs the shifts while you're away; we don't touch it.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeLieutenant = ALifeLieutenant or {}
 local L = ALifeLieutenant
 local TAG = "[ALifeLieutenant]"
-L.VERSION = "0.9.2"
+L.VERSION = ALifeSide.MOD_VERSION
 L.DEFAULTS = {
     lieutenants = true,   -- you can leave someone in charge
     ltAwayTiles = 150,    -- you're "away" past this far from the base
@@ -281,7 +282,7 @@ end
 if type(Events) == "table" then
     if Events.EveryHours ~= nil then
         ALifeSide.stagger("EveryHours", function()
-            if type(isClient) == "function" and isClient() then return end -- MP: the server does it
+            if ALifeSide.client() then return end -- MP: the server does it
             local ok, err = pcall(L.tick)
             if not ok and not L.tickErr then L.tickErr = true; log("tick error (once): " .. tostring(err)) end
         end)

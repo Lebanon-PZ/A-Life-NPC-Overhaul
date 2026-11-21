@@ -110,7 +110,7 @@ function M.listenLog(msg, key, gapMs)
         if now - (M.listenLogAt[key] or -1e12) < (gapMs or 10000) then return end
         M.listenLogAt[key] = now
     end
-    print("[ALifeTalk][Listen] " .. tostring(msg))
+    ALifeHealth.note("[ALifeTalk][Listen]", msg)
 end
 local function who(l) return tostring(l and l.record and nameOf(l.record) or "?") .. " (" .. tostring(l and l.record and l.record.uid) .. ")" end
 local function windowMs() return math.max(2, tonumber(M.settings.listenWindowSec) or 10) * 1000 end

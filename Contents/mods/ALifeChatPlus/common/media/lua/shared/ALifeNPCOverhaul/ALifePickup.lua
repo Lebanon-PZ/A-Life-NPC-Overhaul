@@ -66,7 +66,7 @@ function P.ask(record, shell, player)
     if near then
         local D = ALifeDriveOrders
         if D and D.car(player) ~= nil then
-            print(TAG .. " " .. tostring(record.uid) .. " is right here: treated as get in")
+            ALifeHealth.note(TAG, tostring(record.uid) .. " is right here: treated as get in")
             return D.ask("in", record, shell, player, "get in")
         end
         return pick(P.LINES.close)
@@ -80,7 +80,7 @@ function P.ask(record, shell, player)
     P.pending = { uid = record.uid, carKey = key, fuelUsed = tiles / 400,
         dueH = h + mins / 60, warnH = h + math.max(0, mins - 4) / 60 }
     if ALifeMemory then pcall(ALifeMemory.add, record, "the stranger asked you to come pick them up") end
-    print(string.format("%s %s coming, %d min", TAG, tostring(record.uid), math.floor(mins)))
+    ALifeHealth.note(TAG, string.format("%s coming, %d min", tostring(record.uid), math.floor(mins)))
     return pick(P.LINES.yes)
 end
 
@@ -195,7 +195,7 @@ function P.arrive(player)
     if not removed then
         -- 0.8.4: its spot is loaded and it isn't there: someone else drove it off. No car, no ride (never a copy).
         if spotLoaded(snap.x, snap.y) then
-            print(TAG .. " " .. tostring(snap.script) .. " is gone from where it sat: nobody comes")
+            ALifeHealth.note(TAG, tostring(snap.script) .. " is gone from where it sat: nobody comes")
             pcall(ALifeLetter, player, "Nobody came. Whatever they meant to drive must be gone")
             P.pending = nil
             return
@@ -257,7 +257,7 @@ function P.arrive(player)
     pcall(function() car:engineDoStarting() end)
     if shell then pcall(ProjectALife.Speech.say, shell, pick(P.LINES.here), { face = player }) end
     pcall(ALifeLetter, player, "A car pulls up nearby")
-    print(TAG .. " arrived in " .. tostring(snap.script))
+    ALifeHealth.note(TAG, "arrived in " .. tostring(snap.script))
     P.pending = nil
 end
 

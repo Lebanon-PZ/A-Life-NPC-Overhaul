@@ -10,7 +10,7 @@ require "ALifeLLMTalk/ALifeLLMTalk_Main"
 
 ALifeGestureAI = ALifeGestureAI or {}
 local G = ALifeGestureAI
-G.VERSION = "0.8.3"
+G.VERSION = ALifeSide.MOD_VERSION
 G.MOODS = { neutral = true, friendly = true, emphatic = true, question = true, nervous = true, angry = true }
 G.DEFAULTS = { talkGestures = true }
 G.metrics = G.metrics or { asked = 0, planned = 0, none = 0 }
@@ -36,7 +36,7 @@ function G.apply(shell, player, text, mood)
     if fn(T, "enabled") and not T.enabled() then return false end
     if fn(T, "targetOk") and not T.targetOk(player) then return false end
     -- same rule as A-Life's onLine: animations run where the NPC lives (SP / host), not on an MP client
-    local clientOnly = type(isClient) == "function" and isClient() and not (type(isServer) == "function" and isServer())
+    local clientOnly = ALifeSide.mpClient()
     if clientOnly then return false end
     G.metrics.asked = G.metrics.asked + 1
     local steps = T.plan(text, mood, T.armedOf(shell), { chance = roll(100), pick = roll(1000) })

@@ -4,6 +4,7 @@
 --   someone you met                 -> you recognize them (halo text)
 -- If they died by your hand and someone saw, ALifeMemory already holds that; here they find the body.
 
+require "ALifeNPCOverhaul/AA_Side"
 local TAG = "[ALifeBodies]"
 ALifeBodies = ALifeBodies or {}
 local B = ALifeBodies

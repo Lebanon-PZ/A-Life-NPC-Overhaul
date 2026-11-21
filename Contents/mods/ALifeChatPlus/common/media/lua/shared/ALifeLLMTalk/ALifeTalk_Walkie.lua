@@ -29,7 +29,7 @@ local W = ALifeWalkie
 ALifeTalkWalkie = ALifeTalkWalkie or {}
 local K = ALifeTalkWalkie
 local TAG = "[ALifeTalkWalkie]"
-K.VERSION = "0.8.5"
+K.VERSION = ALifeSide.MOD_VERSION
 K.metrics = K.metrics or { calls = 0, ai = 0, fixed = 0, incoming = 0, missed = 0, presets = 0, scanned = 0, raids = 0, ambush = 0, swaps = 0 }
 K.contacts, K.baseCh = K.contacts or {}, K.baseCh
 

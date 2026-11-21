@@ -481,7 +481,7 @@ function M.nmInstall()
         end
         return abandon(b, reason, ...)
     end
-    print("[ALifeNomads] loaded v0.6.5 (starving groups on stripped land move on; big groups hold outposts)")
+    print("[ALifeNomads] loaded v" .. ALifeSide.MOD_VERSION .. " (starving groups on stripped land move on; big groups hold outposts)")
     return true
 end
 if not M.nmInstall() and type(Events) == "table" and Events.OnGameStart then Events.OnGameStart.Add(function() M.nmInstall() end) end

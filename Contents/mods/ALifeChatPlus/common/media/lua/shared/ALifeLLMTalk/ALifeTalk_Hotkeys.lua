@@ -16,7 +16,7 @@ if type(M) ~= "table" or type(U) ~= "table" then return end
 local TAG = "[ALifeHotkeys]"
 ALifeHotkeys = ALifeHotkeys or {}
 local K = ALifeHotkeys
-K.VERSION = "0.9.0"
+K.VERSION = ALifeSide.MOD_VERSION
 K.last = K.last or nil
 U.registerSettings()
 

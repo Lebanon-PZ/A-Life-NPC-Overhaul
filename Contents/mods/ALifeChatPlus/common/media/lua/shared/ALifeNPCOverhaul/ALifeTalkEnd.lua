@@ -8,12 +8,13 @@
 -- You saying goodbye closes the window too, with no hard feelings (no refusal).
 -- Multiplayer-ready: the client sends { uid, refuse } / { uid } through ALifeCmd; the server checks the record and
 -- the refusal window itself. Settings: talkEndClose, talkEndCloseMs, talkEndRefuse, talkPushCost, talkPushMax.
+require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
 ALifeTalkEnd = ALifeTalkEnd or {}
 local E = ALifeTalkEnd
 local TAG = "[ALifeTalkEnd]"
-E.VERSION = "0.8.3"
+E.VERSION = ALifeSide.MOD_VERSION
 E.metrics = E.metrics or { ended = 0, refused = 0, closed = 0, pushed = 0, cost = 0 }
 
 local function PA() return type(ProjectALife) == "table" and ProjectALife or nil end

@@ -80,6 +80,6 @@ if Events ~= nil and Events.OnGameStart then
     Events.OnGameStart.Add(function()
         local ok = pcall(L.writeVoiceFile)
         local code = L.code()
-        print("[ALifeLanguage] NPC language: " .. tostring(code) .. (ok and "" or " (voice file not written)"))
+        ALifeHealth.note("[ALifeLanguage]", "NPC language: " .. tostring(code) .. (ok and "" or " (voice file not written)"))
     end)
 end

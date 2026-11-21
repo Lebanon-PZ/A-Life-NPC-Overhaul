@@ -13,10 +13,10 @@ local D = ALifeDemocracy
 if type(M) ~= "table" or type(D) ~= "table" then return end
 ALifeDemocracyUI = ALifeDemocracyUI or {}
 local U = ALifeDemocracyUI
-U.VERSION = "0.9.5"
+U.VERSION = ALifeSide.MOD_VERSION
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
 local function playerOf() local p = nil; pcall(function() p = ALifeSide.you() end); return p end
-local function isMP() return type(isClient) == "function" and isClient() end
+local function isMP() return ALifeSide.client() end
 local function letter(t) if type(ALifeLetter) == "function" and playerOf() then pcall(ALifeLetter, playerOf(), t, 200, 210, 230) end end
 local function send(name, args) local p = playerOf(); if p and fn(ALifeCmd, "send") then pcall(ALifeCmd.send, p, name, args or {}) end end
 U.WORDS = {

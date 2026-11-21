@@ -17,7 +17,7 @@ require "ALifeNPCOverhaul/AA_Side"
 local Events = ALifeSide.hooks("world", "ALifeBondsPower") -- pre-1.0 MP: one side switch (world ticks where the world is; OnGameStart = OnServerStarted on a server)
 
 local TAG = "[ALifeBondsPower]"
-local VERSION = "1.3.0"
+local VERSION = ALifeSide.MOD_VERSION
 
 ALifeBondsPower = ALifeBondsPower or {}
 local P = ALifeBondsPower
@@ -552,7 +552,7 @@ function P.take(player, uid)
     B().change(key, uid, -6, 15, 0, { player = player, record = record })
     witnessCost(key, player, 3)
     notify(player, nameOf(record) .. " is your prisoner" .. (P.state().cap[uid].tied and ", hands tied" or "") .. ". " .. factionTitle(record.factionId) .. " will think twice.", true)
-    print(TAG .. " prisoner taken: " .. tostring(uid) .. " (" .. tostring(record.factionId) .. ")")
+    ALifeHealth.note(TAG, "prisoner taken: " .. tostring(uid) .. " (" .. tostring(record.factionId) .. ")")
     if ALifeLLMTalk and ALifeLLMTalk.valPrisoner then ALifeLLMTalk.valPrisoner("prisoner", player, record) end
     return true
 end
@@ -630,7 +630,7 @@ function loseCaptive(uid, c, why)   -- forward-declared above cellTick
     end
     shakeFaction(c.key, c.fid, why == "died" and -10 or -4, -20, player)
     markLost(c.key, c.fid)
-    print(TAG .. " prisoner " .. tostring(uid) .. " " .. why)
+    ALifeHealth.note(TAG, "prisoner " .. tostring(uid) .. " " .. why)
 end
 
 -- tribute -------------------------------------------------------------------
@@ -654,7 +654,7 @@ function P.demand(player, uid)
     s.deal[key][record.factionId] = { since = hours(), last = hours() - P.TRIBUTE_EVERY_H }
     witnessCost(key, player, 2)
     notify(player, factionTitle(record.factionId) .. " will pay you every 3 days.", true)
-    print(TAG .. " tribute deal: " .. tostring(record.factionId))
+    ALifeHealth.note(TAG, "tribute deal: " .. tostring(record.factionId))
     return true
 end
 
@@ -672,7 +672,7 @@ local function breakDeal(key, fid, player, why)
     shakeFaction(key, fid, -8, -20, player)
     markLost(key, fid)
     notify(player, "Your deal with " .. factionTitle(fid) .. " is over (" .. why .. ")", false)
-    print(TAG .. " deal broken with " .. tostring(fid) .. ": " .. why)
+    ALifeHealth.note(TAG, "deal broken with " .. tostring(fid) .. ": " .. why)
 end
 
 function P.collect(player, uid)

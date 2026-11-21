@@ -14,7 +14,7 @@ require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 ALifeAIRelay = ALifeAIRelay or {}
 local R = ALifeAIRelay
-R.VERSION = "pre-1.0"
+R.VERSION = ALifeSide.MOD_VERSION
 R.PIECE = 280
 R.MAX_PIECES = 200 -- 56k chars: a request bigger than that is refused (A-Life answers)
 R.state = R.state or {}     -- server: key -> { on, at, ver }

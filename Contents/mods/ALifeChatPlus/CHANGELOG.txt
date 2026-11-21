@@ -2,6 +2,9 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- Fixed (A-Life 1.5.3): dead NPCs dropped their spare ammo twice - real mags plus A-Life's new bonus loose rounds
+  counted against the full reserve again (and in the ammo of the gun they started with, not the one they carried).
+  Loose rounds now only come from what was left after the mags, for the gun they really had (ALifeBodyAmmo.handBack).
 - Fixed (Rundown): base status said "Food: running low" and the meal after a run was called off ("there isn't enough
   food in the base") while you were away. The base's squares aren't loaded then, so the count read 0. Away, the camp
   widget, morale and party cap now use the last count taken while the base was loaded; feasts and the run meal wait

@@ -84,6 +84,17 @@ function B.patchPlan(inventory, plan)
     return p
 end
 
+-- A-Life 1.5.3 drops bonus loose rounds right after the mags (DeathDrops.dropLooseRounds), capped by the reserve left
+-- after the mag drops (plan.roundsLeft, written by dropMagazines via noteLeft; experiment ammodrop_honest_loose).
+-- dropMagazines saw our copy, so the left-over count and the real gun go back to A-Life's plan. Without this the loose
+-- rounds were capped by the full reserve again (same ammo counted twice) and keyed to the authored gun.
+-- dropAmmo is NOT handed back: the profile's own drop-ammo switch still decides the bonus loose rounds.
+function B.handBack(plan, p)
+    if type(plan) ~= "table" or type(p) ~= "table" then return end
+    if type(p.roundsLeft) == "table" then plan.roundsLeft = p.roundsLeft end
+    if type(p.weaponTypes) == "table" then plan.weaponTypes = p.weaponTypes end
+end
+
 function B.installDead()
     if B.deadInstalled then return true end
     local pa = PA()
@@ -96,7 +107,12 @@ function B.installDead()
         B.metrics.plans = B.metrics.plans + 1
         if B.on("bodyAmmo") then
             local ok, p = pcall(B.patchPlan, inventory, plan)
-            if ok and p ~= nil then B.metrics.patched = B.metrics.patched + 1; return orig(inventory, p, ...) end
+            if ok and p ~= nil then
+                B.metrics.patched = B.metrics.patched + 1
+                local r = orig(inventory, p, ...)
+                B.handBack(plan, p)
+                return r
+            end
             if not ok then log("plan error: " .. tostring(p)) end
         end
         return orig(inventory, plan, ...)

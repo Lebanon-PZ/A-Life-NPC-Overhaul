@@ -490,8 +490,52 @@ function M.activityLine(uid)
     return a.words .. who
 end
 
+-- pre-1.0 (Joe Nov 20: "npcs have weird animations, asking 'what are you doing' should tell what they're working on"):
+-- the answer is what they are really on right now, first match wins: lying hurt, their camp job, your order, our idle
+-- activity, then A-Life's own activity / intent (the words its squad map uses). nil = nothing we can name.
+M.doingOrders = { follow = "keeping up, following", hold = "holding this spot like I was told", surrender = "keeping my hands where you can see them",
+    leave = "leaving, like you said", flee = "getting out of here" }
+function M.doingNow(uid, l, player)
+    uid = tostring(uid)
+    local record = type(l) == "table" and l.record or nil
+    local shell = type(l) == "table" and l.shell or nil
+    local pa = PA()
+    if record == nil and pa and pa.ActorRegistry and fn(pa.ActorRegistry, "read") then record = pa.ActorRegistry.read(uid) end
+    if shell == nil and pa and fn(pa.Talk, "shellFor") then pcall(function() shell = pa.Talk.shellFor(uid) end) end
+    -- lying hurt (A-Life's injury system): the pose people asked about
+    local downed = false
+    pcall(function() local md = shell:getModData(); downed = md.ProjectALifeInjured == "down" or md.ProjectALifeInjured == "dragged" end)
+    if downed then return "lying here hurt - I can't get up" end
+    -- the camp job you gave them (Camp > Roles / jobs)
+    if type(M.cpJobs) == "table" and type(M.cpJobs[uid]) == "table" then
+        if fn(M, "bdDoing") then local ok, w = pcall(M.bdDoing, uid, player); if ok and type(w) == "string" and w ~= "free" then return w end end
+        return tostring(M.cpJobs[uid].kind or "work") .. " work for the camp"
+    end
+    -- your order
+    local mem = type(record) == "table" and type(record.memory) == "table" and record.memory or {}
+    if mem.orderedTo ~= nil then
+        local kind = type(mem.orderedTo) == "table" and mem.orderedTo.kind or mem.orderedTo
+        return M.doingOrders[tostring(kind)] or ("doing what you told me (" .. string.gsub(tostring(kind), "_", " ") .. ")")
+    end
+    -- our idle activity (sitting, chatting, smoking, ...)
+    local line = M.activityLine(uid)
+    if line then return line end
+    -- A-Life's own activity / intent, in the words of its squad map (client file; plain words without it)
+    local raw = type(record) == "table" and record.activity or nil
+    if type(raw) == "string" and raw ~= "" and raw ~= "idle" and raw ~= "dead" then
+        local Tip = pa and pa.SquadMapTooltip or nil
+        if fn(Tip, "activity") then
+            local ok, words = pcall(Tip.activity, raw)
+            if ok and type(words) == "string" and words ~= "" then return string.lower(words) end
+        end
+        local base = string.match(raw, "^(.-) %(") or raw
+        return (string.gsub(string.gsub(base, "_", " "), "%s%d+$", ""))
+    end
+    return nil
+end
 -- "what are you doing?" - accurate (the AI gets req.activity; a stock answer when there's no bridge)
-M.whatDoingWords = { "what are you doing", "what you doing", "whatcha doing", "what are you up to", "what you up to", "watcha doin" }
+M.whatDoingWords = { "what are you doing", "what you doing", "whatcha doing", "what are you up to", "what you up to", "watcha doin",
+    "what're you doing", "what are you working on", "what you working on" }
 function M.onWhatDoing(player, text, loud, hearers)
     local low = string.lower(tostring(text or ""))
     local hit = false
@@ -499,7 +543,8 @@ function M.onWhatDoing(player, text, loud, hearers)
     if not hit or hearers == nil or hearers[1] == nil then return end
     local l = hearers[1]
     local uid = tostring(l.record.uid)
-    local line = M.activityLine(uid)
+    local okD, line = pcall(M.doingNow, uid, l, player)
+    if not okD then line = M.activityLine(uid) end
     M.askedWhatDoing = { uid = uid, at = nowMs(), words = line }
     if not (M.bridgeAlive and M.bridgeAlive(nowMs())) and M.say then
         M.say(l.shell, player, line and ("Just " .. line .. ".") or "Nothing much. Keeping my eyes open.", { record = l.record })
@@ -509,7 +554,8 @@ table.insert(M.playerWordHooks, M.onWhatDoing)
 
 table.insert(M.requestExtras, function(req, player, listener, now)
     local uid = tostring(listener.record.uid)
-    local line = M.activityLine(uid)
+    local okD, line = pcall(M.doingNow, uid, listener, player)
+    if not okD then line = M.activityLine(uid) end
     if line then req.activity = { now = line } end
     local asked = M.askedWhatDoing
     if asked and asked.uid == uid and now - asked.at < 8000 then req.activity = req.activity or {}; req.activity.asked = true end

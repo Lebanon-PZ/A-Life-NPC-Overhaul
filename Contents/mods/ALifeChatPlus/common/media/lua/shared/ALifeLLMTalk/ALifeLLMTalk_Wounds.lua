@@ -755,6 +755,13 @@ function M.onTreatGift(player, listener, items)
                 if M.logInteraction then pcall(M.logInteraction, uid, "You gave them a " .. what .. " for their " .. tostring(top and top.part or "wound"), nil, nil, "wound") end
                 log("wound: " .. nameOf(listener.record) .. " treats their wound with your " .. what .. " (" .. tostring(result) .. ")")
                 if M.addDeed then pcall(M.addDeed, "medic", "the stranger patched up " .. nameOf(listener.record) .. "'s wounds", 4, { uid }) end -- 0.5.1: "the medic"
+                -- pre-1.0 (Joe Nov 19): you patched them up = they need you (Need), so they listen to you more
+                pcall(function()
+                    local B = ALifeBonds
+                    local dn = tonumber(M.settings.healNeed) or 10
+                    local key = type(B) == "table" and type(B.keyOf) == "function" and B.keyOf(player) or nil
+                    if key and dn > 0 and type(B.change) == "function" then B.change(key, uid, 0, 0, dn, { player = player, record = listener.record }) end
+                end)
                 return true
             end
         end

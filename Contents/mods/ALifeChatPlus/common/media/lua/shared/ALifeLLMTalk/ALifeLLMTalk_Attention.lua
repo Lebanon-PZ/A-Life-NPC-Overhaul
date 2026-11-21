@@ -263,12 +263,31 @@ local function stopBody(l)
         if l.shell.setMoving ~= nil then l.shell:setMoving(false) end
     end)
 end
+-- lying on the ground in A-Life's injury system (ProjectALifeInjured "down" / "dragged" on the body's mod data)
+function M.attnDowned(l)
+    local I = ALifeInjuryBridge
+    if type(I) == "table" and type(I.downed) == "function" then
+        local ok, d = pcall(I.downed, tostring(l.record.uid), l.shell)
+        if ok then return d == true end
+    end
+    local d = false
+    pcall(function() local md = l.shell:getModData(); d = md.ProjectALifeInjured == "down" or md.ProjectALifeInjured == "dragged" end)
+    return d
+end
 -- start / refresh attention on one NPC
 function M.attend(l, player, why)
     if l == nil or player == nil then return false end
     if M.settings.attention == false then M.listenLog("skip: setting 'attention' is off", "off", 60000); return false, "off" end
     local uid = tostring(l.record.uid)
     local now = nowMs()
+    -- pre-1.0 (Rundown Nov 13: "pleading NPCs on the ground crawl / face the wrong direction"): a downed person (A-Life's
+    -- injury system: down or dragged) is never turned or held here; turning a body lying on the ground plays the crawl
+    -- and A-Life's own downed pose keeps their facing. They still hear you and answer.
+    if M.attnDowned(l) then
+        M.listenLog("skip " .. who(l) .. ": lying hurt (A-Life downed)", uid .. "|downed")
+        if M.attn[uid] then M.release(uid, player, "downed") end
+        return false, "downed"
+    end
     local danger = M.attnDanger(l, player)
     if danger then
         M.listenLog("skip " .. who(l) .. ": danger - " .. tostring(danger), uid .. "|danger")
@@ -394,7 +413,8 @@ function M.attnTick(now)
                 a.untilMs = math.max(a.untilMs, math.min(now + windowMs() * a.factor, cap))
             end
             local danger = M.attnDanger(l, player)
-            if danger then M.release(uid, player, "danger - " .. tostring(danger))
+            if M.attnDowned(l) then M.release(uid, player, "downed") -- pre-1.0: went down mid-talk, never turned again
+            elseif danger then M.release(uid, player, "danger - " .. tostring(danger))
             elseif x == nil or px == nil or (x - px) ^ 2 + (y - py) ^ 2 > M.attnCfg.leaveTiles ^ 2 then M.release(uid, player, "walked away")
             elseif now >= a.untilMs then
                 if a.factor < 0.5 then M.attnCool[uid] = now + 30000 end

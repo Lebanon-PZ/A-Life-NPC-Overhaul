@@ -190,10 +190,13 @@ end
 function L.feast(player, b, people, id, title, memText)
     local s = L.store()
     if s == nil or s.done[id] then return false end
+    local m = M()
+    -- pre-1.0 (Rundown Nov 19): the base's squares aren't loaded while you're away, so its food read 0 and the meal was
+    -- called off. Not loaded = no meal yet (and not "done"): it waits until the base can really be counted.
+    if fn(m, "baseLoaded") and not m.baseLoaded(b) then return false end
     s.done[id] = hours()
     local plates = math.min(#people + 1, L.cfg.maxPlates)
     local have = L.foodIn(b, nil)
-    local m = M()
     if have < plates then
         L.metrics.hungry = L.metrics.hungry + 1
         for _, u in ipairs(people) do sour(u); remember(u, "No " .. title .. " this year - there wasn't enough food to go around") end

@@ -3103,6 +3103,27 @@ function P.install()
         P.installed.relations = true
         log("wrapped Relations.hostileToPlayer, playerStance, status, noteAggression")
     end
+    -- pre-1.0 (Rundown Nov 13: "pleading NPCs on the ground crawl / face the wrong direction"): every turn toward
+    -- someone (A-Life's Talk.hold, its talk window, our attention/pause/medics) goes through Speech.face, which asks
+    -- Speech.mayTurn. A body lying in A-Life's injury system (down / dragged) turning on the spot plays the crawl, so it
+    -- may not turn. Off: setting downedStill.
+    local Speech = pa.Speech
+    if not P.installed.downedTurn and fn(Speech, "mayTurn") then
+        P.orig.mayTurn = Speech.mayTurn
+        Speech.mayTurn = function(shell, ...)
+            local down = false
+            pcall(function()
+                local M = ALifeLLMTalk
+                if type(M) == "table" and type(M.settings) == "table" and M.settings.downedStill == false then return end
+                local md = shell:getModData()
+                down = md.ProjectALifeInjured == "down" or md.ProjectALifeInjured == "dragged"
+            end)
+            if down then P.downedTurnsBlocked = (P.downedTurnsBlocked or 0) + 1; return false end
+            return P.orig.mayTurn(shell, ...)
+        end
+        P.installed.downedTurn = true
+        log("wrapped Speech.mayTurn (downed bodies never turn on the spot)")
+    end
     if not P.installed.calmdown and type(pa.CalmDown) == "table" then
         if pa.CalmDown.plead == nil then pa.CalmDown.plead = P.plead end
         P.installed.calmdown = true

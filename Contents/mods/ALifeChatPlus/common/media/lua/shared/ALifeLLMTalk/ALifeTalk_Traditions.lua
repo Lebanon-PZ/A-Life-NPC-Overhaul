@@ -122,9 +122,24 @@ function T.runMeal()
     local b = L.base(p)
     if b == nil then return false end
     local day = math.floor(hours() / 24)
-    local ok, done = pcall(L.feast, p, b, L.atTable(p, b), "runmeal:" .. day, "a meal after the run", "We ate together after the run, like always")
+    local s = T.store()
+    -- pre-1.0 (Rundown Nov 19): a run often comes home while you're away and the base isn't loaded, so its food read 0 and
+    -- the meal was called off ("there isn't enough food"). Not loaded = the meal waits (a day at most) until it is.
+    if fn(M, "baseLoaded") and not M.baseLoaded(b) then
+        s.mealWait = s.mealWait or day
+        return false
+    end
+    local ok, done = pcall(L.feast, p, b, L.atTable(p, b), "runmeal:" .. tostring(s.mealWait or day), "a meal after the run", "We ate together after the run, like always")
+    s.mealWait = nil
     if ok and done then T.stats.meals = T.stats.meals + 1 end
     return ok and done
+end
+-- the waiting run meal, once the base is loaded again (hourly)
+function T.mealHourly()
+    local s = T.store()
+    if s.mealWait == nil then return end
+    if math.floor(hours() / 24) - (tonumber(s.mealWait) or 0) > 1 or not T.has("run_meal") then s.mealWait = nil; return end
+    T.runMeal()
 end
 
 -- the ways change how people act
@@ -181,4 +196,5 @@ function T.install()
 end
 pcall(T.hook)
 if type(Events) == "table" and Events.OnGameStart then Events.OnGameStart.Add(function() pcall(T.install) end) end
+if type(Events) == "table" and Events.EveryHours then Events.EveryHours.Add(function() pcall(T.mealHourly) end) end
 return T

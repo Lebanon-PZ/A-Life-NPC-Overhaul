@@ -98,13 +98,16 @@ M.settings = {
     shoutTiles = 32,        -- shouted chat ("!" or the shout key)
     -- pre-1.0 MP (docs/PLAN-MP.md P2): the server builds the AI request, the talking player's own bridge answers
     localGreet = true,      -- Nov 16: a plain hello / how are you is answered by A-Life locally, never waits for the AI (off = AI takes it)
+    healNeed = 10,          -- pre-1.0 (Joe Nov 19): Need they gain when you treat their wounds (pills / food / water when down: half; 0 = off)
+    downedStill = true,     -- pre-1.0 (Rundown Nov 13): someone lying hurt (A-Life downed / dragged) is never turned on the spot (turning plays the crawl)
+    chatterHearTiles = 40,  -- pre-1.0 (Joe Nov 20): NPC chatter (banter, chimes, witness lines) is only asked of the AI when a player is this close (0 = no limit)
     mpAI = true,            -- server: use players' AI bridges (off = A-Life's own lines for everyone)
     mpAIStaleSec = 90,      -- server: a player's "my AI is on/off" older than this counts as off
     mpAIStateSec = 20,      -- client: tell the server whether your AI is on at least this often (and on every change)
 }
 if earlySettings ~= nil then for k, v in pairs(earlySettings) do if M.settings[k] == nil then M.settings[k] = v end end end
 M.fileKeys = M.fileKeys or {}
-for _, k in ipairs({ "mpAI", "mpAIStaleSec", "mpAIStateSec", "localGreet" }) do
+for _, k in ipairs({ "mpAI", "mpAIStaleSec", "mpAIStateSec", "localGreet", "chatterHearTiles", "downedStill", "healNeed" }) do
     local have = false
     for _, x in ipairs(M.fileKeys) do if x == k then have = true end end
     if not have then M.fileKeys[#M.fileKeys + 1] = k end
@@ -1243,8 +1246,35 @@ end
 -- Request queue: the bridge handles one request at a time. Player lines jump ahead of NPC chatter.
 ----------------------------------------------------------------------------------------------------------------
 M.chatGen = 0
+-- pre-1.0 (Joe Nov 20: "NPC chatter sends to server when not even nearby"): lines NPCs say out loud on their own go to
+-- the AI only when a player can hear them. One gate for every such mode; player-driven modes never pass through it.
+M.chatterModes = { ambient = true, banter = true, chime = true, event = true, death = true }
+function M.chatterHeard(job)
+    local reach = tonumber(M.settings.chatterHearTiles)
+    if reach == nil or reach <= 0 then return true end
+    local shell = type(job.listener) == "table" and job.listener.shell or nil
+    if shell == nil and job.uid ~= nil then
+        pcall(function() local talk = PA().Talk; if fn(talk, "shellFor") then shell = talk.shellFor(job.uid) end end)
+    end
+    if shell == nil then return false end -- not in the loaded world: nobody hears it
+    local sx, sy = nil, nil
+    pcall(function() sx, sy = shell:getX(), shell:getY() end)
+    if sx == nil then return false end
+    local heard = false
+    local function near(p)
+        if heard or p == nil then return end
+        pcall(function() if (p:getX() - sx) ^ 2 + (p:getY() - sy) ^ 2 <= reach * reach then heard = true end end)
+    end
+    near(job.player)
+    if not heard then for _, p in ipairs(M.players()) do near(p) end end
+    return heard
+end
 function M.submit(job)
     local now = nowMs()
+    if M.chatterModes[job.mode] and not M.chatterHeard(job) then
+        M.metrics.farChatter = (M.metrics.farChatter or 0) + 1
+        return nil
+    end
     if (job.mode == "reply" or job.mode == "radio") and (type(job.text) ~= "string" or string.match(job.text, "^[%s%p]*$")) then
         M.emptyDropped = (M.emptyDropped or 0) + 1
         return nil -- 0.5.1.6: nothing was said

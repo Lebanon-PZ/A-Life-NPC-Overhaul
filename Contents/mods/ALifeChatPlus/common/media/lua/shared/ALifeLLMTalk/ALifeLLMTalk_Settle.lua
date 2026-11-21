@@ -185,6 +185,7 @@ function M.foodScan(base, player)
         end
     end)
     -- the base's own area, every floor
+    local ground, groundLoaded = 0, 0
     pcall(function()
         local r, floors, most = foodSetting("foodScanRadius", 30), foodSetting("foodScanFloors", 4), foodSetting("foodScanMax", 400)
         local squares, area = 0, 0
@@ -194,6 +195,7 @@ function M.foodScan(base, player)
                     squares = squares + 1
                     if squares > M.foodScanSquares then return end
                     local sq = cell:getGridSquare(x, y, z)
+                    if z == 0 then ground = ground + 1; if sq ~= nil then groundLoaded = groundLoaded + 1 end end
                     if sq ~= nil then
                         local n, c = squareFood(sq, x .. "," .. y .. "," .. z, seen)
                         out.items, out.containers, area = out.items + n, out.containers + c, area + c
@@ -203,7 +205,32 @@ function M.foodScan(base, player)
             end
         end
     end)
+    -- pre-1.0 (Rundown Nov 19): away from base its squares aren't loaded, so the count read 0 ("running low", the run
+    -- meal called off). Unloaded (under half the ground squares there) = the last count taken while it was loaded.
+    local key = cx .. ":" .. cy
+    local okS, st = pcall(M.store)
+    local known = okS and type(st) == "table" and st or nil
+    if known then known.foodKnown = type(known.foodKnown) == "table" and known.foodKnown or {} end
+    out.loaded = ground > 0 and groundLoaded * 2 >= ground
+    if out.loaded then
+        if known then known.foodKnown[key] = { items = out.items, containers = out.containers } end
+    else
+        local last = known and known.foodKnown[key] or nil
+        if type(last) == "table" then
+            out.items, out.containers = tonumber(last.items) or out.items, tonumber(last.containers) or out.containers
+            out.remembered = true
+        end
+    end
     return out
+end
+-- pre-1.0: the base's area is loaded right now (its food can be counted and taken for real)
+function M.baseLoaded(base)
+    if type(base) ~= "table" or not tonumber(base.x1) then return false end
+    local okC, cell = pcall(getCell)
+    if not okC or cell == nil then return false end
+    local cx, cy = math.floor((base.x1 + base.x2) / 2), math.floor((base.y1 + base.y2) / 2)
+    local ok, sq = pcall(function() return cell:getGridSquare(cx, cy, 0) end)
+    return ok and sq ~= nil
 end
 function M.baseState(player)
     local base = M.playerBase and M.playerBase(player) or nil

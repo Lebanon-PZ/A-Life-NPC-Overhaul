@@ -156,8 +156,9 @@ function L.onDeed(player, act, uid, payload)
     local B = ALifeBonds
     local victim = record(uid)
     local p, n = playerName(player), nameOf(victim)
-    if row.mine and (row.mine.l or row.mine.f) and key and fn(B, "change") and act ~= "mercy" then
-        pcall(B.change, key, tostring(uid), row.mine.l or 0, row.mine.f or 0, 0, { player = player, record = victim })
+    local dn = L.healNeed(act)
+    if row.mine and (row.mine.l or row.mine.f or dn > 0) and key and fn(B, "change") and act ~= "mercy" then
+        pcall(B.change, key, tostring(uid), row.mine.l or 0, row.mine.f or 0, dn, { player = player, record = victim })
     end
     if row.mem then remember(uid, "injured_" .. act, fill(row.mem, p, n)) end
     local count = 0
@@ -177,6 +178,18 @@ function L.onDeed(player, act, uid, payload)
     L.metrics.witnesses = L.metrics.witnesses + count
     L.tally(key, act, payload.hostile == true)
     log("deed " .. act .. " on " .. tostring(uid) .. (payload.hostile and " (hostile)" or "") .. ", " .. count .. " saw it")
+end
+
+-- pre-1.0 (Joe Nov 19): being patched up by you is a NEED, not only love: they owe you their life and listen to you
+-- more (leadership: love / need / fear). Treating their wounds = healNeed; pills, food, water = half.
+L.HEAL_ACTS = { aid = 1, splint = 1, pills = 0.5, food = 0.5, water = 0.5 }
+function L.healNeed(act)
+    local f = L.HEAL_ACTS[act]
+    if f == nil then return 0 end
+    local M = ALifeLLMTalk
+    local v = type(M) == "table" and type(M.settings) == "table" and tonumber(M.settings.healNeed) or nil
+    if v == nil then v = 10 end
+    return math.max(0, v * f)
 end
 
 -- CAMP TRADITIONS (roadmap): what you keep doing becomes what your people do. Counted per player; at the threshold

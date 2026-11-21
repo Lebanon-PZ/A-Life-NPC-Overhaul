@@ -2,6 +2,22 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- Fixed (Rundown): base status said "Food: running low" and the meal after a run was called off ("there isn't enough
+  food in the base") while you were away. The base's squares aren't loaded then, so the count read 0. Away, the camp
+  widget, morale and party cap now use the last count taken while the base was loaded; feasts and the run meal wait
+  until the base is loaded again (a run meal waits a day at most).
+- Fixed (Joe): NPC chatter (banter, chimes, witness and death lines) was sent to the AI with nobody near to hear it.
+  Now only when a player is within chatterHearTiles (40; 0 = no limit).
+- Fixed (Rundown): people lying hurt (A-Life downed / dragged, the pleading ones) crawled on the spot and faced the
+  wrong way when talked to. Nothing turns a downed body now (A-Life's Speech.mayTurn, so its own talk hold too), and
+  attention never holds them. Setting downedStill (on).
+- New (Joe): patching someone up gives Need, not only love: they owe you and listen to you more. Treating wounds from
+  the injured menu or a bandage/splint gift = healNeed (10; pills, food, water when down = half; 0 = off).
+- New (Joe): "What are you doing?" (also "what are you working on") answers what they're really on: lying hurt,
+  their camp job, an order (holding, following, hands up), their idle activity, then A-Life's own activity.
+- Already fixed in pre-1.0 (TonyTheDeadly, 0.9.5): Stack overflow in Talk.respond after many cloud AI errors, which
+  turned talk off and dropped you to Jeem's chat box.
+
 - New: automatic bug reports reach the mod's Discord (#automated-bug-reports, a forum: each report is its own post).
   Before, the 0.6.20 sender never got through (Discord rejected its message format), only ran with the AI on, and
   was only switched on by hand-editing a file. Now the helper sends (bridge/alifeai_report.ps1), with the AI on or off,

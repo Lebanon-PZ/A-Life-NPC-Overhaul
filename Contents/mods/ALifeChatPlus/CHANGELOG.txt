@@ -2,6 +2,16 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- Fixed: people at your base playing chop / build poses with nothing getting built. Jeem's resident post kept
+  everyone at their spot before our real work (build plans, camp jobs, bodies) was ever asked, and called anyone off
+  duty back once they walked 8 tiles out to a plan. Free residents now do real work first: a plan to build, a camp
+  job, a body to move. Nobody with a Jeem job or work shift (their hours would count twice), on a guard post, under
+  orders, on a mission, in a sleep or meal block, during the base alarm or worn out is pulled. Daytime only, except
+  the night watch. Settings: "Camp: free people do real work..." (on), from / until this hour (7 / 21).
+- New: Builder is a real job. Make someone your base's Builder and they put down their Jeem job ("I'll leave
+  the axe for now.") and build your plans instead of standing guard. Take the role away and they go back to their
+  old Jeem job, if the base can still run it. Setting: "Camp: a Builder leaves their Jeem job to build..." (on).
+
 - New: the People list (Contacts tab) is grouped instead of 50 strangers in a row. Headers for the kind of group you
   take people for: Your people, Hostile to you, Raiders, Friendly, Traders, Faithful, Keep to themselves, Can't tell
   yet, Dead (starred people on top). Under each, the group you suspect them of running with. You only know someone's

@@ -934,19 +934,31 @@ function M.respond(player, listener, text, now, choiceIntent)
     return a, b, c, d
 end
 ALifeLLMTalk._ours[M.respond] = true
+-- a listener's NPC, if it has one (stable across calls; unlike the listener table itself, which A-Life's own
+-- talk.listeners() rebuilds fresh every call, so comparing listener == listener by identity never matches twice)
+local function listenerUid(l) return type(l) == "table" and type(l.record) == "table" and tostring(l.record.uid) or nil end
 function M.respondNow(player, listener, text, now, choiceIntent)
     M.respondHit = true
-    local orig = M.realRespond()
-    -- loop breaker: the "original" we call came back into us with the very same line (a wrapper chain that ends in
-    -- our own respond: console 41072, respond -> respondNow -> respond until Stack overflow). Never call it again.
-    local act = M.origActive
-    if act ~= nil and act.player == player and act.listener == listener and act.text == text and act.intent == choiceIntent then
-        if not M.loopLogged then M.loopLogged = true; log("WARNING: Talk.respond loops back into A-Life Talk (another mod's wrapper?); answer skipped, no loop") end
-        return nil
-    end
     if choiceIntent == nil and not M.inNative and M.settings.enabled then
         local okA, picked = pcall(M.readdress, player, listener, text, now or nowMs())
         if okA and picked ~= nil then listener = picked end
+    end
+    local orig = M.realRespond()
+    -- loop breaker: the "original" we call came back into us with the very same line (a wrapper chain that ends in
+    -- our own respond: console 41072 / Nov22 Discord, respond -> respondNow -> respond until Stack overflow). Never
+    -- call it again. Matched on the NPC's uid (readdress already applied on both sides), not table identity: the
+    -- old check compared this call's listener (before readdress) against the outer call's act.listener (after
+    -- readdress) -> never equal once readdress actually redirected to a named NPC, so the loop ran unchecked.
+    -- respondDepth is a hard backstop beneath that: any reentry at all, for any reason, stops here first.
+    M.respondDepth = (M.respondDepth or 0) + 1
+    local act = M.origActive
+    local uid = listenerUid(listener)
+    local looped = M.respondDepth > 4
+        or (act ~= nil and act.player == player and act.uid == uid and act.text == text and act.intent == choiceIntent)
+    if looped then
+        M.respondDepth = M.respondDepth - 1
+        if not M.loopLogged then M.loopLogged = true; log("WARNING: Talk.respond loops back into A-Life Talk (another mod's wrapper?); answer skipped, no loop") end
+        return nil
     end
     if choiceIntent == nil and not M.inNative and type(listener) == "table" and type(listener.record) == "table" then
         M.lastAddressee = { uid = tostring(listener.record.uid), at = nowMs(), text = text }
@@ -958,6 +970,7 @@ function M.respondNow(player, listener, text, now, choiceIntent)
         local ok, deferred, said, reason = pcall(M.tryDefer, player, listener, text, now, choiceIntent)
         if ok and deferred == true then
             if choiceIntent ~= nil then M.metrics.aiRows = (M.metrics.aiRows or 0) + 1 end
+            M.respondDepth = M.respondDepth - 1
             return said, reason
         end
         if not ok then
@@ -973,11 +986,12 @@ function M.respondNow(player, listener, text, now, choiceIntent)
     local okO, a, b, c = false, nil, nil, nil
     if orig ~= nil then
         local prevAct = M.origActive
-        M.origActive = { player = player, listener = listener, text = text, intent = choiceIntent }
+        M.origActive = { player = player, uid = uid, text = text, intent = choiceIntent }
         okO, a, b, c = pcall(orig, player, listener, text, now, choiceIntent)
         M.origActive = prevAct
     else okO = true end
     M.inStockRespond = M.inStockRespond - 1
+    M.respondDepth = M.respondDepth - 1
     if not okO then error(a, 0) end
     return a, b, c
 end

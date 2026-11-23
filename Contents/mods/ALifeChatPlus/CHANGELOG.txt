@@ -27,6 +27,14 @@ pre-1.0 (work in progress toward 1.0: multiplayer)
 - Fixed (MP side): the ledge guard added its NPC check to every MP client's tick list too (it skipped itself each
   tick, but world logic must not be on a client at all). Now on the one side switch (ALifeSide.hooks "world"): SP and
   server only. Harness: docs/tests/test_1001_p2.lua 71/0 (old fails the client tick count).
+- Fixed (Discord, zero.gravity.soul: Stack overflow, "ALifeTalkCommands 'line'" / "normalize" / "classify" all turned
+  off the same moment): Talk.respond's own loop breaker only caught a wrapper chain bouncing back into us when the
+  SAME call looked identical (same player/NPC/line); nothing capped how deep that chain could nest at all once it
+  didn't look identical, so it ran until the JVM's own stack blew and took down whatever else happened to be on that
+  stack with it (the symptoms in the report are collateral, not separate bugs). ALifeLLMTalk_Main.respondNow now
+  caps Talk.respond's own nesting at 4 regardless of whether anything matches, and the identity check itself compares
+  the NPC's uid (stable) instead of the listener table (which A-Life's own talk.listeners() rebuilds fresh every
+  call). Harness: docs/tests/test_1002_p2b.lua 22/0 (old fails: recurses 97 deep into a real C stack overflow).
 - Fixed (A-Life 1.5.3): dead NPCs dropped their spare ammo twice - real mags plus A-Life's new bonus loose rounds
   counted against the full reserve again (and in the ammo of the gun they started with, not the one they carried).
   Loose rounds now only come from what was left after the mags, for the gun they really had (ALifeBodyAmmo.handBack).

@@ -23,7 +23,10 @@ function K.hash(s) local h = 5381; s = tostring(s); for i = 1, #s do h = (h * 33
 -- one roll 0..1 (tests replace K.rnd)
 -- Kahlua math.random() with no args throws in B42; use the engine roll (harness: math.random fallback)
 function K.rnd()
-    if type(ZombRand) == "function" then return ZombRand(10000) / 10000 end
+    if type(ZombRand) == "function" then
+        local ok, v = pcall(ZombRand, 10000)
+        if ok and type(v) == "number" then return v / 10000 end
+    end
     return math.random()
 end
 function K.chance(pct) return K.rnd() * 100 < (tonumber(pct) or 0) end

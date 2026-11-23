@@ -15,6 +15,18 @@ pre-1.0 (work in progress toward 1.0: multiplayer)
   Settings: orgWalls, orgScanTiles, orgMaxGap, orgMaxGapTotal, wallLayers, wallLayerDays, wallLayerGap, wallMaxRing,
   orgGuess, orgTreesPer100. Harness: docs/tests/test_pre1_walls.lua 37/0 (old fails). Not played.
 
+- Fixed (auto bug report: abduct): the camp alarm file reused the Airport's names (alCfg, alStats, alTick, alPerf) on the
+  shared table and, loading later, replaced them. Airport abductions crashed ("attempted index: desperate of non-table")
+  and the Airport's supply-flight tick and settings were silently the alarm's. Alarm now uses caCfg/caStats/caTick/caPerf.
+- Fixed (Discord, zero.gravity.soul): on a dedicated server the AI tab said "Host AI: none" and only showed Refresh.
+  The tab still followed the old 0.8.12 rule (AI on the host): it asked the server, which read its own Zomboid\Lua (a
+  dedicated server has no helper). But the MP talk relay uses each player's own AI. The tab now always reads and
+  writes THIS PC's files (ALifeAISetup.ask / .act, no aiSetupAsk/aiSetupDo round trip): every MP player gets the full
+  tab, cloud AI form, AI rules and doctor for their own AI. A server never writes the helper files. Harness:
+  docs/tests/test_0812_aisetup.lua 100/0 (MP block rewritten; old code fails 9).
+- Fixed (MP side): the ledge guard added its NPC check to every MP client's tick list too (it skipped itself each
+  tick, but world logic must not be on a client at all). Now on the one side switch (ALifeSide.hooks "world"): SP and
+  server only. Harness: docs/tests/test_1001_p2.lua 71/0 (old fails the client tick count).
 - Fixed (A-Life 1.5.3): dead NPCs dropped their spare ammo twice - real mags plus A-Life's new bonus loose rounds
   counted against the full reserve again (and in the ammo of the gun they started with, not the one they carried).
   Loose rounds now only come from what was left after the mags, for the gun they really had (ALifeBodyAmmo.handBack).

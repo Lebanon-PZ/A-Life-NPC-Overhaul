@@ -58,9 +58,9 @@ M.cpDefaults.CPAlarmFighters = 2
 M.cpDefaults.CPAlarmLights = true
 M.cpDefaults.CPAlarmClear = 30
 M.cpDefaults.CPAlarmBell = false
-M.alCfg_bell = { radius = 60, volume = 60 }
-M.alCfg = { scanMs = 5000, scanTiles = 30, maxPosts = 6, lightRadius = 25, arriveTiles = 1.8 }
-M.alStats = { raised = 0, cleared = 0, lightsOff = 0, arrived = 0 }
+M.caBell = { radius = 60, volume = 60 }
+M.caCfg = { scanMs = 5000, scanTiles = 30, maxPosts = 6, lightRadius = 25, arriveTiles = 1.8 }
+M.caStats = { raised = 0, cleared = 0, lightsOff = 0, arrived = 0 }
 
 ----------------------------------------------------------------------------------------------------------------
 -- state (saved with the camp)
@@ -115,7 +115,7 @@ end
 ----------------------------------------------------------------------------------------------------------------
 local function eachSwitch(b, f)
     local x1, y1, x2, y2 = b.x1, b.y1, b.x2, b.y2
-    if x1 == nil then local r = M.alCfg.lightRadius; x1, y1, x2, y2 = b.x - r, b.y - r, b.x + r, b.y + r end
+    if x1 == nil then local r = M.caCfg.lightRadius; x1, y1, x2, y2 = b.x - r, b.y - r, b.x + r, b.y + r end
     local cell = getCell()
     for z = 0, 2 do
         for x = math.floor(x1), math.floor(x2) do
@@ -147,7 +147,7 @@ function M.alLightsOut(player)
             end
         end)
     end)
-    M.alStats.lightsOff = M.alStats.lightsOff + n
+    M.caStats.lightsOff = M.caStats.lightsOff + n
     return n
 end
 function M.alLightsBack()
@@ -217,14 +217,14 @@ function M.alRaiseNow(reason, player)
     local h = hours()
     if a.on then a.seenAt = h; return true end
     a.on, a.reason, a.since, a.seenAt, a.said, a.geared = true, reason, h, h, {}, {}
-    M.alStats.raised = M.alStats.raised + 1
+    M.caStats.raised = M.caStats.raised + 1
     for _, uid in ipairs(people) do if fn(M, "cpRelease") then pcall(M.cpRelease, uid, shellFor(uid)) end end
     local lights = M.alLightsOut(player)
     -- the bell: everyone hears it. So does everything dead within 60 tiles.
     if M.cpOpt("CPAlarmBell") == true then
         local b = fn(M, "wzBase") and M.wzBase(player) or nil
         if b and type(addSound) == "function" then
-            pcall(addSound, player, math.floor(b.x), math.floor(b.y), math.floor(b.z or 0), M.alCfg_bell.radius, M.alCfg_bell.volume)
+            pcall(addSound, player, math.floor(b.x), math.floor(b.y), math.floor(b.z or 0), M.caBell.radius, M.caBell.volume)
             halo("The bell rings out. Everything for sixty tiles heard it.", 255, 150, 90)
         end
     end
@@ -244,7 +244,7 @@ function M.alClear(player, why)
     if not a.on then return false end
     player = player or thePlayer()
     a.on, a.reason, a.said = false, nil, {}
-    M.alStats.cleared = M.alStats.cleared + 1
+    M.caStats.cleared = M.caStats.cleared + 1
     local back = M.alLightsBack()
     local people = M.cpPeople(player)
     for _, uid in ipairs(people) do M.cpNextTry[uid] = nil end
@@ -254,16 +254,16 @@ function M.alClear(player, why)
     return true
 end
 -- while it's up: look around the base; quiet long enough -> all clear
-M.alScanAt = 0
-function M.alTick(player)
+M.caScanAt = 0
+function M.caTick(player)
     if not M.alOn() then return end
     local now = rawMs()
-    if now - M.alScanAt < M.alCfg.scanMs then return end
-    M.alScanAt = now
+    if now - M.caScanAt < M.caCfg.scanMs then return end
+    M.caScanAt = now
     local b = fn(M, "wzBase") and M.wzBase(player) or nil
     if b == nil then return end
     local a = M.alData()
-    local s = M.cpSpot(b.x, b.y, M.alCfg.scanTiles, player)
+    local s = M.cpSpot(b.x, b.y, M.caCfg.scanTiles, player)
     if s.zombies > 0 or s.hostile then a.seenAt = hours() end
     local mins = tonumber(M.cpOpt("CPAlarmClear")) or 30
     if mins > 0 and (hours() - (tonumber(a.seenAt) or 0)) * 60 >= mins then M.alClear(player, "quiet") end
@@ -286,7 +286,7 @@ function M.alEvaluate(actor, shell, context)
     if spot then
         local sx, sy = pos(shell)
         if sx == nil then return nil end
-        if d2(sx, sy, spot.x + 0.5, spot.y + 0.5) > M.alCfg.arriveTiles ^ 2 then
+        if d2(sx, sy, spot.x + 0.5, spot.y + 0.5) > M.caCfg.arriveTiles ^ 2 then
             if type(context.startMovement) ~= "function" then return nil end
             return context.startMovement(actor, shell, { x = spot.x + 0.5, y = spot.y + 0.5, z = spot.z or 0 }, "chatplus_alarm",
                 { pace = "run", timeoutMs = 15000, tolerance = 1.2 })
@@ -298,7 +298,7 @@ function M.alEvaluate(actor, shell, context)
     end
     if not a.said[uid] then
         a.said[uid] = true
-        M.alStats.arrived = M.alStats.arrived + 1
+        M.caStats.arrived = M.caStats.arrived + 1
         if hash(uid .. tostring(a.since)) % 3 == 0 then say(shell, pickLine(kind == "post" and POSTED or HIDING, uid .. tostring(a.since))) end
     end
     if type(context.setActivity) == "function" then pcall(context.setActivity, actor, "idle", "chatplus_alarm") end
@@ -355,7 +355,7 @@ function M.alMenu(child, off, player, x, y, z, inRange, why)
         am:addOption("Remove post " .. here, nil, function() M.cpAct("alPostRemove", x, y, z, nil, nil, player) end)
     else
         local o = am:addOption("Post here (" .. (#a.posts + 1) .. ")", nil, function() M.cpAct("alPost", x, y, z, nil, nil, player) end)
-        if #a.posts >= M.alCfg.maxPosts then off(o, "You already have " .. #a.posts .. " posts (max " .. M.alCfg.maxPosts .. ").")
+        if #a.posts >= M.caCfg.maxPosts then off(o, "You already have " .. #a.posts .. " posts (max " .. M.caCfg.maxPosts .. ").")
         elseif not inRange then off(o, why or "Too far from your base.") end
     end
     local isSafe = a.safe and a.safe.x == x and a.safe.y == y and a.safe.z == z
@@ -385,7 +385,7 @@ end
 M.cpActs.alPost = function(player, x, y, z)
     local a = M.alData()
     x, y, z = M.cpNum(x), M.cpNum(y), M.cpNum(z) or 0
-    if x == nil or y == nil or #a.posts >= M.alCfg.maxPosts or not inReach(player, x, y) then return false end
+    if x == nil or y == nil or #a.posts >= M.caCfg.maxPosts or not inReach(player, x, y) then return false end
     a.posts[#a.posts + 1] = { x = x, y = y, z = z }
     halo("Post " .. #a.posts .. " set. On the alarm, fighters spread out over the posts.")
 end
@@ -433,8 +433,8 @@ function M.alExtra(req, player, listener)
     req.psyche = type(req.psyche) == "table" and req.psyche or {}
     req.psyche.mood = req.psyche.mood and (tostring(req.psyche.mood) .. ". " .. note) or note
 end
-function M.alPerf()
-    local s = M.alStats
+function M.caPerf()
+    local s = M.caStats
     return "alarm: raised " .. s.raised .. ", cleared " .. s.cleared .. ", lights off " .. s.lightsOff .. ", at posts " .. s.arrived
 end
 
@@ -444,13 +444,13 @@ end
 if type(Events) == "table" then
     if Events.OnTick then
         ALifeHealth.add(Events.OnTick, "ALifeTalk_CampAlarm", function()
-            if M._alTickDead then return end
+            if M._caTickDead then return end
             local ok, err = pcall(function()
                 if not M._alRegistered then M.alRegister() end
                 local p = thePlayer()
-                if p then M.alTick(p) end
+                if p then M.caTick(p) end
             end)
-            if not ok then M._alTickDead = true; log("tick error, alarm tick off for this session: " .. tostring(err)) end
+            if not ok then M._caTickDead = true; log("tick error, alarm tick off for this session: " .. tostring(err)) end
         end)
     end
     if Events.OnPostRender then

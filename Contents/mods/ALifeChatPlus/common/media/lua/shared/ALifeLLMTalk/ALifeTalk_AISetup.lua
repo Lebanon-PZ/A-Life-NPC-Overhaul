@@ -1,8 +1,9 @@
 -- A-Life NPC Overhaul 0.8.12: THE "AI" TAB. Set up the AI from inside the game, step by step:
 --   1 helper running  2 Ollama  3 pick a model (download / delete)  4 test reply (time, graphics card)  5 AI ready
 -- Advanced fold (closed): reading size, reply length, wait limit, load wait, backup model. Every button has a hover tip.
--- The tab only asks (ALifeCmd "aiSetupAsk" / "aiSetupDo"); ALifeAISetup (shared) decides and talks to the helper.
--- Multiplayer: the host gets the full tab; everyone else a read-only card ("Host AI: ready / down").
+-- The tab only asks (ALifeAISetup.ask / .act); ALifeAISetup (shared) decides and talks to the helper.
+-- Multiplayer: every player gets the full tab for their OWN AI (it runs on their PC; the relay sends their NPC lines
+-- to the server). Never asks the server: a dedicated server has no AI (pre-1.0 fix: it showed "Host AI: none").
 require "ALifeNPCOverhaul/AA_Side"
 local Events, ALifeHealth = ALifeSide.hooks("ui", "ALifeTalk_AISetup") -- pre-1.0 MP: one side switch (docs/PLAN-MP.md)
 require "ALifeLLMTalk/ALifeLLMTalk_Main"
@@ -44,7 +45,7 @@ end
 -- asking / doing
 ----------------------------------------------------------------------------------------------------------------
 K.advOpen = false
-function K.ask() local p = playerOf(); if p then ALifeCmd.send(p, "aiSetupAsk", {}) end end
+function K.ask() return A.ask(playerOf()) end
 function K.state() return A.last end
 function K.setup()
     local s = A.last
@@ -52,14 +53,13 @@ function K.setup()
     if type(s) == "table" and type(s.setup) == "table" then for k, v in pairs(s.setup) do out[k] = v end end
     return out
 end
-function K.send(action, arg, setup, game)
-    local p = playerOf()
-    if p == nil then return end
-    ALifeCmd.send(p, "aiSetupDo", { action = action, arg = arg, setup = setup, game = game })
-    K.ask()
+function K.send(action, arg, setup)
+    local ok, why = A.act(playerOf(), { action = action, arg = arg, setup = setup })
+    if not ok then K.ask() end
+    return ok, why
 end
 local WHY = {
-    notHost = "Only the host can change the AI.", badAction = "The helper doesn't know that one.",
+    notHost = "The AI is set up on each player's own PC.", badAction = "The helper doesn't know that one.",
     badModel = "That model name isn't allowed.", waiting = "The helper hasn't picked up the last request yet. Is it running?",
     write = "Couldn't write to Zomboid\\Lua.", bad = "Bad request.",
 }
@@ -70,20 +70,16 @@ function A.onDone(payload)
     else text = tr("Why_" .. tostring(payload.why), WHY[payload.why] or tostring(payload.why)) end
     if fn(M, "momToast") then pcall(M.momToast, text) end
 end
--- the doctor: the game side (version + settings) goes in the helper's report. Single player: written here (same PC).
+-- the doctor: the game side (version + settings) goes in the helper's report, written here (the helper is on this PC)
 function K.doctor()
-    local lines = { "A-Life NPC Overhaul (game side) " .. A.VERSION, "bridge protocol " .. tostring(M.VERSION) }
+    local lines = { "A-Life NPC Overhaul (game side) " .. A.VERSION, "bridge protocol " .. tostring(M.VERSION),
+        "multiplayer " .. tostring(not K.isSP()) }
     local keys = {}
     for k, v in pairs(M.settings or {}) do if type(k) == "string" and type(v) ~= "table" and type(v) ~= "function" then keys[#keys + 1] = k end end
     table.sort(keys)
     for _, k in ipairs(keys) do lines[#lines + 1] = k .. "=" .. string.gsub(tostring(M.settings[k]), "[\r\n]", " ") end
-    if M.isSP and M.isSP() then
-        A.writeLines(A.FILES.game, lines)
-        K.send("doctor")
-    else
-        -- multiplayer: the host's server writes a short game part (the full settings list is too big for one command)
-        K.send("doctor", nil, nil, { mod = A.VERSION, protocol = tostring(M.VERSION), sp = false })
-    end
+    A.writeLines(A.FILES.game, lines)
+    K.send("doctor")
 end
 -- the folder with Setup.cmd. getModInfoByID(id):getDir() = the mod's root (common, 42, bridge): read in the
 -- decompiled 42.21 ChooseGameInfo.Mod.
@@ -241,13 +237,8 @@ function K.text()
         out[#out + 1] = GREY .. tr("Asking", "Asking...") .. TXT
         return table.concat(out)
     end
-    if not s.host then
-        local word = A.summary(s)
-        local col = (word == "ready" or word == "slow") and GREEN or (word == "warming" and YELLOW or RED)
-        out[#out + 1] = tr("HostAI", "Host AI: ") .. col .. tr("Sum_" .. word, word) .. TXT .. " <LINE> "
-        if s.modelName then out[#out + 1] = GREY .. tr("HostModel", "Model: {1}", esc(short(s.modelName))) .. TXT .. " <LINE> " end
-        out[#out + 1] = GREY .. tr("HostOnly", "The AI runs on the host's PC. Only the host can change it.") .. TXT
-        return table.concat(out)
+    if not K.isSP() then
+        out[#out + 1] = GREY .. tr("MPOwn", "Multiplayer: this is your own AI, on your PC. The NPCs you talk to answer with it, and everyone hears them. No AI here: they use A-Life's own lines.") .. TXT .. " <LINE> "
     end
     if s.power == "off" then
         out[#out + 1] = YELLOW .. tr("PowerOffText", "The AI is turned off. Nothing is started and nothing is asked. People use A-Life's own lines. Press \"AI: off\" to turn it back on.") .. TXT
@@ -275,7 +266,7 @@ function K.text()
             end
         end
     end
-    if K.isSP() then
+    do
         local c = A.readCloud()
         out[#out + 1] = " <LINE> " .. GOLD .. tr("CloudTitle", "CLOUD AI") .. TXT .. "  " .. GREY .. tr("CloudTag", "(no graphics card needed: a paid or free online AI)") .. TXT .. " <LINE> "
         if c.enabled then
@@ -398,7 +389,7 @@ function K.actions(menuAt)
     if type(ALifeBugReports) == "table" and fn(ALifeBugReports, "button") then pcall(function() bug = ALifeBugReports.button() end) end
     if type(ALifeBugReports) == "table" and fn(ALifeBugReports, "sendButton") then pcall(function() bugSend = ALifeBugReports.sendButton() end) end
     if type(s) ~= "table" or not s.host then
-        local l = { { label = tr("BtnRefresh", "Refresh"), tip = tr("TipRefresh", "Ask the host again."), fn = function() K.ask() end } }
+        local l = { { label = tr("BtnRefresh", "Refresh"), tip = tr("TipRefresh", "Check again."), fn = function() K.ask() end } }
         if bugSend then l[#l + 1] = bugSend end
         if bug then l[#l + 1] = bug end
         return l
@@ -409,11 +400,9 @@ function K.actions(menuAt)
     local cloud = s.ollama == "cloud"
     local list = {}
     local function add(a) list[#list + 1] = a end
-    if K.isSP() then
-        add({ label = tr("BtnFolder", "Open the AI folder"), accent = not up,
-            tip = tr("TipFolder", "Opens the mod's bridge folder in Windows Explorer: Setup.cmd (first time), Restart AI helper.cmd, Set up cloud AI.cmd. The game can't run them for you (safety rule), but it can take you there."),
-            fn = function() K.openFolder() end })
-    end
+    add({ label = tr("BtnFolder", "Open the AI folder"), accent = not up,
+        tip = tr("TipFolder", "Opens the mod's bridge folder in Windows Explorer: Setup.cmd (first time), Restart AI helper.cmd, Set up cloud AI.cmd. The game can't run them for you (safety rule), but it can take you there."),
+        fn = function() K.openFolder() end })
     if not up then
         add({ label = tr("BtnHelper", "Start the helper"), accent = true,
             tip = tr("TipHelper", "The game can't start programs on your PC (safety rule). Click for the two-click way to start it."),
@@ -475,7 +464,7 @@ function K.actions(menuAt)
     add({ label = K.advOpen and tr("BtnAdvClose", "Advanced -") or tr("BtnAdvOpen", "Advanced +"),
         tip = tr("TipAdv", "Fine-tuning for people who want it. Each one says what it does and a safe range."),
         fn = function(win) K.advOpen = not K.advOpen; if win then win.sig = nil; win:refresh() end end })
-    if K.advOpen and K.isSP() then -- 0.8.12: your own AI rules file (single player: the file is on this PC)
+    if K.advOpen then -- 0.8.12: your own AI rules file (on this PC, single player or MP)
         add({ label = tr("BtnRules", "Your AI rules"),
             tip = tr("TipRules", "How people talk is written in plain text files the AI reads live. This opens your own file (Zomboid\\Lua\\alifeai_prompts.txt, made if missing): house rules under [extra], or copy a section from the mod's bridge\\prompts.txt and change it. Save and the next line uses it. Survives mod updates."),
             fn = function() K.rulesFile() end })
@@ -537,7 +526,7 @@ function K.gameMenu(cm, which)
 end
 
 ----------------------------------------------------------------------------------------------------------------
--- 0.8.12: CLOUD AI form (single player). The key box is masked and starts empty: empty = keep the saved key. The
+-- 0.8.12: CLOUD AI form (this PC: single player or your own MP client). The key box is masked and starts empty: empty = keep the saved key. The
 -- key is written only to this PC's Zomboid/Lua/alifeai_cloud.txt (ALifeAISetup.writeCloud), never shown or logged.
 ----------------------------------------------------------------------------------------------------------------
 function K.providerName(url)
@@ -560,10 +549,10 @@ function K.modeMenu(cm)
     end
     local function mark(m) return (m == cur) and " *" or "" end
     tip(cm:addOption(tr("ModeLocal", "Local") .. mark("local"), nil, function()
-        if K.isSP() and A.readCloud().enabled then A.writeCloud({ enabled = false }) end
+        if A.readCloud().enabled then A.writeCloud({ enabled = false }) end
         apply()
     end), tr("TipModeLocal", "The AI runs on your PC with Ollama. Needs a graphics card for good speed."))
-    if K.isSP() then
+    do
         tip(cm:addOption(tr("ModeCloud", "Cloud") .. mark("cloud"), nil, function()
             local c = A.readCloud()
             if c.exists and c.hasKey and A.validUrl(c.url) and A.validCloudModel(c.model) then
@@ -581,13 +570,15 @@ function K.modeMenu(cm)
     end), tr("TipModeOff", "Stops the AI and keeps it off, even after a restart, until you pick Local or Cloud. Nothing nags you."))
 end
 function K.cloudErr(code) if code and CLOUD_ERR[code] then return tr("CloudErr_" .. code, CLOUD_ERR[code]) end return nil end
-local CLOUD_WHY = { url = "That address doesn't look right (it starts with https://).", key = "Paste your key (no spaces).",
+local CLOUD_WHY = { url = "That address doesn't look right (it starts with https://).", key = "That key has a character keys don't use. Copy it again, just the key.",
     model = "Type the model's name exactly as your provider lists it.", write = "Couldn't write the file in Zomboid/Lua.", bad = "Bad request." }
 -- form: { url, key, model (text boxes with getText/setText), bg, cap, msg, close }
 function K.cloudSave(form, on)
     local c = A.readCloud()
-    local data = { enabled = on, url = form.url:getText(), key = form.key:getText(), model = form.model:getText(),
+    local data = { enabled = on, url = form.url:getText(), key = A.cleanKey(form.key:getText()), model = form.model:getText(),
         background = form.bg, cap = form.cap }
+    if type(data.url) == "string" then data.url = string.gsub(data.url, "^%s+", ""); data.url = string.gsub(data.url, "%s+$", "") end
+    if type(data.model) == "string" then data.model = string.gsub(data.model, "^%s+", ""); data.model = string.gsub(data.model, "%s+$", "") end
     if not on then
         if data.url == "" or not A.validUrl(data.url) then data.url = c.url end
         if data.model == "" or not A.validCloudModel(data.model) then data.model = c.model end

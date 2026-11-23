@@ -21,7 +21,11 @@ end
 function K.day() return math.floor(K.hours() / 24) end
 function K.hash(s) local h = 5381; s = tostring(s); for i = 1, #s do h = (h * 33 + string.byte(s, i)) % 2147483647 end; return h end
 -- one roll 0..1 (tests replace K.rnd)
-function K.rnd() return math.random() end
+-- Kahlua math.random() with no args throws in B42; use the engine roll (harness: math.random fallback)
+function K.rnd()
+    if type(ZombRand) == "function" then return ZombRand(10000) / 10000 end
+    return math.random()
+end
 function K.chance(pct) return K.rnd() * 100 < (tonumber(pct) or 0) end
 function K.clamp(v, a, b) if v < a then return a end; if v > b then return b end; return v end
 function K.pos(o) if o == nil then return nil end; local x, y, z = nil, nil, nil; pcall(function() x, y, z = o:getX(), o:getY(), o:getZ() end); return x, y, z end

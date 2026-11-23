@@ -9,6 +9,8 @@
 -- IsoGameCharacter getForwardDirectionX/Y, isMoving, isClimbing, isDead, getPathFindBehavior2, setPath2, setMoving.
 -- All numbers are player settings (ledgeGuard, ledgeLookTiles, ledgeCheckMs).
 require "ALifeNPCOverhaul/AA_Side"
+-- world logic (moves NPCs): the one side switch. Tick only where the world runs (SP / server), never on an MP client.
+local Events, ALifeHealth = ALifeSide.hooks("world", "ALifeLedgeGuard")
 ALifeLedgeGuard = ALifeLedgeGuard or {}
 local L = ALifeLedgeGuard
 local TAG = "[ALifeLedgeGuard]"
@@ -134,8 +136,7 @@ function L.tick()
 end
 
 if type(Events) == "table" then
-    if type(ALifeTick) == "table" and type(ALifeTick.add) == "function" then ALifeTick.add(L.tick)
-    elseif Events.OnTick ~= nil then Events.OnTick.Add(function() pcall(L.tick) end) end
+    ALifeHealth.tickAdd("ledgeGuard", L.tick) -- side switch: skipped on an MP client (was added there, then bailed each tick)
     local function start()
         register()
         if not L.said then
@@ -143,6 +144,5 @@ if type(Events) == "table" then
             log("ready v" .. L.VERSION .. ": ledge guard (" .. (L.on() and "on" or "off") .. ")")
         end
     end
-    if Events.OnGameStart ~= nil then Events.OnGameStart.Add(start) end
-    if Events.OnServerStarted ~= nil then Events.OnServerStarted.Add(start) end
+    if Events.OnGameStart ~= nil then Events.OnGameStart.Add(start) end -- world mode: OnServerStarted on a server
 end

@@ -9,9 +9,9 @@
 --   alifeai_setup.txt         game -> helper + both bridges: your choices (model, num_ctx, num_predict, timeout,
 --                             warmup, fallback). Overrides model.txt, survives mod updates.
 --   alifeai_doctor_game.txt   game -> helper: mod version + settings, folded into alifeai_doctor.txt (Doctor check)
--- Multiplayer: the AI runs on the host. Client asks "aiSetupAsk", server answers "aiSetupState" (read from the server's
--- own Zomboid\Lua). Only the host (single player, or a player with admin power) may send "aiSetupDo"; everyone else
--- gets a read-only card. Args are plain tables, checked again on the server.
+-- Multiplayer (pre-1.0): every player runs their own AI (ALifeAIRelay asks the talking player's PC), so the tab is
+-- always about THIS PC: A.ask / A.act read and write this PC's Zomboid\Lua directly, never over the network. A server
+-- has no AI of its own (a dedicated one has no helper at all), so nothing here runs or answers there.
 require "ALifeNPCOverhaul/AA_Side"
 require "ALifeNPCOverhaul/ALifeCmd"
 
@@ -123,15 +123,13 @@ function A.knownOf(name)
     for _, k in ipairs(A.KNOWN) do if k.name == name or k.name .. ":latest" == name then return k end end
     return nil
 end
--- single player: you are the host. Multiplayer: admin power (vanilla B42: getRole():hasAdminPower(); unverified on
--- the server side of 42.21, guarded: no answer = not host)
+-- the AI files are on this PC: single player or an MP client (each player's own AI). Never on an MP server: the
+-- server's folder is not anyone's AI (pre-1.0: this used to be "admin = host" and showed "Host AI: none" on dedicated).
 function A.isHost(player)
     local client = ALifeSide.client()
     local server = ALifeSide.server()
-    if not client and not server then return true end
-    if player == nil then return false end
-    local ok, yes = pcall(function() return player:getRole():hasAdminPower() end)
-    return ok and yes == true
+    if server and not client then return false end
+    return true
 end
 
 ----------------------------------------------------------------------------------------------------------------
@@ -317,9 +315,9 @@ function A.summary(s)
 end
 
 ----------------------------------------------------------------------------------------------------------------
--- doing it (server side; SP = direct)
+-- doing it (on this PC: single player or the player's own MP client)
 ----------------------------------------------------------------------------------------------------------------
--- args: { action, arg, setup = { model, num_ctx, ... }, game = { [k] = v } }  -> ok, why
+-- args: { action, arg, setup = { model, num_ctx, ... } }  -> ok, why
 function A.run(player, args)
     if not A.isHost(player) then return false, "notHost" end
     if type(args) ~= "table" then return false, "bad" end
@@ -338,20 +336,6 @@ function A.run(player, args)
     if type(args.setup) == "table" then
         if not A.writeSetup(args.setup) then return false, "write" end
     end
-    -- multiplayer doctor: the client's short game part (single player writes the full one itself, on the same PC)
-    if action == "doctor" and type(args.game) == "table" then
-        local lines = { "A-Life NPC Overhaul (game side, from the server) " .. A.VERSION }
-        do
-            local keys = {}
-            for k in pairs(args.game) do if type(k) == "string" then keys[#keys + 1] = k end end
-            table.sort(keys)
-            for _, k in ipairs(keys) do
-                local v = args.game[k]
-                if type(v) ~= "table" then lines[#lines + 1] = k .. "=" .. string.gsub(tostring(v), "[\r\n]", " ") end
-            end
-        end
-        A.writeLines(A.FILES.game, lines)
-    end
     local id = A.writeCmd(action, arg)
     if id == nil then return false, "write" end
     log("command " .. action .. (arg ~= "" and (" " .. arg) or "") .. " -> helper (id " .. A.intStr(id) .. ")")
@@ -360,8 +344,8 @@ end
 
 ----------------------------------------------------------------------------------------------------------------
 -- 0.8.12: CLOUD AI from the tab (Zomboid\Lualifeai_cloud.txt, the file "Set up cloud AI.cmd" opened in Notepad).
--- Single player only: the key is typed on this PC and written straight to this PC's file, never sent over the
--- network or logged. The tab never reads the key back: it only learns that one is saved.
+-- This PC only (single player or your own MP client): the key is typed here and written straight to this PC's file,
+-- never sent over the network or logged. The tab never reads the key back: it only learns that one is saved.
 ----------------------------------------------------------------------------------------------------------------
 A.CLOUD_FILE = "alifeai_cloud.txt"
 A.PROVIDERS = {
@@ -375,6 +359,15 @@ A.PROVIDERS = {
 A.CLOUD_CAPS = { 30, 60, 100, 150, 300, 600, 1200 }
 function A.validUrl(u)
     return type(u) == "string" and #u >= 10 and #u <= 200 and string.match(u, "^https?://[%w%.%-_:%[%]]+[%w%./%-_:%%~]*$") ~= nil
+end
+-- pasted keys come with a trailing space/newline, quotes, or "Bearer " in front: strip those (keys never hold whitespace)
+function A.cleanKey(k)
+    if type(k) ~= "string" then return k end
+    k = string.gsub(k, "[%s%c]", "")
+    k = string.gsub(k, "^[Bb]earer", "")
+    k = string.gsub(k, "^[\"'`]+", "")
+    k = string.gsub(k, "[\"'`]+$", "")
+    return k
 end
 function A.validKey(k) return type(k) == "string" and #k >= 1 and #k <= 300 and string.match(k, "^[%w%-_%.:=/+]+$") ~= nil end
 function A.validCloudModel(m) return type(m) == "string" and #m >= 1 and #m <= 150 and string.match(m, "^[%w%-_%.:/@+]+$") ~= nil end
@@ -391,7 +384,8 @@ end
 function A.writeCloud(c)
     if type(c) ~= "table" then return false, "bad" end
     local old = A.readKV(A.CLOUD_FILE) or {}
-    local key = (type(c.key) == "string" and c.key ~= "") and c.key or old.key
+    c.key = A.cleanKey(c.key)
+    local key =(type(c.key) == "string" and c.key ~= "") and c.key or old.key
     if c.enabled then
         if not A.validUrl(c.url) then return false, "url" end
         if not A.validKey(key) then return false, "key" end
@@ -419,20 +413,17 @@ function A.writeCloud(c)
     return true, nil
 end
 
-if not A._cmds then
-    A._cmds = true
-    ALifeCmd.onServer("aiSetupAsk", function(player, args)
-        ALifeCmd.reply(player, "aiSetupState", A.state(player))
-    end)
-    ALifeCmd.onServer("aiSetupDo", function(player, args)
-        local ok, why = A.run(player, args)
-        ALifeCmd.reply(player, "aiSetupDone", { ok = ok, why = why, action = type(args) == "table" and args.action or nil })
-        if ok then ALifeCmd.reply(player, "aiSetupState", A.state(player)) end
-    end)
-    ALifeCmd.onClient("aiSetupState", function(payload) A.last = payload; A.lastAt = nowMs() end)
-    ALifeCmd.onClient("aiSetupDone", function(payload)
-        A.lastDone = payload
-        if fn(A, "onDone") then pcall(A.onDone, payload) end
-    end)
+-- the tab's two calls: always this PC's files (pre-1.0: no "aiSetupAsk" / "aiSetupDo" round trip to the server any more)
+function A.ask(player)
+    A.last = A.state(player)
+    A.lastAt = nowMs()
+    return A.last
 end
-log("ready v" .. A.VERSION .. ": AI tab logic, helper command channel (10 fixed actions), host-only in MP")
+function A.act(player, args)
+    local ok, why = A.run(player, args)
+    A.lastDone = { ok = ok, why = why, action = type(args) == "table" and args.action or nil }
+    if fn(A, "onDone") then pcall(A.onDone, A.lastDone) end
+    if ok then A.ask(player) end
+    return ok, why
+end
+log("ready v" .. A.VERSION .. ": AI tab logic, helper command channel (10 fixed actions), each player's own PC in MP")

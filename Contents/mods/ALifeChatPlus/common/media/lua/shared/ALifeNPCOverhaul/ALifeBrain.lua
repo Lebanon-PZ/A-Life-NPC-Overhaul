@@ -137,12 +137,88 @@ function BR.base(id)
     local b = M.nbOf(id)
     return type(b) == "table" and b.status == "active" and b or nil
 end
+-- the group a run belongs to: an NPC base, or (One Brain, ALifeBrainYou) your camp's record for "you"
+function BR.home(id) return BR.base(id) end
 function BR.count(t) local n = 0; for _ in pairs(t or {}) do n = n + 1 end; return n end
 function BR.sortedKeys(t) local o = {}; for k in pairs(t or {}) do o[#o + 1] = k end; table.sort(o, function(a, b) return tostring(a) < tostring(b) end); return o end
 function BR.str(b) if not fn(M, "nbStrength") then return 0 end local ok, s = pcall(M.nbStrength, b); return ok and tonumber(s) or 0 end
 function BR.foodDays(b) return (tonumber(b and b.food) or 0) / math.max(1, tonumber(b and b.crewN) or 1) end
 function BR.tie(b, o) if not fn(M, "dirTie") or type(o) ~= "table" then return 0 end local ok, v = pcall(M.dirTie, b, o); return ok and tonumber(v) or 0 end
 function BR.tieState(v) if fn(M, "dirTieState") then return M.dirTieState(v) end return "neutral" end
+
+-- MP (co-op: one shared camp): the camp's players = everyone online with a base (the same rule as M.homePlayer);
+-- nobody with a base yet: the home player. Single player: you. Cached 2 s per player (M.alifeBase is a 1-slot cache).
+BR._campBase = BR._campBase or {}
+local function nowMs() return type(getTimestampMs) == "function" and getTimestampMs() or 0 end
+local function hasBase(p)
+    local key = ALifeSide.keyOf(p) or tostring(p)
+    local c = BR._campBase[key]
+    local t = nowMs()
+    if c == nil or t - c.at > 2000 or t < c.at then
+        local ok, b = pcall(function() return fn(M, "alifeBase") and M.alifeBase(p) or nil end)
+        c = { at = t, has = ok and b ~= nil }
+        BR._campBase[key] = c
+    end
+    return c.has
+end
+local function mp() return fn(ALifeSide, "mpServer") and ALifeSide.mpServer() == true end
+function BR.campPlayers()
+    if not mp() then
+        local p = nil
+        if fn(ALifeSide, "localPlayer") then pcall(function() p = ALifeSide.localPlayer() end) end
+        if p == nil and fn(ALifeSide, "you") then pcall(function() p = ALifeSide.you() end) end
+        return p and { p } or {}
+    end
+    local out = {}
+    for _, p in ipairs(ALifeSide.online()) do if hasBase(p) then out[#out + 1] = p end end
+    if #out == 0 and fn(M, "homePlayer") then local ok, hp = pcall(M.homePlayer); if ok and hp ~= nil then out[1] = hp end end
+    return out
+end
+function BR.isCampPlayer(player)
+    if player == nil then return false end
+    if not mp() then return true end
+    local key = ALifeSide.keyOf(player)
+    for _, p in ipairs(BR.campPlayers()) do if p == player or (key ~= nil and ALifeSide.keyOf(p) == key) then return true end end
+    return false
+end
+local function xyOf(p) local x, y = nil, nil; pcall(function() x, y = p:getX(), p:getY() end); return x, y end
+-- a camp player within tiles of (x, y)?
+function BR.campPlayerNear(x, y, tiles)
+    for _, p in ipairs(BR.campPlayers()) do local px, py = xyOf(p); if px and (px - x) ^ 2 + (py - y) ^ 2 < tiles * tiles then return p end end
+    return nil
+end
+-- letters / cards to the whole camp (SP: you), or to whoever is near a spot
+local function letterTo(p, text, bad)
+    local T = ALifeTrade
+    if fn(T, "letter") then return pcall(T.letter, p, text, bad == true) end
+    if fn(ALifeSide, "outLetter") then return pcall(ALifeSide.outLetter, p, text, nil, nil, nil, bad == true) end
+end
+function BR.campLetter(text, bad)
+    local n = 0
+    for _, p in ipairs(BR.campPlayers()) do letterTo(p, text, bad); n = n + 1 end
+    if n == 0 and not mp() then letterTo(nil, text, bad); n = 1 end -- SP with no player handle yet: the old path
+    return n
+end
+function BR.nearLetter(x, y, tiles, text, bad)
+    local n = 0
+    if not (tonumber(x) and tonumber(y)) then return 0 end
+    for _, p in ipairs(ALifeSide.online()) do
+        local px, py = xyOf(p)
+        if px and (px - x) ^ 2 + (py - y) ^ 2 < tiles * tiles then letterTo(p, text, bad); n = n + 1 end
+    end
+    return n
+end
+-- the same card to every camp player (MP: one ALifeOut card each, the choice runs as whoever answers; the first
+-- answer settles it, a late click on the others finds it gone). SP: once.
+function BR.campCard(card)
+    if not mp() then
+        if fn(M, "momCard") then local ok, r = pcall(M.momCard, card); return ok and r end
+        return false
+    end
+    local any = false
+    for _, p in ipairs(BR.campPlayers()) do local ok, r = pcall(ALifeSide.outCard, p, card); any = any or (ok and r) end
+    return any
+end
 
 -- the brain runs only with Directive (it writes its goals) and the base simulation
 function BR.on() return BR.setting("brain") ~= false and M.settings.directives ~= false end

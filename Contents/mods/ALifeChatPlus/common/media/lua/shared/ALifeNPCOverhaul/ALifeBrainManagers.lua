@@ -92,6 +92,7 @@ manager("defense", function(b, sit, h, s, bids)
                 break
             end
         end
+        if fn(BR, "coalitionCall") then pcall(BR.coalitionCall, b, sit, h, s) end -- Brain 2 R6: coalition partners too
     end
 end)
 
@@ -253,7 +254,7 @@ end
 manager("military", function(b, sit, h, s, bids)
     if not BR.flag("warParties") or (s.orders or {}).noWar or nRuns(b, "war") > 0 then return end
     -- an ally asked for help
-    if type(s.helpAsk) == "table" and h - (tonumber(s.helpAsk.h) or -1e9) < 48 and s.stance ~= "survive" and BR.base(s.helpAsk.by) then
+    if type(s.helpAsk) == "table" and h - (tonumber(s.helpAsk.h) or -1e9) < 48 and s.stance ~= "survive" and (BR.base(s.helpAsk.by) or s.helpAsk.by == "you") then
         bid(bids, { job = "war", n = 2, value = 2 + BR.debtV(b, s.helpAsk.by, h) / 20, tool = "help", target = { to = s.helpAsk.by }, key = "help", force = true })
     end
     if s.stance ~= "dominate" and s.stance ~= "revenge" and not (type(s.plan) == "table" and s.plan.wantWar) then return end
@@ -374,3 +375,92 @@ local function install()
 end
 BR.installers[#BR.installers + 1] = install
 pcall(install)
+
+----------------------------------------------------------------------------------------------------------------
+-- Brain 2 R6: coalitions and the last war go through the minds (ALifeRegion's rules stay the checks)
+--   * a coalition only holds the members who know the big one and fear it (a belief, a threat, a grudge): fog of war
+--   * coalition partners never pick each other as targets, and call each other for help like allies
+--   * the last war waits while either side is just trying to survive
+----------------------------------------------------------------------------------------------------------------
+function BR.fearsIt(b, bigId, h)
+    if not BR.runs(b) then return true end -- not on the brain: Region's own rule
+    local k = BR.belief(b, bigId, h)
+    if k == nil then return false end
+    local s = BR.of(b)
+    if s.threatBy == bigId or BR.grudgeV(b, bigId, h) >= 20 then return true end
+    return (tonumber(k.str) or 0) >= BR.str(b) * 1.5
+end
+function BR.coalitionPartners(b)
+    local R = ALifeRegion
+    if type(R) ~= "table" or not fn(R, "coalitionOf") then return {} end
+    local c = R.coalitionOf(b.id)
+    if type(c) ~= "table" then return {} end
+    local out = {}
+    for _, id in ipairs(c.members or {}) do if id ~= b.id then out[#out + 1] = id end end
+    return out
+end
+local function installRegion()
+    local R = ALifeRegion
+    if type(R) ~= "table" or not fn(R, "formCoalitions") then return false end
+    if R._brainCoal then return true end
+    R._brainCoal = true
+    local fc = R.formCoalitions
+    R.formCoalitions = function(h, ...)
+        local before = #(R.store().coalitions or {})
+        local made = fc(h, ...)
+        if BR.on() then
+            local list = R.store().coalitions
+            for i = #list, before + 1, -1 do
+                local c = list[i]
+                local keep = {}
+                for _, id in ipairs(c.members or {}) do local b = BR.base(id); if b and BR.fearsIt(b, c.against, h) then keep[#keep + 1] = id end end
+                if #keep < 2 then table.remove(list, i); made = math.max(0, (tonumber(made) or 1) - 1)
+                else
+                    c.members = keep
+                    for _, id in ipairs(keep) do local b = BR.base(id); if b then BR.interrupt(b, "coalition", { a = c.against }) end end
+                end
+            end
+        end
+        return made
+    end
+    if fn(R, "warPair") then
+        local wp = R.warPair
+        R.warPair = function(...)
+            local a, b = wp(...)
+            if a and b and BR.on() then
+                for _, side in ipairs({ a, b }) do
+                    local o = BR.base(side.id)
+                    local s = o and type(o.brain) == "table" and o.brain or nil
+                    if s and (s.stance == "survive" or (tonumber(s.pressure) or 0) >= 60) then return nil, "a side is just trying to survive" end
+                end
+            end
+            return a, b
+        end
+    end
+    return true
+end
+BR.installers[#BR.installers + 1] = installRegion
+pcall(installRegion)
+-- partners are never targets
+do
+    local wt = BR.warTarget
+    BR.warTarget = function(b, sit, h, s, ...)
+        local t = wt(b, sit, h, s, ...)
+        if type(t) == "table" and t.id ~= nil then
+            for _, id in ipairs(BR.coalitionPartners(b)) do if id == t.id then return nil end end
+        end
+        return t
+    end
+end
+-- partners answer a call for help like allies (Defense calls only allied groups today)
+do
+    BR.coalitionCall = function(b, sit, h, s)
+        if not (sit.threat >= 1.5 and h - (tonumber(s.askedHelpH) or -1e9) >= 48) then return false end
+        for _, id in ipairs(BR.coalitionPartners(b)) do
+            local o = BR.base(id)
+            if o and fn(BR, "askHelp") then s.askedHelpH = h; BR.askHelp(b, o, sit.threatBy, h); return true end
+        end
+        return false
+    end
+end
+

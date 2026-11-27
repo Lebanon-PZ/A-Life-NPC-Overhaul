@@ -259,7 +259,8 @@ function M.alifeBase(player, adopt)
     -- pre-1.0: a base you made in Jeem beats A-Life's BaseHeat guess (the house you slept the most nights in). BaseHeat
     -- first kept the camp at an old house: zones "too far from your base" at the new one, the camp stuck after a move.
     -- adopt: houseFor already picked BaseHeat (it has no Jeem step), so Jeem overrides that pick too.
-    if (house == nil or src == "baseheat") and M.settings.jeemBase ~= false then
+    -- pre-1.0 (one camp, Joe): a Jeem base is THE camp, ahead of A-Life's mark / safehouse too (docs/PLAN-JEEM-MERGE.md)
+    if M.settings.jeemBase ~= false then
         local h, s = M.jeemBaseHouse(player)   -- 0.5.11
         if h ~= nil then house, src = h, s end
     end

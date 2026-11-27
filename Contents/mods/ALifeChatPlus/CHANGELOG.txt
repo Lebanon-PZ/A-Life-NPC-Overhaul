@@ -2,6 +2,112 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- MAJOR: Brain 2 (docs/PLAN-BRAIN-2.md). Fights you can see, roads worth fighting over, a camp you can hand the keys to,
+  groups that learn how you play and lie to each other. All world side (MP: server). Tests: docs/tests/test_pre1_brain2_*.lua.
+  * R1 real fights (ALifeBrainFight.lua): a war party arriving with people around fights for real (A-Life combat) instead
+    of turning back. Small and human: a stand-off and a shout first (fightStandoffMin), at most fightMaxSide go in, the
+    rest hang back; hostility pair by pair (ALifeTalkPatch.setPairStance, our wrap of A-Life Relations.status) only
+    between those fighters; A-Life hold orders walk them (DecisionLoop.setOrder). A side breaks at fightBreakPct down /
+    hurt, its leader down or the fight brain's break; attackers pull out after fightMaxMinutes. Hostility off, orders
+    released, A-Life's after-fight grudges between the two sides wiped. Wins carry off real stash / trading post goods.
+    At your gate they demand first; a refusal brings the fight (Relations.hostileToPlayer wrap: only those raiders).
+    Your war party waits for you nearby (fightJoinPlayer) and the defenders fight you too. Nobody loaded and you gone:
+    the old off-screen math. One fight at a time (fightsAtOnce). Settings fightsOnScreen, fightMaxSide, fightBreakPct,
+    fightMaxMinutes, fightStandoffMin, fightStageTiles, fightJoinPlayer, fightsAtOnce, fightHurtPct.
+  * R3 standing orders + lieutenants (ALifeBrainCommandYou.lua, Work tab > Orders): trade (never trade food / meds /
+    ammo, keep days of food, friends only), people (always scout new groups, never alone), diplomacy (peace talks
+    without asking, never pay / pay much stronger: demands answered for you), war (defend only / hit back / free hand,
+    raids only, spare friends, decoys). An idea an order forbids never becomes a card ("Lately" says why); one it allows
+    goes without one (fights still ask). Lieutenants per branch (Trade, War, Scouting, Diplomacy, Home): their nature
+    bends the branch (greedy = daily trade, paranoid = scouts twice as often, bold war chief brings raids), they make
+    the small calls and report after, fights come as cards in their voice. Low trust: stretch orders (ltOverrule) or
+    skip reports; overruled ltQuitNos times a week: they quit (card); dead / gone: branch unsure for stainDays.
+    Settings lieutenants, ltOverrule, ltQuitNos, ltTrustLow. Calls byOrder / byLt, view byOrders.
+  * R2 roads (ALifeBrainRoads.lua): traffic is intel (runs seen near a group or a held point: beliefs + a spot on their
+    road); ambushes (tool ambush: wait ambushHours by a road the enemy was seen on; off screen the real crews' odds,
+    escorts count; on screen a real roadside fight; winners take the packs); escorts from beliefs (hostile people or a
+    hostile held point near the road lower its safety); held points (tool hold, chokepoints: toll from neutrals, enemy
+    traders turned back or robbed by a dominating holder, war parties fight past it off screen; everyone near knows the
+    holder); blockades (besieged can't send or receive runs, food drains blockadeDrain). Settings ambushes,
+    ambushHours, ambushReach, escorts, holdPoints, holdDays, holdTax, blockades, blockadeDrain. Belief field "holds".
+  * R5 spying and lies (ALifeBrainLies.lua): bluffs (pressed groups claim strength) and bait (dominating groups talk a
+    rival down) on the radio, your camp hears them too; a sure look that disagrees marks the belief wrong ("turned out
+    to be wrong" on What we know), the liar is believed half as much each time and resented. Decoys (armed, nothing to
+    take, down roads where they were robbed). Feints (careful leaders send one ahead; defenders at 70 percent against
+    that party for a few hours; never an on-screen fight). Spies (traders from groups with designs on you look around
+    your post: sure belief; caught by your guards: card, let it go / run them off). Your side: radio > Spread word
+    (byRumour, a claim: caught lies cost their trust), decoys by order. Settings brainLies, spies, decoys, feints,
+    liesPerWeek.
+  * R4 learning (ALifeBrainLearn.lua): each group models you from what it saw: kill hours, guns / melee / night /
+    alone, where you're seen, your caravans' roads, how you answer demands, seen far from home. Counters: guards up at
+    your usual hour, traders off your ground, raids staged from the side you're seen least, held off while you're home,
+    demands sooner if you always pay. Allies share it at half; fades over learnFadeDays; their talk and the AI's picture
+    show it ("You always come at night."). Also writes lastHitBy / lastHitH (read by the commander, never set before).
+    Settings brainLearn (off / slow / on), learnFadeDays.
+  * R6 gaps: allies help your camp (camp radios allies, help parties walk to you, count off screen, fight on screen;
+    campAskHelp), camp morale from the members' real unrest, campAsksPerDay card limit, What we know as notes on your
+    paper map (campMapPins), coalitions only of members who know and fear the big one, partners never targets and
+    called for help, the last war waits while a side is just surviving.
+  * Servers (co-op, one shared camp = everyone online with a base, same rule as M.homePlayer): BR.campPlayers /
+    isCampPlayer / campLetter / campCard / nearLetter (ALifeBrain.lua). Raiders at your camp turn only on camp players;
+    defenders of a place your war party hits only on camp players within fightWithTiles (new setting); idea, spy and
+    lieutenant cards go to every camp player (first answer settles it, the choice runs as whoever answered); camp
+    letters (reports, demands, warnings, tribute taken, your caravans robbed / tolled / ambushed) to the camp; fight
+    news to players near it; Spread word answered on the sender's screen with their radio; map notes per player.
+    Test: test_pre1_brain2_mp.lua (server, 3 players: 2 in the camp, 1 stranger).
+- MAJOR: One Brain (docs/PLAN-ONE-BRAIN.md). Your camp runs on the same brain as every NPC group.
+  * shared/ALifeNPCOverhaul/ALifeBrainYou.lua (world; MP server): the camp is a group record "you" (global ModData
+    bucket brainYou, never in the NPC base list), rebuilt hourly from the Jeem residents at camp, the Food store, the
+    trading post and your strength (Kingmaker). Beliefs (fog of war) from sight, radio, your scouts, your traders and
+    traders at your post; the mind from the members' persona lens (everyone's voice counts); stance, plans and the
+    allocator as for any group. No outposts, recruiting or nomad moves for the camp.
+  * The dial (Work tab button): Off (nothing unless you start it), Advisor (default: anything that sends people out
+    asks first), Run it (trade runs, scouts, peace talks go, you're told after). Raids, wars and tribute always ask,
+    even on Run it (setting campBrainWarAsk).
+  * Members bring ideas as priority cards in their own voice (the one whose nature fits: brave / proud for a fight,
+    greedy for trade, paranoid for scouting, kind for peace), with the brain's reasons and anyone objecting. Do it /
+    No / Later. No: trust lost (campOverruleTrust, more for proud / brave); unanswered campAskHours: a little
+    (campIgnoreTrust); yes: a little gained, an objector overruled loses some; later: back in campLaterHours (twice).
+    A turned-down idea waits campAskCooldown. Who goes is real: hurt, scared or untrusting people stay home.
+  * Away jobs on the real engines: your caravan (TradeOwn), scout / envoy / war party (BrainWar, run.from = "you").
+    Peace / alliance by radio when in range. Loot and tribute come home into the trading post. Your raid costs
+    standing with them; peace +10, alliance +15, tribute paid -10. An NPC war party halfway to you puts the camp on
+    alert (runs called home, guards up); demands at your gate become a grudge.
+  * Reports: what the camp does and learns as letters in "we" words (campReports a day). Members whose nature fights
+    the stance grumble. Your own caravan sent while the camp is scraping by draws a complaint (it still goes).
+  * What we know (Work tab page): each group in words (strength next to ours, fed or hungry, hostile, dug in), where
+    the news came from, how sure, how old; what was said lately; ideas waiting. View byKnow.
+  * ALifeWork: the small camp brain is gone. The allocator's counts (guard / food / build) are the Work tab's targets;
+    the pass picks who inside your priorities. Settings workBrainGuards / workBrainFoodDays removed (minGuards and the
+    stance decide). wkDial exposed (wkBrain kept: on = Advisor).
+  * Brain core: BR.home(id) (the camp for "you"), allocator never stamps camp people (the Work tab is their job).
+  * New settings (fileKeys at load): campBrainWarAsk, campAskHours, campLaterHours, campAskCooldown,
+    campOverruleTrust, campIgnoreTrust, campYesTrust, campReports.
+  * Harness: docs/tests/test_pre1_one_brain.lua 53/0 (old fails); test_pre1_work.lua updated 34/0.
+- MAJOR: one camp, Jeem required (docs/PLAN-JEEM-MERGE.md). mod.info requires ProjectALifeJimmy.
+  * shared/ALifeNPCOverhaul/ALifeCamp.lua: whoever lives at your camp is a Jeem resident. "Live at my base" = Jeem
+    recruit (refugee path: just that person, no standing cost). Old saves: settlers moved in once (a card says so).
+  * No Jeem base yet: one is made around A-Life's house (campAutoBase).
+  * Beds: join anyway and sleep rough; trust down daily; they scavenge for a bed (Jeem Scavenger role); a sleeping
+    bag / tent brought home = priority card to set it up; warned at 7 days, leave at 14, some to an unfriendly group
+    that then knows your camp. Settings campRoughTrust, campBedTrust, campRoughWarnDays, campRoughDays, campRivalPct,
+    campBedHunt. Clock: Jeem's day / evening / night shifts are the only schedule (bases switched once, a letter);
+    Work tab Day / Eve / Night columns; our Schedules menu hidden, sleep / free time / night watch read Jeem's shifts.
+    Storage: Jeem stores are the only stores; our drop points are a view of them (fresh food to food stores, the rest to
+    the drop box for the quartermaster), marking a drop point marks a Jeem store, old ones converted once. The settler
+    list mirrors Jeem residents, so every settler feature sees them. A Jeem base is always the camp's base.
+    ALifeExpeditions: haul listeners (E.hauls). Harness test_pre1_camp_merge.lua 39/0, old fails.
+- New: Work tab + work priorities + camp brain (docs/PLAN-WORK.md). shared/ALifeNPCOverhaul/ALifeWork.lua (world),
+  client/ALifeNPCOverhaul/ALifeWorkTab.lua (tab, next to Camp in the Journal).
+  * One grid: your people x every camp work (camp roles + Jeem base jobs; Jeem's farmer = our Farmer). One job each.
+  * Priorities 1-4 / never per person per work (click cycles, right-click back). Auto pass every workAutoH hours and
+    right after a change: best priority the base can run, not refused today; no churn inside the best tier.
+  * Click a name: "do this now" (locked till you let them choose) or "let them choose".
+  * Orders reach only people within workRange (100) tiles of their base's edge; far / away rows greyed with why.
+  * Camp brain toggle (Work tab, off by default): runs everyone in earshot, ties by need (food store days, guards
+    first, a medic once the camp is big enough, spread), one line saying what it's after; never overrides never/orders.
+  * Settings: workTab, workRange, workAutoH, workBrainGuards, workBrainMedicAt, workBrainFoodDays.
+  * MP: exposed wkPrio / wkOrder / wkFree / wkBrain, view wkRows. Harness: test_pre1_work.lua 33/0, old fails.
 - New (Joe, MAJOR): the brain (docs/PLAN-BRAIN.md, B1-B8). An RTS-style mind per NPC group; nine new shared files
   (shared/ALifeNPCOverhaul/ALifeBrain*.lua), world side only (MP: server), no new commands, no UI change.
   * Knowledge (BrainKnow): strict fog of war. Beliefs about other groups and your camp ("you") from sight (neighbours

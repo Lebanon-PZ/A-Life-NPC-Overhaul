@@ -102,7 +102,7 @@ function BR.turnHome(run, h, x0, y0)
     local t = T()
     local tx, ty = t.placeXY(run.from)
     if tx == nil then BR.finishRun(run, "homeless"); return false end
-    local b = BR.base(run.from)
+    local b = BR.home(run.from)
     local th = M.travelH(x0, y0, tx, ty, b)
     run.legs = { run.legs[1] or { to = run.target } }
     run.leg = 2
@@ -133,13 +133,13 @@ function BR.recallRun(run, h, why)
         run.legs = { run.legs[run.leg] or run.legs[1] }
         run.state = "home"
         run.leg = #run.legs + 1
-        local th = M.travelH(x, y, tx, ty, BR.base(run.from))
+        local th = M.travelH(x, y, tx, ty, BR.home(run.from))
         run.x0, run.y0, run.x1, run.y1, run.leave, run.arrive = x, y, tx, ty, h, h + th
         for _, uid in ipairs(run.crew) do pcall(M.lvSend, uid, { tx = tx, ty = ty, untilH = run.arrive, tag = "trade_run" }) end
     end
     run.recalled = why or true
     BR.stats.recalls = BR.stats.recalls + 1
-    local b = BR.base(run.from)
+    local b = BR.home(run.from)
     if b then BR.event(b, "Called their " .. (run.kind == "war" and "fighters" or (run.kind == "scout" and "scout" or "people")) .. " home" .. (why and (": " .. tostring(why)) or ""), "brain") end
     return true
 end
@@ -186,7 +186,7 @@ BR.tool({ id = "warParty", job = "war", minPeople = 2, maxPeople = 12,
     end })
 BR.tool({ id = "help", job = "war", minPeople = 1, maxPeople = 4,
     start = function(b, people, target)
-        if type(target) ~= "table" or BR.base(target.to) == nil then return false end
+        if type(target) ~= "table" or (BR.base(target.to) == nil and target.to ~= "you") then return false end -- Brain 2 R6: allies help your camp too
         local run = BR.launch(b, "help", target.to, people, hours(), {})
         if run then BR.event(b, "Sent fighters to help " .. placeName(target.to), "war"); BR.of(b).helpAsk = nil end
         return run ~= nil
@@ -249,7 +249,7 @@ local function dropCrew(run, dead)
     for _, u in ipairs(run.crew) do if not gone[u] then keep[#keep + 1] = u end end
     run.crew = keep
     run.lost = (tonumber(run.lost) or 0) + #dead
-    local b = BR.base(run.from)
+    local b = BR.home(run.from)
     local s = b and BR.of(b) or nil
     if s and type(s.plan) == "table" and run.planId == s.plan.id then s.plan.lost = (tonumber(s.plan.lost) or 0) + #dead end
     if fn(T(), "splitPacks") then T().splitPacks(run) end
@@ -406,7 +406,7 @@ function BR.tributeToYou(b, h)
     local off = { id = t.newId("offer"), from = b.id, name = tostring(b.name), give = "safety", want = kind, every = 7, h = h, tribute = true }
     st.offers[off.id] = off
     BR.stats.tribute = BR.stats.tribute + 1
-    if fn(t, "letter") then t.letter(nil, tostring(b.name) .. "'s people came to your place: they want " .. (t.KIND_WORDS[kind] or kind) .. " every week, or else. Answer in the Trade tab.", true) end
+    if fn(BR, "campLetter") then BR.campLetter(tostring(b.name) .. "'s people came to your place: they want " .. (t.KIND_WORDS[kind] or kind) .. " every week, or else. Answer in the Trade tab.", true) end
     BR.event(b, "Told the newcomer to pay up", "brain")
     return true
 end
@@ -427,7 +427,7 @@ function BR.warArrive(run, b, h)
         run.siegeDays = (tonumber(run.siegeDays) or 0) + 1
         if run.siegeDays == 1 then
             BR.tributeToYou(b, h)
-            if BR.flag("brainWarn") and fn(T(), "letter") then T().letter(nil, "Armed people from " .. tostring(b.name) .. " are camped outside your place.", true) end
+            if BR.flag("brainWarn") then BR.campLetter("Armed people from " .. tostring(b.name) .. " are camped outside your place.", true) end
         end
         if run.siegeDays <= BR.num("siegeMaxDays") and BR.eatOnSiege(run) then run.state = "siege"; run.stay = 24 end
         return
@@ -543,7 +543,7 @@ function BR.siegeDay(run, b, o, h)
     run.stay = 24
 end
 function BR.helpArrive(run, b, h)
-    local o = BR.base(run.target)
+    local o = BR.home(run.target) -- your camp's record for "you" (One Brain), else the base
     if o == nil then return end
     local so = BR.of(o)
     so.helpers = type(so.helpers) == "table" and so.helpers or {}
@@ -559,7 +559,7 @@ end
 
 -- a brain run reached the end of a leg
 function BR.runArrive(run, h)
-    local b = BR.base(run.from)
+    local b = BR.home(run.from)
     if b == nil then BR.siegeLift(run); BR.finishRun(run, "homeless"); return end
     local stay = nil
     if run.state ~= "home" then
@@ -587,7 +587,7 @@ function BR.runArrive(run, h)
     BR.finishRun(run, "home")
 end
 function BR.partyLost(run, h)
-    local b = BR.base(run.from)
+    local b = BR.home(run.from)
     BR.siegeLift(run)
     if b then
         local words = { war = "Their war party never came back", scout = "Their scout never came back", envoy = "Their messenger never came back", help = "The fighters they sent never came back" }
@@ -602,9 +602,9 @@ function BR.runHalfway(run, h)
     if run.kind ~= "war" or run.seenHalf or run.state ~= "out" then return end
     if h < run.leave + (run.arrive - run.leave) * 0.5 then return end
     run.seenHalf = true
-    local b = BR.base(run.from)
+    local b = BR.home(run.from)
     if run.target == "you" then
-        if BR.flag("brainWarn") and b and fn(T(), "letter") then T().letter(nil, "Word on the radio: armed people from " .. tostring(b.name) .. " are heading your way.", true) end
+        if BR.flag("brainWarn") and b then BR.campLetter("Word on the radio: armed people from " .. tostring(b.name) .. " are heading your way.", true) end
         return
     end
     local o = BR.base(run.target)
@@ -672,8 +672,8 @@ local function install()
         t.tradeWithYou = function(run, leg, h, ...)
             if type(leg) == "table" and leg.give == "safety" and fn(t, "postBox") and t.postBox() ~= nil then
                 local got = t.postTake(leg.want, 20)
-                local a = BR.base(run.from)
-                t.letter(nil, tostring(a and a.name or "Their people") .. " took " .. #got .. " " .. (t.KIND_WORDS[leg.want] or "things") .. " from your trading post, as agreed.", false)
+                local a = BR.home(run.from)
+                BR.campLetter(tostring(a and a.name or "Their people") .. " took " .. #got .. " " .. (t.KIND_WORDS[leg.want] or "things") .. " from your trading post, as agreed.", false)
                 if #got == 0 then return {}, got, "short" end
                 return {}, got, nil
             end
@@ -705,7 +705,7 @@ local function install()
     -- the end of any run: people back in the pool now; plans count what came home
     t.onRunDone = t.onRunDone or {}
     t.onRunDone[#t.onRunDone + 1] = function(run, why)
-        local b = BR.base(run.from)
+        local b = BR.home(run.from)
         if b == nil or not BR.on() then return end
         local s = BR.of(b)
         s.dirty = true
@@ -728,6 +728,8 @@ function BR.tributeExpire(h)
         end
     end
 end
+-- Brain 2 (ALifeBrainFight, ALifeBrainRoads) reuse these
+BR.warWin, BR.warLoot, BR.homeCrew, BR.playersNear, BR.runAlive, BR.dropCrew, BR.memSet, BR.casualties, BR.whereNow, BR.partyStr = win, loot, homeCrew, playersNear, alive, dropCrew, memSet, casualties, whereNow, partyStr
 BR.installers[#BR.installers + 1] = install
 pcall(install)
 local function tenMin() if BR.on() then pcall(BR.tributeExpire, hours()) end end

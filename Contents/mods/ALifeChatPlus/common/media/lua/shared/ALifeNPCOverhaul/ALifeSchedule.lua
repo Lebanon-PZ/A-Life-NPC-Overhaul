@@ -53,6 +53,11 @@ end
 local function within(h, r) if r == nil then return false end; local a, b = r[1], r[2]; if a > b then return h >= a or h < b end; return h >= a and h < b end
 -- "sleep" | "free" | "work"
 function C.period(uid, hour)
+    -- pre-1.0 (one camp, Joe): Jeem's 3 shifts are the schedule; our presets only for someone with no Jeem row yet
+    if type(ALifeCamp) == "table" and K.fn(ALifeCamp, "period") then
+        local ok, per = pcall(ALifeCamp.period, uid, hour)
+        if ok and per ~= nil then return per end
+    end
     if not C.on() then return "work" end
     local p = C.PRESETS[C.presetOf(uid)]
     if p == nil or p.sleep == nil then return "work" end
@@ -136,7 +141,21 @@ function C.hook()
     if K.wrap(M, "cpWatcher", "sched:cpWatcher", function(orig)
         return function(player, ...)
             local w = orig(player, ...)
-            if w == nil or not C.on() or C.presetOf(w) == "night" then return w end
+            if w == nil then return w end
+            -- pre-1.0 (one camp): whoever Jeem has on guard / work the night shift takes the watch
+            if type(ALifeCamp) == "table" and K.fn(ALifeCamp, "shiftOf") then
+                local okN, mine = pcall(ALifeCamp.shiftOf, w, "night")
+                if okN and (mine == "guard" or mine == "work") then return w end
+                for _, uid in ipairs(K.people(player)) do
+                    local okU, sh = pcall(ALifeCamp.shiftOf, uid, "night")
+                    if okU and sh == "guard" and not (type(ALifeBreaks) == "table" and ALifeBreaks.active(uid)) then
+                        M.cpData().watcher = uid
+                        C.stats.watchSwaps = C.stats.watchSwaps + 1
+                        return uid
+                    end
+                end
+            end
+            if not C.on() or C.presetOf(w) == "night" then return w end
             local d = M.cpData()
             for _, uid in ipairs(K.people(player)) do
                 if C.presetOf(uid) == "night" and not (type(ALifeBreaks) == "table" and ALifeBreaks.active(uid)) then
@@ -158,6 +177,7 @@ function C.mood(uid)
 end
 function C.menu(child, off, player)
     if not C.on() then return end
+    if type(ALifeCamp) == "table" and K.fn(ALifeCamp, "ready") and ALifeCamp.ready() then return end -- (one camp: shifts are in the Work tab)
     local s = C.store()
     local m = child("Schedules")
     for _, uid in ipairs(K.people(player)) do

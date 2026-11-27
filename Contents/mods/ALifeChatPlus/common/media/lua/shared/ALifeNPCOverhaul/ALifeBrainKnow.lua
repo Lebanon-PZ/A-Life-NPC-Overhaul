@@ -10,7 +10,7 @@ local M = BR and BR.M
 if type(BR) ~= "table" or type(M) ~= "table" then return end
 local fn, hours, d2, clamp, roll = BR.fn, BR.hours, BR.d2, BR.clamp, BR.roll
 
-local FIELDS = { "x", "y", "str", "crew", "food", "mood", "hostile", "wealth", "stage", "walls", "name" }
+local FIELDS = { "x", "y", "str", "crew", "food", "mood", "hostile", "wealth", "stage", "walls", "name", "holds" } -- holds: a road point they hold (Brain 2 roads)
 
 -- where the player's camp is ("you" as a group)
 function BR.youXY()

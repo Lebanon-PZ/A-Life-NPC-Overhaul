@@ -68,6 +68,7 @@ end
 
 -- stamp a job on a person (dormant only: never yank someone you might be watching)
 local function stamp(p, job)
+    if p.camp then return true end -- your camp: the Work tab is their job (ALifeBrainYou)
     if p.job0 == job then return true end
     if p.loaded then return false end
     local R = BR.PA().ActorRegistry

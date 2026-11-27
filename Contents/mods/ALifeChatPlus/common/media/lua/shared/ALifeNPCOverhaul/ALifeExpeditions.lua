@@ -17,6 +17,7 @@ local E = ALifeExpeditions
 local TAG = "[ALifeExpeditions]"
 local VERSION = ALifeSide.MOD_VERSION
 E.cfg = { abstractRadii = { 40, 80, 130, 190, 260 }, abstractAngles = 12 }
+E.hauls = E.hauls or {}
 E.stats = { trips = 0, carried = 0, abstract = 0, looted = 0, empty = 0 }
 local function log(m) print(TAG .. " " .. tostring(m)) end
 local function fn(t, k) return type(t) == "table" and type(t[k]) == "function" end
@@ -85,6 +86,8 @@ function E.returnHome(orig, m, q, hours)
         E.stats.carried = E.stats.carried + #haul
     end
     if #haul == 0 then E.stats.empty = E.stats.empty + 1 end
+    -- pre-1.0 (one camp): listeners see what came home (ALifeCamp: a bed for someone sleeping rough)
+    for _, f in ipairs(E.hauls or {}) do pcall(f, m, haul) end
     -- run Jeem's own return with every made-up reward at zero and the haul as its "loot"
     local saved = { rounds = Ms.roundsEach, gun = Ms.gunChanceEach, minSup = Ms.minSuppliesEach, roll = Ms.rollLoot }
     Ms.roundsEach, Ms.gunChanceEach, Ms.minSuppliesEach = { 0, 0 }, 0, 0

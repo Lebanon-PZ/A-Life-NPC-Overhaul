@@ -2,6 +2,65 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- New (Joe, MAJOR): the brain (docs/PLAN-BRAIN.md, B1-B8). An RTS-style mind per NPC group; nine new shared files
+  (shared/ALifeNPCOverhaul/ALifeBrain*.lua), world side only (MP: server), no new commands, no UI change.
+  * Knowledge (BrainKnow): strict fog of war. Beliefs about other groups and your camp ("you") from sight (neighbours
+    within knowSeeTiles: people, walls), scouts (0.8), their traders' visits (0.7), visitors' second-hand news (0.5),
+    radio (0.4, late), fights (0.9, real strength both ways), allies sharing (x0.7) and your claims in talk ("Ridge is
+    weak", as sure as they trust you). Confidence fades (knowDecayDays, faster far away: knowFarDecay); far news
+    arrives late (inbox). A sure look that contradicts your claim = lie caught (trust, rep, grudge). knowMax kept by
+    importance. brainCheat 1 = a fuzzy look at the truth.
+  * Mind (BrainMind): weights (greed, fear, aggression, pride, kindness, caution, loyalty, ambition, faith) from creed
+    + rule (leader alone; council = leader half + two steadiest; vote = everyone; faith = preacher + devout) + their
+    persona lens; discipline vs volatility. Memory per action/target ("raid:x", "trade:x"), grudges (group, "you" or a
+    place) and debts, fading over memFadeDays; pride bites deeper. Succession stain for stainDays: shaken / vengeful /
+    unsure, the new leader's ways blend in.
+  * Commander (BrainCommand): daily + interrupts (attacked, raided, a member lost, robbed, deal broken, a war party
+    seen, leader change, you did something big, a known group ended, an ally's call). Seven stances (survive, secure,
+    grow, trade, expand, dominate, revenge) from utility x personality x memory; held stanceMinDays (disciplined
+    longer, volatile wobble); hidden pressure (starving, no ammo, losses, overrun, siege) lifts survive/secure and damps
+    the personality bend. Per-stance people shares + standing orders (gate guards, no runs on bad roads, keep food, no
+    war), economy floor brainEconomyFloor.
+  * People budget (BrainAlloc): real members only; leader home, hurt rest (brainHurtPct), people on the road hold their
+    job for the real road time. Jobs economy/guard/build/recruit/trade/scout/war/idle by bid value inside the shares;
+    reserve minGuards + minHomePct; enemy at the gate = everyone home. Tool contract (ALifeBrain.tool / owns / call /
+    permit): while the brain is on the old daily rolls only run when it starts them: trade swaps (cvRun), middlemen
+    (brokerDay), deal offers (offerDay), caravans to your post (tpDaily), recruiting (nbRecruit), raids on paper
+    (dirRaid, while warParties is on), outpost founding (opFound), wall rings (ALifeWalls.maybeLayer: secure/grow
+    only), build pace (bdCrew = build job), the A-Life planner pull (greedBias) and foraging follow the food share.
+    A run takes exactly the people it was handed (cvTravellers); otherwise never guards/scouts/fighters. Return to pool:
+    any run's end clears the job and recounts. Jobs stamped on dormant people (memory.alcpJob), never on loaded ones.
+  * Managers (BrainManagers): Economy, Defense (guards from threat, walls, radio allies for help, pull runs home when a
+    war party is coming), Trade (partner by known groups, route safety, memory of robbed roads, debts), Scouting (the
+    stalest belief that matters), Growth (loners, outposts when expanding, moving on when stripped and starving),
+    Diplomacy (shared-enemy alliances, tribute, peace after a bad war), Military (target by gain vs loss, raid /
+    assault / siege, party size from the odds, never on unsure intel: scouts first).
+  * War as real marches (BrainWar): scouts, envoys, war parties and help parties are runs on the TradeRuns engine
+    (Leaving on the road; meet them). They pack their own food. Off screen: the party's real strength vs the defenders
+    at home, walls and allies who came; raid = loot carried home in packs, assault = deaths among the defenders (nbKill:
+    never anyone loaded), surrender = absorbed or tribute, siege = no foraging / trading for the besieged until starved
+    out, broken by a sally, given up at siegeMaxDays or when the party's food runs out. On screen (place or party
+    loaded): they hold back and leave, nothing settled on paper. Lookouts may see them halfway (the target digs in).
+    Against you (brainVsPlayer on / provoked only / off, brainPlayerGrace days): they camp outside and demand tribute
+    (an offer in the Trade tab: "being left alone" for your goods weekly; refused or ignored 3 days = a grudge);
+    brainWarn letters. Tribute between groups: the weak pay by fear, the envoy carries it home.
+  * Plans (BrainPlans): one slot; library scoutRaid, siege, armsFirst, tribute, wallsWinter, ally, outpost (each
+    brainPlan_<name> on/off). Aborts every manager tick: planAbortLoss of the people sent, food, target reinforced,
+    leader gone, a bigger threat, target gone, impulse (volatile), nerve (fearful). Abort / recall = every run of the
+    plan turns home from where it stands on the road, a siege lifts, orders reset, the commander thinks now.
+  * Words (BrainWords): Directive's day / week / month goals are written from the brain (brain-only week codes run out
+    quietly); one-line M.brainLine first in the base's recent events; M.brainWhy; each person's own job in their talk
+    context; members whose nature fights the stance grumble now and then. Dev: brainDebug (console + a "Brain (dev)"
+    line on the Roads map group card), M.brainDump(id), M.brainPerf().
+  Brain off (brain = false, or directives off): every wrap passes through; the harness runs the same ten days before
+  the brain loads and with it off and compares (identical).
+- Fix (found building the brain): the offline base sim pulled dormant members back to the depot and counted them
+  home even while they were on a trade run or Leaving (so runs and war parties were double counted as defenders).
+  People on the road now stay on the road (Bases nbSimBase). Test docs/tests/test_pre1_brain_home.lua (5/0; old 2/3).
+  Tests: docs/tests/test_pre1_brain.lua 90/0 (old code fails from the first brain check), whole-mod side load SP /
+  client / server clean (test_1001_p2.lua 71/0). Unverified 42.21: A-Life's planner steers whole groups (ctx.havenId),
+  so the economy job is a group pull, not per person; on-screen group-vs-group fights are A-Life's (we never fake one).
+
 - New (Joe, MAJOR): trade overhaul (docs/PLAN-TRADE.md, T1-T10). Seven new shared files (ALifeTalk_Trade*) + a new
   Trade tab (client/ALifeTalk_TradeTab.lua).
   * Prices from scarcity (TradePrice): ALifeWorth.need follows how short a group really is of every kind (food in days

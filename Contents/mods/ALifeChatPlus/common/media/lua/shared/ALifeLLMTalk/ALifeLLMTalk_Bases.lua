@@ -1333,7 +1333,8 @@ function M.nbSimBase(b, h, scan, force)
         if x and inside(b.bounds, x, y, M.nbCfg.homeTiles) then home = home + 1
         elseif r.virtual then
             if far and M.sbBringHome and M.sbBringHome(r, b, depot, h) == true then home = home + 1 end
-        elseif sh == nil and r.lifecycle == "dormant" and far and m.squadId == nil and m.activityId ~= "hold" and fn(reg, "update") then
+        elseif sh == nil and r.lifecycle == "dormant" and far and m.squadId == nil and m.activityId ~= "hold" and fn(reg, "update")
+                and m.alcpRun == nil and not (M.lvIsAway and M.lvIsAway(r.uid)) then -- pre-1.0: people on the road (runs, war parties) stay on the road
             local ok = pcall(reg.update, r.uid, r.revision, function(entry)
                 entry.worldPosition = { x = depot.x + (hash(r.uid) % 3) - 1, y = depot.y + (hash(r.uid .. "y") % 3) - 1, z = depot.z or 0 }
             end)

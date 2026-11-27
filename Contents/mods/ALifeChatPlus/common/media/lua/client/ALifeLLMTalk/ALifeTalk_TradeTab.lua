@@ -236,6 +236,7 @@ local function groupCard(g)
     out[#out + 1] = DIM .. "How they are: " .. TXT .. esc(g.wealth ~= "" and g.wealth or "hard to say") .. (g.trader and ", traders" or "") .. " <LINE> "
     if g.mood ~= "" then out[#out + 1] = DIM .. "Word is: " .. TXT .. esc(g.mood) .. " <LINE> " end
     if g.feel ~= "" then out[#out + 1] = DIM .. "Toward you: " .. TXT .. esc(g.feel) .. " <LINE> " end
+    if type(g.brain) == "string" and g.brain ~= "" then out[#out + 1] = DIM .. "Brain (dev): " .. TXT .. esc(g.brain) .. " <LINE> " end -- setting brainDebug only
     if g.road ~= "" then out[#out + 1] = DIM .. "The road from you: " .. roadColor(g.road) .. esc(g.road) .. TXT .. (g.hrs ~= "" and (DIM .. ", a walk there gets you there " .. TXT .. esc(g.hrs)) or "") .. " <LINE> " end
     return table.concat(out)
 end

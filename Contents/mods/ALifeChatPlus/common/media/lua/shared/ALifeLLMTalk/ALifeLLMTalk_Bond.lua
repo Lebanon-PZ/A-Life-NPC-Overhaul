@@ -1334,7 +1334,10 @@ function M.tierInstall()
             local word, v = orig(r, player)
             if M.settings.bondTiers == false or r == nil then return word, v end
             if word == "nemesis" or word == "enemy" or word == "distrust" or word == "ally" then return word, v end
-            local t = M.bondTier(r.uid)
+            -- MP client: bondTier is a server read (nil until it answers) -> keep the plain word
+            local okT, t = pcall(M.bondTier, r.uid)
+            t = okT and tonumber(t) or nil
+            if t == nil then return word, v end
             if t >= 5 then return "lover", v end
             if t >= 2 then return M.tierWord(t), v end
             if word == "friend" or word == "buddy" or word == "best friend" then return "friendly", v end

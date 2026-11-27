@@ -760,18 +760,26 @@ local function after(win, msg)
     win.bondMsg, win.bondMsgAt = msg, T.now()
     win:bondRefresh()
 end
+-- MP client: the button runs on the server and the answer comes back out loud + on the next refresh (nil here)
+local function asked(win, r)
+    if r ~= nil then return false end
+    after(win, "You asked. Wait for their answer.")
+    return true
+end
 function W:onBondAsk()
     local st = M.bondAskState(self.uid, ALifeSide.you())
-    if st.ask == nil or not st.ask.enabled then return end
+    if type(st) ~= "table" or st.ask == nil or not st.ask.enabled then return end
     local r = M.bondDecide(self.uid, st.ask.want, ALifeSide.you())
+    if asked(self, r) then return end
     local p = { kind = "ask", want = M.tierWord(st.ask.want), ok = r.ok, why = r.why, awkward = r.awkward, already = r.already }
     M.bondVoice(self.uid, p, ALifeSide.you())
     after(self, r.ok and ("They said yes: " .. r.why .. ".") or ("Not yet: " .. r.why .. "."))
 end
 function W:onBondTogether()
     local st = M.bondAskState(self.uid, ALifeSide.you())
-    if st.together == nil or not st.together.enabled or not M.romanceAsk then return end
+    if type(st) ~= "table" or st.together == nil or not st.together.enabled or not M.romanceAsk then return end
     local ok, why = M.romanceAsk(self.uid, ALifeSide.you())
+    if asked(self, ok) then return end
     local p = { kind = "ask", want = "partner", ok = ok, why = why or (ok and "you feel the same" or "not ready") }
     M.bondVoice(self.uid, p, ALifeSide.you())
     after(self, ok and "They said yes." or ("Not yet: " .. tostring(why) .. "."))
@@ -788,7 +796,7 @@ function W:onBondSorry()
     local b = self.bondBtns and self.bondBtns.sorry
     if M.settings.fixApology ~= false and b and b.enable == false then after(self, tostring(b.bondTip or "Not now.")); return end
     local r = M.bondApologize(self.uid, ALifeSide.you())
-    if r == nil then return end
+    if asked(self, r) then return end
     if r.nothing then
         if M.settings.fixApology ~= false then M.bondVoice(self.uid, { kind = "apology", nothing = true, ok = true, why = r.why }, ALifeSide.you()) end
         after(self, "They don't think you owe them an apology."); return
@@ -807,6 +815,7 @@ function W:onBondBase() -- 0.5.1.8
     if M.baseButton == nil then return end
     local was = M.settlerAway and M.settlerAway(self.uid)
     local ok, why = M.baseButton(self.uid, ALifeSide.you())
+    if asked(self, ok) then return end
     if was then after(self, ok and "Sent home - they're heading back to the base." or ("Couldn't: " .. tostring(why) .. "."))
     else after(self, ok and ("They're coming with you: " .. tostring(why) .. ".") or ("They'd rather stay: " .. tostring(why) .. ".")) end
 end

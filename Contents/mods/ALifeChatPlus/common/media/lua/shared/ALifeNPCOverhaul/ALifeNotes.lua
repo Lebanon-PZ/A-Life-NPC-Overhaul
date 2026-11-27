@@ -94,14 +94,20 @@ N.SIGN_TILES = {
     slaver = { S = "alife_signs_01_6", E = "alife_signs_01_7", N = "alife_signs_01_14", W = "alife_signs_01_15" },
 }
 N.SIGN_TILE = N.SIGN_TILES.hostile
+-- why the painted tile was not used (printed once per reason, so a board-on-the-ground report can be traced)
+N.tileWhy = N.tileWhy or {}
+local function tileFail(why)
+    if not N.tileWhy[why] then N.tileWhy[why] = true; print("[ALifeNotes] sign tile not used, board instead: " .. why) end
+    return nil
+end
 function N.signSprite(facing, kind)
     local set = N.SIGN_TILES[kind or "hostile"] or N.SIGN_TILE
     local name = set[facing] or set.S
-    if type(getSprite) ~= "function" then return nil end
+    if type(getSprite) ~= "function" then return tileFail("no getSprite") end
     local ok, spr = pcall(getSprite, name)
-    if not ok or spr == nil then return nil end
+    if not ok or spr == nil then return tileFail("sprite " .. tostring(name) .. " not loaded (tiledef/pack)") end
     local ok2, group = pcall(function() return spr:getProperties():get("GroupName") end)
-    if not ok2 or group ~= "Territory" then return nil end
+    if not ok2 or group ~= "Territory" then return tileFail("sprite " .. tostring(name) .. " GroupName=" .. tostring(group)) end
     return spr
 end
 
@@ -129,9 +135,10 @@ function N.putSignTile(square, text, facing, kind, extra)
     local spr = N.signSprite(facing, kind)
     if spr == nil or square == nil or IsoObject == nil then return false end
     local ok, obj = pcall(IsoObject.new, getCell(), square, spr)
-    if not ok or obj == nil then return false end
+    if not ok or obj == nil then tileFail("IsoObject.new: " .. tostring(obj)); return false end
     pcall(function() stamp(obj:getModData(), text, extra) end)
-    if not pcall(square.AddTileObject, square, obj) then return false end
+    local okA, errA = pcall(square.AddTileObject, square, obj)
+    if not okA then tileFail("AddTileObject: " .. tostring(errA)); return false end
     if ALifeSide.server() then pcall(function() obj:transmitCompleteItemToClients() end) end
     pcall(function() square:RecalcProperties() end)
     pcall(triggerEvent, "OnObjectAdded", obj)

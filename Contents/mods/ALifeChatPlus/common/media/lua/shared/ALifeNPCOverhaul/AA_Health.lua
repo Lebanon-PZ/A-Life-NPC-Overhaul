@@ -148,13 +148,20 @@ function HL.rows()
 end
 local function f1(x) return tostring(math.floor((tonumber(x) or 0) * 10 + 0.5) / 10) end
 function HL.summary(n)
-    local rows, parts, total = HL.rows(), {}, 0
-    for _, r in ipairs(rows) do total = total + r.ms5 end
+    -- "Main:<part>" rows are pieces of a timed handler: kept out of the total (no double count), listed by worst spike
+    local all, rows, subs, parts, total = HL.rows(), {}, {}, {}, 0
+    for _, r in ipairs(all) do
+        if string.find(r.label, ":", 1, true) then subs[#subs + 1] = r else rows[#rows + 1] = r; total = total + r.ms5 end
+    end
     for i = 1, math.min(n or 5, #rows) do
         local r = rows[i]
         parts[#parts + 1] = r.label .. " " .. f1(r.ms5) .. " ms/" .. f1(r.calls5) .. " calls (max " .. math.floor(r.max) .. ")"
     end
+    table.sort(subs, function(a, b) return a.max > b.max end)
+    local spikes = {}
+    for i = 1, math.min(3, #subs) do spikes[#spikes + 1] = subs[i].label .. " max " .. math.floor(subs[i].max) end
     return "NPC Overhaul cost per 5 s: " .. f1(total) .. " ms total; most: " .. table.concat(parts, ", ")
+        .. (#spikes > 0 and (" | spikes: " .. table.concat(spikes, ", ")) or "")
         .. (#HL.offs > 0 and (" | features off: " .. #HL.offs) or "")
 end
 function HL.writeFile()

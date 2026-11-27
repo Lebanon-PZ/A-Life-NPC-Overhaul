@@ -2914,66 +2914,75 @@ function M.onTickUI()
     end
 end
 -- world logic: SP, or the MP server
+-- each world part timed on its own ("Main:<part>") so the health report names the one that spikes
+M._timed = M._timed or {}
+local function timed(label, f)
+    local H = ALifeHealth
+    if type(f) ~= "function" or type(H) ~= "table" or type(H.wrap) ~= "function" then return f end
+    local c = M._timed[label]
+    if c == nil or c.f ~= f then c = { f = f, w = H.wrap("Main:" .. label, f) }; M._timed[label] = c end
+    return c.w
+end
 function M.onTickWorld()
     if not M.installed then
-        if M.tick % 120 == 1 then pcall(M.install) end
+        if M.tick % 120 == 1 then pcall(timed("install", M.install)) end
         return
     end
     if M.tick % 300 == 0 then
-        pcall(M.installChatFallback)
-        M.installParts()
+        pcall(timed("fallback", M.installChatFallback))
+        timed("parts", M.installParts)()
     end
     -- v3.2 hearing / hostile talk / grief ticks (each pcall-guarded, staggered)
     if M.hearingTick and M.tick % 30 == 5 and part("hearing") then
-        local okH, errH = pcall(M.hearingTick)
+        local okH, errH = pcall(timed("hearing", M.hearingTick))
         if not okH then log("hearing error: " .. tostring(errH)) end
     end
-    if M.tick % 10 == 5 and #M.reshowQueue > 0 then pcall(M.reshowTick, nowMs()) end -- world side: the queue lives with the replies
+    if M.tick % 10 == 5 and #M.reshowQueue > 0 then pcall(timed("reshow", M.reshowTick), nowMs()) end -- world side: the queue lives with the replies
     if M.hostileTick and M.tick % 30 == 20 and part("hostile") then
-        local okF, errF = pcall(M.hostileTick)
+        local okF, errF = pcall(timed("hostile", M.hostileTick))
         if not okF then log("combat talk error: " .. tostring(errF)) end
     end
     if M.injuryTick and M.tick % 60 == 10 and part("injury") then
-        local okI, errI = pcall(M.injuryTick)
+        local okI, errI = pcall(timed("injury", M.injuryTick))
         if not okI then log("injury watch error: " .. tostring(errI)) end
     end
     if M.followTick and M.tick % 120 == 70 and part("follow") then
-        local okW, errW = pcall(M.followTick)
+        local okW, errW = pcall(timed("follow", M.followTick))
         if not okW then log("follow error: " .. tostring(errW)) end
     end
     if M.griefTick and M.tick % 90 == 50 and part("grief") then
-        local okG2, errG2 = pcall(M.griefTick)
+        local okG2, errG2 = pcall(timed("grief", M.griefTick))
         if not okG2 then log("grief error: " .. tostring(errG2)) end
     end
     if M.radioTick and M.tick % 30 == 15 and part("radio") then
-        local okR, errR = pcall(M.radioTick)
+        local okR, errR = pcall(timed("radio", M.radioTick))
         if not okR then log("radio error: " .. tostring(errR)) end
     end
     if M.scanEvents and M.tick % 60 == 45 and part("events") then
-        local okE, errE = pcall(M.scanEvents)
+        local okE, errE = pcall(timed("events", M.scanEvents))
         if not okE then log("event scan error: " .. tostring(errE)) end
     end
     if M.ambientTick and M.tick % 60 == 30 and part("ambient") then
-        local okA, errA = pcall(M.ambientTick)
+        local okA, errA = pcall(timed("ambient", M.ambientTick))
         if not okA then log("ambient error: " .. tostring(errA)) end
     end
     if M.giftTick and M.tick % 60 == 0 and part("gift") then
-        local okG, errG = pcall(M.giftTick)
+        local okG, errG = pcall(timed("gift", M.giftTick))
         if not okG then log("gift watch error: " .. tostring(errG)) end
     end
-    if M.personaTick and M.tick % 90 == 40 and part("persona") then pcall(M.personaTick) end -- v0.4.0 opinion hook + bridge pushes
+    if M.personaTick and M.tick % 90 == 40 and part("persona") then pcall(timed("persona", M.personaTick)) end -- v0.4.0 opinion hook + bridge pushes
     if M.nemesisTick and M.tick % 300 == 150 and part("nemesis") then
-        local okN, errN = pcall(M.nemesisTick)
+        local okN, errN = pcall(timed("nemesis", M.nemesisTick))
         if not okN then log("nemesis error: " .. tostring(errN)) end
     end
     if M.newsTick and M.tick % 600 == 333 and part("news") then
-        local okW, errW = pcall(M.newsTick)
+        local okW, errW = pcall(timed("news", M.newsTick))
         if not okW then log("news error: " .. tostring(errW)) end
     end
     local pt = M.settings.pollTicks
     if M.settings.fastReplyPoll ~= false and M.pending ~= nil and (M.pending.mode == "reply" or M.pending.mode == "radio") then pt = 1 end
     if (M.pending ~= nil or #M.queue > 0 or M.late ~= nil) and M.tick % pt == 0 then
-        local ok, err = pcall(M.poll)
+        local ok, err = pcall(timed("poll", M.poll))
         if not ok then
             M.pending = nil
             log("poll error: " .. tostring(err))

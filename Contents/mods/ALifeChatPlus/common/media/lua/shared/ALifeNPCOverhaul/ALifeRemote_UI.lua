@@ -37,7 +37,9 @@ U.BUTTONS = {
 }
 -- these return a list / table: {} until the server answers (the windows walk them)
 U.LISTS = { knownNpcs = true, histRows = true, promisesOf = true, interactionsOf = true, keyMemOf = true, tiesOf = true,
-    traitLines = true, traitChart = true, personaMods = true, lens = true }
+    traitLines = true, traitChart = true, personaMods = true, lens = true,
+    -- tables the windows index straight away (st.ask, s.hurt): {} until the server answers, never nil
+    woundState = true, bondAskState = true, baseAskState = true }
 for name, s in pairs(U.READS) do R.readable(name, s[1], s[2], U.LISTS[name] == true) end
 for name, s in pairs(U.BUTTONS) do R.expose(name, s[1], s[2]) end
 print("[ALifeRemoteUI] ready " .. U.VERSION .. ": windows read the server's world on an MP client")

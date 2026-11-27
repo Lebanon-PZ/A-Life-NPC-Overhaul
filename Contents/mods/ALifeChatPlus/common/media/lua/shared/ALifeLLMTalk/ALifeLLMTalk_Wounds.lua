@@ -855,6 +855,7 @@ end
 ----------------------------------------------------------------------------------------------------------------
 function M.injuryLine(uid, limit)
     local s = M.woundState(uid)
+    if type(s) ~= "table" then return nil, { list = {} } end -- MP client: the server's answer is not here yet
     if not s.hurt then return nil, s end
     local parts = {}
     local biteOn = M.settings.biteCore ~= false

@@ -33,12 +33,34 @@ function S.tileText(obj)
     return nil
 end
 
-function S.scan(player)
-    local out, cell = {}, getCell()
-    if cell == nil then S.cache = out return end
-    local px, py, pz = math.floor(player:getX()), math.floor(player:getY()), math.floor(player:getZ())
+-- one scan = (2R+1)^2 squares (3721 at R=30); done in one frame it hitched 0.6 s on MP clients.
+-- So a scan walks S.ROWS_PER_FRAME columns per frame and swaps the cache in when the last column is done.
+S.ROWS_PER_FRAME = 4
+function S.scanStart(player)
     local R = S.RANGE
-    for x = px - R, px + R do
+    local px = math.floor(player:getX())
+    S.job = { px = px, py = math.floor(player:getY()), pz = math.floor(player:getZ()), x = px - R, x2 = px + R, out = {} }
+end
+-- advance the running scan; true when it finished this call
+function S.scanStep()
+    local j = S.job
+    if j == nil then return false end
+    local cell = getCell()
+    if cell == nil then S.job = nil; S.cache = {}; return true end
+    local last = math.min(j.x + S.ROWS_PER_FRAME - 1, j.x2)
+    S.scanCols(cell, j.x, last, j.py, j.pz, j.out)
+    j.x = last + 1
+    if j.x > j.x2 then S.cache = j.out; S.job = nil; return true end
+    return false
+end
+-- whole scan at once (kept for callers/tests)
+function S.scan(player)
+    S.scanStart(player)
+    while not S.scanStep() do end
+end
+function S.scanCols(cell, x1, x2, py, pz, out)
+    local R = S.RANGE
+    for x = x1, x2 do
         for y = py - R, py + R do
             local sq = cell:getGridSquare(x, y, pz)
             if sq ~= nil then
@@ -46,19 +68,10 @@ function S.scan(player)
                     local text = S.textOf(wo:getItem())
                     if text then out[#out + 1] = { x = x + 0.5, y = y + 0.5, z = pz, text = string.upper(text) } end
                 end)
-                -- sign tiles (alife_signs_01): only objects that already carry ModData, so we never create tables
-                eachOf(sq:getObjects(), function(o)
-                    local has = false
-                    pcall(function() has = o:hasModData() end)
-                    if has then
-                        local text = S.tileText(o)
-                        if text then out[#out + 1] = { x = x + 0.5, y = y + 0.5, z = pz, text = string.upper(text) } end
-                    end
-                end)
+                -- painted sign tiles (alife_signs_01) carry their own words: no floating text over them (Joe: boards only)
             end
         end
     end
-    S.cache = out
 end
 
 -- world position -> screen pixels (UI space)
@@ -78,10 +91,16 @@ function S.draw()
     local player = getPlayer and getPlayer()
     if player == nil then return end
     local t = nowMs()
-    if t - S.lastScan >= S.SCAN_MS then
+    if S.job == nil and t - S.lastScan >= S.SCAN_MS then
         S.lastScan = t
-        local ok, err = pcall(S.scan, player)
-        if not ok and not S.warned then S.warned = true; print(TAG .. " scan failed: " .. tostring(err)) end
+        S.scanStart(player)
+    end
+    if S.job ~= nil then
+        local ok, err = pcall(S.scanStep)
+        if not ok then
+            S.job = nil
+            if not S.warned then S.warned = true; print(TAG .. " scan failed: " .. tostring(err)) end
+        end
     end
     if #S.cache == 0 then return end
     local pn = player:getPlayerNum()

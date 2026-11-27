@@ -104,6 +104,8 @@ end
 -- goals
 ----------------------------------------------------------------------------------------------------------------
 local function perHead(b) return (tonumber(b.food) or 0) / math.max(1, tonumber(b.crewN) or 1) end
+-- pre-1.0 (greed, ALifeTalk_TradeGreed): how much is "enough" is a setting now; it's the apocalypse, they want more
+local function greed(key, old) local v = M.settings and tonumber(M.settings[key]); if v == nil or (M.settings and M.settings.greed == false) then return old end; return v end
 local function recent(list, h, win) local c = 0; for _, t in ipairs(list or {}) do if h - (tonumber(t) or -1e9) <= win then c = c + 1 end end; return c end
 local function nearestEnemy(b)
     for id, _ in pairs(b.dir.enemies or {}) do
@@ -118,7 +120,7 @@ function M.dirPickDay(b, h)
     local ph = perHead(b)
     local g
     if b.lastAttack and h - (b.lastAttack.h or -1e9) < 48 then g = "guard"
-    elseif ph < 2 then g = "forage"
+    elseif ph < greed("greedForageDays", 2) then g = "forage"
     elseif (tonumber(b.morale) or 50) < 35 then g = "rest"
     elseif b.stage ~= "fortified" then g = "fortify"
     else g = (roll(b.id .. "#day" .. math.floor(h / 24)) < 0.5) and "forage" or "scout" end
@@ -137,7 +139,7 @@ function M.dirPickWeek(b, h, crew)
     elseif mf.noAmmo and d.creed ~= "faithful" then g = "ammo"              -- 0.6.3: from what's really in their stash
     elseif enemy and (d.creed == "raiders" or d.rule == "leader") then g, target = "avenge", enemy.id
     elseif d.creed == "raiders" then g = "raid"
-    elseif perHead(b) < 5 then g = "stockpile"
+    elseif perHead(b) < greed("greedStockBelow", 5) then g = "stockpile"
     elseif b.stage ~= "fortified" then g = "finish"
     elseif (tonumber(b.crewN) or 1) < 5 and (d.creed == "open" or d.creed == "faithful") then g = "grow"
     elseif recent(b.losses, h, 168) > 0 or roll(b.id .. "#med" .. math.floor(h / 168)) < 0.3 then g = "medicine"
@@ -338,7 +340,7 @@ function M.dirCheckGoals(b, h, haven, scan)
     local w = d.goals.week
     if w then
         local age = h - w.at
-        local done = (w.g == "stockpile" and perHead(b) >= 10) or (w.g == "finish" and b.stage == "fortified")
+        local done = (w.g == "stockpile" and perHead(b) >= greed("greedStockDays", 10)) or (w.g == "finish" and b.stage == "fortified")
             or (w.g == "grow" and (tonumber(b.crewN) or 1) >= w.crew0 + 2)
             or (w.g == "medicine" and (tonumber(type(b.goods) == "table" and b.goods.meds) or 0) > (tonumber(w.meds0) or 0)) -- 0.6.3: real medicine came in
             or (w.g == "ammo" and (tonumber(type(b.goods) == "table" and b.goods.ammo) or 0) > 0)
@@ -367,7 +369,7 @@ function M.dirCheckGoals(b, h, haven, scan)
     local m = d.goals.month
     if m then
         local age = h - m.at
-        local done = (m.g == "selfsufficient" and b.stage == "fortified" and perHead(b) >= 12)
+        local done = (m.g == "selfsufficient" and b.stage == "fortified" and perHead(b) >= greed("greedSelfDays", 12))
             or (m.g == "grow8" and (tonumber(b.crewN) or 1) >= 8)
             or (m.g == "rule" and (d.raids or 0) - (m.raids0 or 0) >= 2)
             or (m.g == "flock" and (tonumber(b.crewN) or 1) >= m.crew0 + 3)

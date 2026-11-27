@@ -2,6 +2,40 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- New (Joe, MAJOR): trade overhaul (docs/PLAN-TRADE.md, T1-T10). Seven new shared files (ALifeTalk_Trade*) + a new
+  Trade tab (client/ALifeTalk_TradeTab.lua).
+  * Prices from scarcity (TradePrice): ALifeWorth.need follows how short a group really is of every kind (food in days
+    a head, the rest in items a head vs "enough" settings), clamped priceMin..priceMax; Jeem's quote, runs and haggling
+    all follow it. Cue words only.
+  * Runs you can see (TradeRuns): cvRun's swap (now M.cvRunWith) is a run of legs. Dormant members (never the leader,
+    runKeepHome stay) leave with the goods out of the stash, walk the road (ALifeTalk_Leaving), trade at the other end
+    by worth x need, walk home with the return load. Loaded crew carry the goods as real items (haggle with them, rob
+    them). Off-screen robbery rolled once at halfway (M.cvRobber). Route safety per pair: up on arrivals, down on
+    robberies, fades to 50; escorts below escortBelow, no run below skipBelow; a warband ending near a road raises it.
+    Walk with a run (youEscortMin) = rep with that group. Middlemen: trader groups buy where a kind is plentiful and
+    carry it to a group short of it (two legs).
+  * Embargo (TradeEmbargo): kill / attack a group's traders (run, face-to-face caravan, Jeem caravan) and someone lived
+    to tell: rep loss + embargo (embargoDays, half for an attack); allies (tie >= allyTie) take allyRepShare and embargo
+    too if they drop below allyEmbargoBelow. No caravans from them (tpKnows). Pay back in person at their place with
+    real items worth what was taken. Feuds: robbing runs sours ties; at feudTie their allies take sides.
+  * Your own caravans (TradeOwn): settlers at home, each may refuse (hurt, scared, obeyChance); goods out of the
+    trading post; turned away by an embargo, robbed by a group that hates you; home goods into the post (or wait at
+    the gate until it's loaded); turn one back.
+  * Deals (TradeDeals): propose (fair, needed, trusted), NPC offers by letter, NPC-NPC deals after npcDealAfter swaps.
+    Each delivery is a run to your trading post; they wait dealWaitH if it isn't loaded; short = missed; dealMissBreak
+    and it's off. Radio trade talk once a day (needs a radio): shortages, robbed roads, broken deals.
+  * Greed (TradeGreed, Joe: "it is the apocalypse after all"): Directive's "enough" thresholds are settings with
+    greedier defaults (forage below 6 days, stockpile done at 30); A-Life's ActivityPlanner.score gets a standing pull
+    toward supply activities (greedDrive, not at night); trade pairs on "well off" vs "plenty", not only "out of".
+  * Trade tab: Post / Roads (drawn map: groups, roads by safety, runs moving) / Caravans / Deals / Word. Flat-row
+    ALifeRemote views (trPost ... trCrew); buttons exposed (trOwnSend, trOwnRecall, trDealPropose, trDealAnswer,
+    trDealEnd, trRepay). Replaces the old text Trade page in the hub and the Journal.
+  Bug caught by the harness on the way: a precision string.format in a log line threw after the run was stored, so
+  the paper swap ran too (goods moved twice). Test docs/tests/test_pre1_trade.lua (+ trade_block.lua MP round trip):
+  57/0; old code fails from the first check. Not built: settlers deserting on a caravan (no verified way to drop a camp
+  member). Unverified 42.21: settlers/residents walking off with Leaving (A-Life may keep them loaded); ActivityPlanner
+  hook (read from A-Life 42.20 source).
+
 - New (player request, Ruse): camp roles follow Jeem (ALifeCampJeem). Before, our roles ignored Jeem's schedule and
   our Farmer doubled Jeem's farmer job. Now a Jeem resident does role work (patrol, meals, armory, farm duty, haul)
   only while Jeem has them free (Shifts.busy: not asleep, not on a post, Free shift, not called soon); the gate sits

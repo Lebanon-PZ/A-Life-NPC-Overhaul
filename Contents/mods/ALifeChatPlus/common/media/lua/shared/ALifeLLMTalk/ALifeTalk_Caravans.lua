@@ -121,6 +121,7 @@ local function travellers(b, n)
     while #out > n do table.remove(out) end
     return out
 end
+M.cvTravellers = travellers -- pre-1.0 trade runs (ALifeTalk_TradeRuns)
 -- what they can spare: { [type] = n } (their food for foodKeepDays a head stays home)
 function M.cvSpare(b, haven)
     local list = stashOf(haven)
@@ -656,6 +657,9 @@ local function moveKind(fromHaven, toHaven, kind, n)
     end
     return moved
 end
+-- pre-1.0 (greed, ALifeTalk_TradeGreed replaces these): what a group can spare / wants more of
+M.cvSpareKind = M.cvSpareKind or function(b, counts, kind) return (counts[kind] or 0) >= 12 end
+M.cvLacksKind = M.cvLacksKind or function(b, counts, kind) return (counts[kind] or 0) < 3 end
 function M.cvRun(b, h)
     if M.settings.caravans == false or type(b) ~= "table" or b.status ~= "active" or b.road or b.airport then return end
     local day = math.floor(h / 24)
@@ -672,7 +676,7 @@ function M.cvRun(b, h)
                 local theirs = stashKinds(M.nbHavenOf(o))
                 for _, k in ipairs({ "food", "meds", "ammo", "tools", "materials" }) do
                     for _, w in ipairs({ "food", "meds", "ammo", "tools", "materials" }) do
-                        if k ~= w and (have[k] or 0) >= 12 and (have[w] or 0) < 3 and (theirs[w] or 0) >= 12 and (theirs[k] or 0) < 3 then
+                        if k ~= w and M.cvSpareKind(b, have, k) and M.cvLacksKind(b, have, w) and M.cvSpareKind(o, theirs, w) and M.cvLacksKind(o, theirs, k) then
                             local s = (have[k] or 0) + (theirs[w] or 0) - math.sqrt(d2(o.x, o.y, b.x, b.y)) / 50
                             if s > bs then best, bs, give, want = o, s, k, w end
                         end
@@ -682,6 +686,32 @@ function M.cvRun(b, h)
         end
     end
     if best == nil then return end
+    M.cvRunWith(b, best, give, want, h)
+end
+-- pre-1.0: the warband near the halfway point of a run from b to o (nil = nobody), rolled once per run key
+function M.cvRobber(b, o, key)
+    local mx, my = (b.x + o.x) / 2, (b.y + o.y) / 2
+    local chance = M.cvRunCfg.robChance
+    if fn(M, "trRouteRobChance") then local okC, c = pcall(M.trRouteRobChance, b, o, chance); if okC and tonumber(c) then chance = c end end
+    for _, w in ipairs(M.nbActive()) do
+        if (w.trade == "warband" or w.trade == "slavers") and w.id ~= b.id and w.id ~= o.id and d2(w.x, w.y, mx, my) <= M.cvRunCfg.robTiles ^ 2
+                and ALifeRoll01(b.id .. w.id .. tostring(key)) < chance then
+            return w
+        end
+    end
+    return nil
+end
+M.cvMoveKind, M.cvMoveWorth = moveKind, moveWorth
+-- the swap itself (b sends give, gets want from best). pre-1.0: a real run on the road when ALifeTalk_TradeRuns
+-- takes it (M.trRunStart); on paper, at once, otherwise.
+function M.cvRunWith(b, best, give, want, h)
+    local day = math.floor(h / 24)
+    local mine = M.nbHavenOf(b)
+    if fn(M, "trRunStart") then
+        local okR, took = pcall(M.trRunStart, b, best, give, want, h)
+        if okR and took then return end
+        if not okR then print("[ALifeCaravans] trade run failed, on paper instead: " .. tostring(took)) end
+    end
     local theirsHaven = M.nbHavenOf(best)
     local n = M.cvRunCfg.swap
     -- 0.6.19: outposts holding a chokepoint on the way take a toll, or everything
@@ -690,18 +720,16 @@ function M.cvRun(b, h)
         if okH and robbed then pcall(M.nbFoodSync, b, mine); return end
     end
     -- the road: a warband near the halfway point may rob the run
-    local mx, my = (b.x + best.x) / 2, (b.y + best.y) / 2
-    for _, w in ipairs(M.nbActive()) do
-        if (w.trade == "warband" or w.trade == "slavers") and w.id ~= b.id and w.id ~= best.id and d2(w.x, w.y, mx, my) <= M.cvRunCfg.robTiles ^ 2
-                and ALifeRoll01(b.id .. w.id .. day) < M.cvRunCfg.robChance then
-            local got = moveKind(mine, M.nbHavenOf(w), give, n)
-            M.cvStats.robbed = M.cvStats.robbed + 1
-            event(b, "Their trade run to " .. tostring(best.name) .. " was robbed on the road by " .. tostring(w.name), "trade")
-            event(w, "Robbed a trade run from " .. tostring(b.name) .. " (" .. got .. " " .. give .. ")", "trade")
-            if fn(M, "dirTieAdd") then pcall(M.dirTieAdd, b, w, -15) end
-            pcall(M.nbFoodSync, b, mine); pcall(M.nbFoodSync, w, M.nbHavenOf(w))
-            return
-        end
+    local w = M.cvRobber(b, best, day)
+    if w then
+        local got = moveKind(mine, M.nbHavenOf(w), give, n)
+        M.cvStats.robbed = M.cvStats.robbed + 1
+        event(b, "Their trade run to " .. tostring(best.name) .. " was robbed on the road by " .. tostring(w.name), "trade")
+        event(w, "Robbed a trade run from " .. tostring(b.name) .. " (" .. got .. " " .. give .. ")", "trade")
+        if fn(M, "dirTieAdd") then pcall(M.dirTieAdd, b, w, -15) end
+        if fn(M, "trRouteRobbed") then pcall(M.trRouteRobbed, b, best, w) end
+        pcall(M.nbFoodSync, b, mine); pcall(M.nbFoodSync, w, M.nbHavenOf(w))
+        return
     end
     local out, back
     if type(ALifeWorth) == "table" and M.settings.itemWorth ~= false then

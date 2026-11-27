@@ -54,6 +54,14 @@ pre-1.0 (work in progress toward 1.0: multiplayer)
     line on the Roads map group card), M.brainDump(id), M.brainPerf().
   Brain off (brain = false, or directives off): every wrap passes through; the harness runs the same ten days before
   the brain loads and with it off and compares (identical).
+- Fix (brain vs A-Life check, read in A-Life 42.20 source): ActorRegistry.update / updateTransient answer nil + a
+  reason on failure, not false. The brain's writes and TradeRuns' crew marking took a refusal as success (people put
+  on a run without the mark). Now checked properly. Job stamps (memory.alcpJob, talk only) use A-Life's
+  updateTransient where it exists: a plain update rebuilds A-Life's save snapshot every write. A-Life's own raids on
+  you (RaidDirector): while one is on, and for brainRaidGap days (7) after, no group marches on you. Other A-Life
+  systems checked, no overlap: OfflineCombat / Revenge / Assassins work on A-Life squads (SquadLedger), not our havens;
+  haven "stale" (72 h nobody home) can't trigger (leader + minHomePct stay home). Test 95/0. Left for later: the same
+  "res ~= false" check in ~10 older files (Leaving, Camp, CampAlarm, Caravans, QoL, CampKit, ...), not all registry.
 - Fix (found building the brain): the offline base sim pulled dormant members back to the depot and counted them
   home even while they were on a trade run or Leaving (so runs and war parties were double counted as defenders).
   People on the road now stay on the road (Bases nbSimBase). Test docs/tests/test_pre1_brain_home.lua (5/0; old 2/3).

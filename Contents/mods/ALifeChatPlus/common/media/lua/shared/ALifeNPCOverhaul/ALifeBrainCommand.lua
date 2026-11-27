@@ -101,10 +101,25 @@ function BR.vsPlayerOk(b, h)
     local mode = BR.num("brainVsPlayer")
     if mode <= 0 then return false end
     if h / 24 < BR.num("brainPlayerGrace") then return false end
+    if BR.alifeRaidRecent(h) then return false end
     if mode == 1 then return type(b) == "table" and type(b.brain) == "table" and b.brain.provoked ~= nil end
     return true
 end
 
+-- A-Life's own raids on you (ProjectALife.RaidDirector, read in 42.20 source; unverified on 42.21): one going on, or
+-- one in the last brainRaidGap days = nobody piles on. Read only (its "raid" bucket: lastHour).
+function BR.alifeRaidRecent(h)
+    local ok, res = pcall(function()
+        local RD = BR.PA().RaidDirector
+        if type(RD) == "table" and RD.state ~= nil then return true end
+        local P = BR.PA().Persistence
+        if type(P) ~= "table" or type(P.bucket) ~= "function" then return false end
+        local st = P.bucket("raid", { lastHour = -1e9 })
+        local last = type(st) == "table" and tonumber(st.lastHour) or nil
+        return last ~= nil and h - last < BR.num("brainRaidGap") * 24
+    end)
+    return ok and res == true
+end
 -- the hidden pressure meter (0..100, never shown): reality overrides pride
 function BR.pressureDay(b, sit, h)
     local s = BR.of(b)

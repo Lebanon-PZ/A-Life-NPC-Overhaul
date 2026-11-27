@@ -43,7 +43,7 @@ local function update(uid, f)
     local r = R.read(uid)
     if r == nil then return false end
     local ok, res = pcall(R.update, r.uid, r.revision, function(e) e.memory = type(e.memory) == "table" and e.memory or {}; f(e) end)
-    return ok and res ~= false
+    return ok and res ~= nil and res ~= false -- A-Life's update returns nil + a reason on failure, a record on success
 end
 local function stashOf(b, create) return fn(M, "nbStashList") and M.nbStashList(M.nbHavenOf(b), create) or nil end
 local function typeOf(it) return type(it) == "table" and it.type or it end

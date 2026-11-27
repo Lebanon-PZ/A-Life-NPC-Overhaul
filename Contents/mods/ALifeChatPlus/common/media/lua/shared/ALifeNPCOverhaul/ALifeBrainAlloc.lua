@@ -74,8 +74,13 @@ local function stamp(p, job)
     if not (fn(R, "read") and fn(R, "update")) then return false end
     local r = R.read(p.uid)
     if r == nil then return false end
-    local ok, res = pcall(R.update, r.uid, r.revision, function(e) e.memory = type(e.memory) == "table" and e.memory or {}; e.memory.alcpJob = job end)
-    return ok and res ~= false
+    -- a talk-only label: A-Life's transient update (no save snapshot per stamp; it's saved with the next real write).
+    -- A-Life returns nil + a reason on failure (ActorRegistry.update / updateTransient, read in 42.20 source)
+    local f = function(e) e.memory = type(e.memory) == "table" and e.memory or {}; e.memory.alcpJob = job end
+    local ok, res
+    if fn(R, "updateTransient") then ok, res = pcall(R.updateTransient, r.uid, r.revision, f, true)
+    else ok, res = pcall(R.update, r.uid, r.revision, f) end
+    return ok and res ~= nil and res ~= false
 end
 
 -- bids = { { job, n, value, tool, target, opts, force } }: fill by value inside the stance's shares

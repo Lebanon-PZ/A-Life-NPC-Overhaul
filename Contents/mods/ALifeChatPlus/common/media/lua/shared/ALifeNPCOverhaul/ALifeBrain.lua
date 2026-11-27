@@ -90,6 +90,7 @@ BR.defaults({
     scouts = true,              -- groups send scouts to see for themselves
     brainTribute = true,        -- strong groups demand tribute from weak ones (and from you)
     brainWarn = true,           -- word reaches you (radio, rumour) when a war party heads your way
+    brainRaidGap = 7,           -- days after one of A-Life's own raids on you before a group marches on you
     brainDebug = false,         -- dev: brain state in the console and on the Roads map
 })
 BR.addRows({
@@ -114,6 +115,7 @@ BR.addRows({
     { "scouts", "Brain: groups send scouts to see for themselves" },
     { "brainTribute", "Brain: strong groups demand tribute from weak ones, and from you" },
     { "brainWarn", "Brain: word reaches you when a war party heads your way" },
+    { "brainRaidGap", "Brain: days after an A-Life raid on you before a group may march on you", { 0, 7, 14 } },
     { "brainDebug", "Brain (dev): print each group's mind to the console and show it on the Roads map" },
 })
 

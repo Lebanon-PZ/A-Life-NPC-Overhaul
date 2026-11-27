@@ -25,7 +25,7 @@ local function memSet(uid, f)
     local r = reg.read(tostring(uid))
     if r == nil then return false end
     local ok, res = pcall(reg.update, r.uid, r.revision, function(e) e.memory = type(e.memory) == "table" and e.memory or {}; f(e.memory) end)
-    return ok and res ~= false
+    return ok and res ~= nil and res ~= false -- A-Life: nil + reason on failure
 end
 local function alive(run)
     local reg = R()

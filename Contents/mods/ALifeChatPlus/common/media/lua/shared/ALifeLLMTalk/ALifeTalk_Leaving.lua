@@ -59,7 +59,7 @@ local function setPos(uid, p, extra)
         if p then e.worldPosition = { x = math.floor(p.x) + 0.5, y = math.floor(p.y) + 0.5, z = p.z or 0 } end
         if extra then extra(e) end
     end)
-    return ok and res ~= false
+    return ok and res ~= nil and res ~= false -- A-Life update: nil + reason on failure
 end
 -- a spot near (x, y) on a road when A-Life knows the roads, else the spot itself
 local function roadSpot(x, y)

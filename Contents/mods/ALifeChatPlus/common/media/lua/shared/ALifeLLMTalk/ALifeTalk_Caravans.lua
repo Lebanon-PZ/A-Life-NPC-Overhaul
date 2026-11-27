@@ -405,7 +405,7 @@ function M.cvSendHome(record)
         if b then r.memory.havenId = b.id end
         if depot then r.worldPosition = { x = depot.x + (hash(r.uid) % 3) - 1, y = depot.y + (hash(r.uid .. "y") % 3) - 1, z = depot.z or 0 }; placed = r.worldPosition end
     end)
-    if ok and res ~= false then
+    if ok and res ~= nil and res ~= false then -- A-Life update: nil + reason on failure
         M.cvStats.home = M.cvStats.home + 1
         -- 0.6.17: home is the end of the road, not a teleport: on the road back until the walk (or drive) is done
         if placed and fx and fn(M, "lvSend") then

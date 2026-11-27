@@ -47,7 +47,7 @@ local function update(uid, f)
     local r = reg.read(uid)
     if r == nil then return false end
     local ok, res = pcall(reg.update, r.uid, r.revision, function(e) e.memory = type(e.memory) == "table" and e.memory or {}; f(e) end)
-    return ok and res ~= false
+    return ok and res ~= nil and res ~= false -- A-Life update: nil + reason on failure
 end
 
 -- where caravans come when there's no Jeem base: your trading post, else your A-Life base

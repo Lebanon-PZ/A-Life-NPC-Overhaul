@@ -167,7 +167,8 @@ function T.ownSend(player, groupId, give, want)
         pcall(function()
             local R = T.PA().ActorRegistry
             local r = R.read(uid)
-            okU = r ~= nil and R.update(r.uid, r.revision, function(e) e.memory = type(e.memory) == "table" and e.memory or {}; e.memory.alcpRun = run.id end) ~= false
+            local res = r ~= nil and R.update(r.uid, r.revision, function(e) e.memory = type(e.memory) == "table" and e.memory or {}; e.memory.alcpRun = run.id end) or nil
+            okU = res ~= nil and res ~= false -- A-Life update: nil + reason on failure
         end)
         if okU then run.crew[#run.crew + 1] = uid end
     end

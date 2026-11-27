@@ -349,7 +349,7 @@ function M.nbAbsorb(winner, loser, h)
                 e.memory.havenId = winner.id
                 e.memory.supplyDepot = depot
             end)
-            if ok and res ~= false then moved = moved + 1 end
+            if ok and res ~= nil and res ~= false then moved = moved + 1 end -- A-Life update: nil + reason on failure
         end
     end
     local led = PA().SquadLedger

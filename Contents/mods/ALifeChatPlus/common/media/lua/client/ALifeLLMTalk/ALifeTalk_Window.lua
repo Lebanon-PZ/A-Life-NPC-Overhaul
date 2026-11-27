@@ -662,7 +662,7 @@ function PeoplePage:onPageClose() pcall(function() if self.avatar then self.avat
 -- CAMP
 ----------------------------------------------------------------------------------------------------------------
 local CampPage = page("ALifeTalkCampHub", "Camp", "camp",
-    tr("TipCamp", "<SIZE:medium> Camp <LINE> <SIZE:small> The camp board, and every camp menu in one place: roles, rules, patrol, alarm, kitchen, farm and the rest, work zones, and Jeem's base and residents if you use Jeem. <LINE> <LINE> Name a spot ('the north gate') and you can send people there to meet you or to hold it."))
+    tr("TipCamp", "<SIZE:medium> Camp <LINE> <SIZE:small> The camp board, and every camp menu in one place: roles, rules, patrol, alarm, kitchen, farm and the rest, work zones, and Jeem's base and residents if you use Jeem. <LINE> <LINE> Name a spot ('the north gate') and you can send people there to meet you or to hold it. <LINE> <LINE> With Jeem: camp roles are done in a person's free time on Jeem's schedule, so give them Free shifts for it. Our Farmer and Jeem's farmer job are the same job."))
 function CampPage:text()
     local ok, txt = false, nil
     if fn(M, "bdText") then ok, txt = pcall(M.bdText, playerOf()) end
@@ -693,6 +693,10 @@ function CampPage:actions()
                 sub:addOption(tr("PlaceShow", "Show on map"), nil, function() pcall(function() ISWorldMap.ShowWorldMap(0, pl.x, pl.y, 18) end) end)
                 sub:addOption(tr("PlaceForget", "Forget this name"), nil, function() M.plRemove(pl.id) end)
             end end },
+        { label = tr("BtnCampMove", "Move camp"), show = function() return fn(ALifeCampMove, "on") and ALifeCampMove.on() end, fn = function(win, btn)
+            local cm = menuAt(win, btn)
+            cm:addOption(tr("CampMoveHere", "Make this building our camp"), nil, function() ALifeCampMove.ask(playerOf()) end)
+            cm:addOption(tr("CampMoveAuto", "Let the camp follow where we sleep"), nil, function() ALifeCampMove.ask(playerOf(), true) end) end },
         { label = tr("BtnJeemBase", "Jeem: base and residents"), show = hasJeem, fn = function(win, btn) M.winJeem(menuAt(win, btn), { 20, 30, 31, 40 }) end },
         { label = tr("BtnCampLog", "From your camp"), show = function() return fn(ALifeSettlement, "openLog") end, fn = function() ALifeSettlement.openLog() end },
     }

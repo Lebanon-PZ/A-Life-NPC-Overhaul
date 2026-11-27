@@ -1213,6 +1213,8 @@ function M.cpPick(uid, shell, player, now)
     if M.cpWatcher(player) == uid then
         return { kind = "watch", key = "watch", spot = { x = b.x, y = b.y, z = b.z or 0 } }
     end
+    -- pre-1.0: Jeem's schedule has them busy (ALifeCampJeem): no role work now
+    if fn(M, "cpJeemBusy") and M.cpJeemBusy(uid) then return nil end
     -- 2) patrol (by day; at night only if there's no night watch)
     if M.cpIsPatroller(uid, player) and (not isNight() or M.cpOpt("CPNightWatch") == false) then
         local pts = M.cpPatrolPoints()

@@ -255,9 +255,15 @@ function M.alifeBase(player, adopt)
             if okK and key ~= nil then local ok, h = pcall(D.markOf, key); if ok and type(h) == "table" then house, src = h, "mark" end end
         end
         if house == nil and fn(D, "claimOf") then local ok, h = pcall(D.claimOf, player); if ok and type(h) == "table" then house, src = h, "safehouse" end end
-        if house == nil and fn(D, "baseOf") then local ok, h = pcall(D.baseOf, player); if ok and type(h) == "table" then house, src = h, "baseheat" end end
     end
-    if house == nil and M.settings.jeemBase ~= false then house, src = M.jeemBaseHouse(player) end   -- 0.5.11
+    -- pre-1.0: a base you made in Jeem beats A-Life's BaseHeat guess (the house you slept the most nights in). BaseHeat
+    -- first kept the camp at an old house: zones "too far from your base" at the new one, the camp stuck after a move.
+    -- adopt: houseFor already picked BaseHeat (it has no Jeem step), so Jeem overrides that pick too.
+    if (house == nil or src == "baseheat") and M.settings.jeemBase ~= false then
+        local h, s = M.jeemBaseHouse(player)   -- 0.5.11
+        if h ~= nil then house, src = h, s end
+    end
+    if house == nil and type(D) == "table" and fn(D, "baseOf") then local ok, h = pcall(D.baseOf, player); if ok and type(h) == "table" then house, src = h, "baseheat" end end
     local base = nil
     if house ~= nil and tonumber(house.x1) and tonumber(house.y1) and tonumber(house.x2) and tonumber(house.y2) then
         local x1, y1, x2, y2 = math.floor(house.x1), math.floor(house.y1), math.floor(house.x2), math.floor(house.y2)

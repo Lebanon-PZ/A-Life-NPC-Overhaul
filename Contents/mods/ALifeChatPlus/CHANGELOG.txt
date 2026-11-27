@@ -2,6 +2,29 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- New (player request, Ruse): camp roles follow Jeem (ALifeCampJeem). Before, our roles ignored Jeem's schedule and
+  our Farmer doubled Jeem's farmer job. Now a Jeem resident does role work (patrol, meals, armory, farm duty, haul)
+  only while Jeem has them free (Shifts.busy: not asleep, not on a post, Free shift, not called soon); the gate sits
+  in cpPick after urgent plug-ins and the night watch. Our Farmer = Jeem's farmer: setting our Farmer sets their Jeem
+  job (Manage.setJob), another role clears it, a Jeem farmer reads as our Farmer, our farm duty skips Jeem farmers
+  (Jeem tends). Jeem can't run it (no food store): our farm duty does. Settlers / no Jeem: unchanged. Guard and
+  Builder have no clean Jeem match (Jeem guards are post shifts): shift gate only. Camp tab tip explains it.
+  Settings: campJeemShifts, campJeemFarm. Test docs/tests/test_campjeem.lua (15/0; old code 7/8).
+
+- Fix (player report, Ruse, dedicated server, mod added mid-save): work zones / camp areas "too far from your base (75
+  tiles max)" while standing in the Jeem base. M.alifeBase asked A-Life's BaseHeat (the house you slept the most
+  nights in, an old one on a long save) before the Jeem base, so the camp sat at the old house. Now: mark, safehouse
+  claim, Jeem base, then BaseHeat (also on the adopt path, where houseFor had already picked BaseHeat). No Jeem base:
+  as before. Setting jeemBase off: as before. Test docs/tests/test_jeembase_first.lua (7/0; old code 5/2).
+
+- New (player report, Ded): move camp (ALifeCampMove). Moving house left the camp at the old place: A-Life's home is
+  SafehouseDirector.houseFor (a mark, then a vanilla safehouse claim, then the BaseHeat base with the most nights
+  slept), so the old base kept winning until the new one had more nights, even torn down. Camp tab > Move camp:
+  "Make this building our camp" sets A-Life's own mark on the building you stand in (SafehouseDirector.mark, clears
+  your old mark); "Let the camp follow where we sleep" clears it. Through ALifeCmd "campMove" / "campMoveDone" (MP:
+  server). Outside a building: says so, no change. Unverified 42.21: a shack of only player-built walls may not count
+  as a building. Setting: campMove. Test docs/tests/test_campmove.lua (13/0; old code 3/10).
+
 - New (Joe): organic walls (ALifeTalk_Walls, docs/PLAN-BUILD.md). When a base is loaded the group looks at the real
   ground (flood-fill from the yard: walls, fences, gates, windows are barriers; rooms and water solid). A fenced
   compound with a few openings gets those openings walled (each <= orgMaxGap 8, all <= orgMaxGapTotal 48; inner cuts

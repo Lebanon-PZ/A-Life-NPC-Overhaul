@@ -389,6 +389,7 @@ end
 CP._saidPlainly = function(t, id) return saidPlainly(t, id) end
 
 local function plusClassify(text, pending, data)
+    CP.lastHow = nil -- set below; an early return must not leave the last line's "fuzzy" for heardFilter
     local id, score = origClassify(text, pending, data)
     if not built then return id, score end
     if pending == true and (id == "YES" or id == "NO") then return id, score end
@@ -455,6 +456,64 @@ local function plusClassify(text, pending, data)
         if CP.log then print(TAG .. " not understood: '" .. tostring(text) .. "'") end
     end
     return id, score
+end
+
+-- ------------------------------------------------------- heard filter -----
+-- pre-1.0 (edge corpus, Nov 27: 5000 generated orders run through the real path): last word on what a line was heard
+-- as. Each rule drops a reading the player can't have meant; nil = not understood (the AI reads it, or they ask).
+-- 1. said to one of your own people: no hold-up / robbery / threat against them ("dont move", "hand over the keys")
+-- 2. A-Life's bare "stop" pattern makes any line with "stop" a hold-up: not a question ("why did you stop"), not
+--    "stop <something>" ("stop being weird", "stop the car"); plain "stop", "stop right there", "stop now" stay
+-- 3. some intents need one of their own words: "back to work" / "fight back" are not GIVE_BACK
+-- 4. a fuzzy guess never makes an NPC do something ("come on really" -> follow, "ditch that" -> "pitch in" -> join)
+CP.STOP_OK_AFTER = { right = true, there = true, now = true, it = true, please = true, pls = true, man = true, dude = true }
+CP.QUESTION_LEAD = { why = true, what = true, how = true, when = true, where = true, who = true, ["do"] = true, does = true,
+    did = true, can = true, could = true, are = true, is = true, will = true, would = true, have = true, wat = true, y = true }
+CP.NEEDS_WORD = { GIVE_BACK = { "give", "return", "mine", "stole", "my stuff", "my things" } }
+CP.FUZZY_NO_ACTION = { FOLLOW_ME = true, COME_WITH_ME = true, WAIT_HERE = true, WALK_WITH_ME = true, JOIN_REQUEST = true,
+    WALK_STOP = true, GO_AWAY = true, OFFER_ITEM = true, GIVE_BACK = true }
+CP.INTERJECTION = { FOLLOW_ME = { "come on" }, WAIT_HERE = { "hold on", "hang on" } }
+CP.SIGH_WORDS = { "really", "seriously", "think", "no way", "kidding", "for real", "srsly", "rly" }
+function CP.heardFilter(text, id, score)
+    if id == nil or id == "YES" or id == "NO" then return id, score end
+    local low = " " .. string.gsub(string.lower(tostring(text or "")), "[^%w']+", " ") .. " "
+    local why
+    local M = ALifeLLMTalk
+    local own = type(M) == "table" and type(M.ownLine) == "table" and M.ownLine.text == text
+    if own and isDanger(id) then why = "threat at your own people" end
+    if why == nil and id == "STOP_FREEZE" then
+        local first = string.match(low, "^ (%S+)")
+        local after = string.match(low, " stop (%S+) ")
+        if CP.QUESTION_LEAD[first or ""] or string.find(tostring(text), "?", 1, true) then why = "question"
+        elseif after ~= nil and not CP.STOP_OK_AFTER[after] and not string.find(low, " freeze ", 1, true)
+                and not string.find(low, " move ", 1, true) and not string.find(low, " halt ", 1, true) then
+            why = "stop <" .. after .. ">"
+        end
+    end
+    if why == nil and CP.NEEDS_WORD[id] then
+        local has = false
+        for _, w in ipairs(CP.NEEDS_WORD[id]) do if string.find(low, " " .. w .. " ", 1, true) then has = true end end
+        if not has then why = "missing its words" end
+    end
+    if why == nil and CP.lastHow == "fuzzy" and CP.FUZZY_NO_ACTION[id] then why = "fuzzy guess" end
+    -- 5. "come on" / "hold on" as a sigh, not an order: "come on really", "hold on a sec let me think"
+    if why == nil and CP.INTERJECTION[id] and type(ALifeOrderText) == "table" and type(ALifeOrderText.clean) == "function" then
+        local okC, c = pcall(ALifeOrderText.clean, text)  -- typo'd sighs too ("come on raelly")
+        if okC and type(c) == "string" then low = low .. " " .. string.gsub(c, "[^%w']+", " ") .. " " end
+    end
+    if why == nil and CP.INTERJECTION[id] then
+        for _, w in ipairs(CP.INTERJECTION[id]) do
+            if string.find(low, " " .. w .. " ", 1, true) then
+                for _, c in ipairs(CP.SIGH_WORDS) do
+                    if string.find(low, " " .. c .. " ", 1, true) then why = "'" .. w .. "' as a sigh" end
+                end
+            end
+        end
+    end
+    if why == nil then return id, score end
+    CP.lastHow, CP.lastScore = "filtered", 0
+    if CP.log then print(TAG .. " '" .. tostring(text) .. "' looked like " .. tostring(id) .. ", not taken: " .. why) end
+    return nil, 0
 end
 
 -- ---------------------------------------------------------------- door -----
@@ -584,7 +643,11 @@ local function installTalk()
     end
     Intents.classify = function(text, pending, data)
         local ok, a, b = tryOnce("classify", plusClassify, text, pending, data)
-        if ok then return a, b end
+        if ok then
+            local okF, fa, fb = pcall(CP.heardFilter, text, a, b)
+            if okF then return fa, fb end
+            return a, b
+        end
         return origClassify(text, pending, data)
     end
     if type(Intents.doorFor) == "function" then

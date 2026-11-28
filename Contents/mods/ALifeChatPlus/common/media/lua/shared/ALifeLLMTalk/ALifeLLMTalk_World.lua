@@ -364,26 +364,74 @@ end
 -- orders: the player's to recruits / companions, leaders' to their group
 ----------------------------------------------------------------------------------------------------------------
 M.orderWords = {
-    { "fall_back", { "fall back", "pull back", "retreat", "get back", "back off", "everyone back" } },
-    { "cover_me", { "cover me", "covering fire", "watch my back", "got my back", "cover my" } },
+    { "fall_back", { "fall back", "pull back", "retreat", "get back", "back off", "everyone back",
+        "get out of here", "get outta here", "lets get out of here", "let's get out of here" } },
+    { "cover_me", { "cover me", "covering fire", "watch my back", "got my back", "cover my", "protect me", "keep me safe", "watch me" } },
     { "move_up", { "move up", "push up", "push forward", "advance", "go go go", "move in", "push in" } },
     { "regroup", { "regroup", "on me", "form up", "group up", "rally on me", "to me" } },
     { "shelter", { "take cover", "get inside", "find shelter", "get indoors", "inside now", "get in the house" } },
     { "guard", { "guard this", "watch this place", "keep watch here", "stand guard" } },
-    { "hold", { "hold here", "hold position", "stay here", "wait here", "stay put", "hold up", "hold the line", "stay back", "hold it here" } },
+    { "hold", { "hold here", "hold position", "stay here", "wait here", "stay put", "hold up", "hold the line", "stay back", "hold it here",
+        "dont move", "don't move", "do not move" } },
     { "follow", { "follow me", "come with me", "let's go", "lets go", "with me", "keep up" } },
 }
+-- pre-1.0 (edge corpus, Nov 27): short phrases that are common inside other sentences ("trade with me", "you're dead
+-- to me") only count when they open their clause, after nothing but these words. A name before them needs a comma
+-- ("jess, with me"), which starts a new clause.
+M.orderShort = { ["with me"] = true, ["to me"] = true, ["on me"] = true, ["lets go"] = true, ["let's go"] = true, ["get back"] = true }
+M.orderLead = { ok = true, okay = true, hey = true, yo = true, alright = true, now = true, please = true, pls = true, guys = true,
+    everyone = true, everybody = true, yall = true, ["y'all"] = true, all = true, you = true, team = true, come = true, on = true,
+    get = true, over = true, here = true, um = true, so = true, right = true, back = true, ["let's"] = true, lets = true, stick = true, keep = true }
+local MOVE_ON = { ["in"] = true, to = true, into = true, out = true, on = true, away = true, there = true, house = true, back = true }
+M.orderNotBefore = { ["dont move"] = MOVE_ON, ["don't move"] = MOVE_ON, ["do not move"] = MOVE_ON }
+M.orderSighAfter = { "no way", "really", "seriously", "kidding", "for real", "lol", "lmao", "haha" }
+local function orderClauses(text)
+    local t = string.lower(tostring(text or ""))
+    t = string.gsub(t, "[%.,!%?;:&%+]", "|")
+    local out = {}
+    for part in string.gmatch(t .. "|", "([^|]*)|") do
+        local low = " " .. string.gsub(part, "[^%w']+", " ") .. " "
+        low = string.gsub(low, " and then ", "|"); low = string.gsub(low, " then ", "|")
+        low = string.gsub(low, " and ", "|"); low = string.gsub(low, " also ", "|"); low = string.gsub(low, " n ", "|")
+        for c in string.gmatch(low .. "|", "([^|]*)|") do
+            c = " " .. string.gsub(string.gsub(c, "^%s+", ""), "%s+$", "") .. " "
+            if c ~= "  " then out[#out + 1] = c end
+        end
+    end
+    return out
+end
+local function leadOnly(before)
+    for w in string.gmatch(before, "%S+") do
+        if not M.orderLead[w] then return false end
+    end
+    return true
+end
+local parseOrderRaw
 function M.parseOrder(text)
+    -- pre-1.0: as typed first, then the close-enough copy (slang, stretched letters, typos: ALifeOrderText)
+    if type(ALifeOrderText) == "table" and type(ALifeOrderText.tryBoth) == "function" then return (ALifeOrderText.tryBoth(parseOrderRaw, text)) end
+    return parseOrderRaw(text)
+end
+parseOrderRaw = function(text)
     -- 0.8.11.2: whole words ("hold upstairs" is not "hold up")
-    local low = " " .. string.gsub(string.lower(tostring(text or "")), "[^%w']+", " ") .. " "
     for _, row in ipairs(M.orderWords) do
         for _, w in ipairs(row[2]) do
-            local a = string.find(low, " " .. w .. " ", 1, true)
-            if a then a = a + 1 end
-            if a then
-                local before = string.sub(low, math.max(1, a - 6), a - 1)
-                if not string.find(before, "n't", 1, true) and not string.find(before, "not ", 1, true) and not string.find(before, "never", 1, true) then
-                    return row[1]
+            for _, low in ipairs(orderClauses(text)) do
+                local a = string.find(low, " " .. w .. " ", 1, true)
+                if a then a = a + 1 end
+                if a then
+                    local before = string.sub(low, math.max(1, a - 6), a - 1)
+                    local negated = string.find(before, "n't", 1, true) or string.find(before, "not ", 1, true) or string.find(before, "never", 1, true)
+                        or string.find(before, "dont ", 1, true) or string.find(before, " no ", 1, true)
+                    local okShort = not M.orderShort[w] or leadOnly(string.sub(low, 1, a - 1))
+                    -- "get outta here, no way" / "come on really": disbelief, not an order
+                    local after = string.sub(low, a + #w)
+                    local sigh = false
+                    for _, s in ipairs(M.orderSighAfter) do if string.find(after, " " .. s .. " ", 1, true) then sigh = true end end
+                    -- "don't move in with them", "dont move to the coast": not "hold"
+                    local nb = M.orderNotBefore[w]
+                    if nb then local nx = string.match(after, "^%s*(%S+)"); if nx and nb[nx] then sigh = true end end
+                    if not negated and okShort and not sigh then return row[1] end
                 end
             end
         end
@@ -448,6 +496,16 @@ function M.ackLine(uid, obeyed)
     return pick(M.ackLines.no)
 end
 
+-- one of the player's own people (A-Life companion, or walking with the player)
+function M.isMine(record)
+    if type(record) ~= "table" or record.uid == nil then return false end
+    local P = patch()
+    if P ~= nil and fn(P, "companionOf") and P.companionOf(tostring(record.uid)) ~= nil then return true end
+    local mine = false
+    pcall(function() local m = record.memory; mine = type(m) == "table" and type(m.walkWith) == "table" end)
+    return mine
+end
+
 -- the player gave an order: companions / recruits near the player answer it
 function M.playerOrder(player, text)
     if M.settings.playerOrders == false then return nil end
@@ -459,11 +517,7 @@ function M.playerOrder(player, text)
     local out = {}
     for _, l in ipairs(M.nearbyNpcs(px, py, pz or 0, 30) or {}) do
         local uid = tostring(l.record.uid)
-        local mine = (fn(P, "companionOf") and P.companionOf(uid) ~= nil)
-        if not mine then
-            pcall(function() local m = l.record.memory; mine = type(m) == "table" and type(m.walkWith) == "table" end)
-        end
-        if mine then
+        if M.isMine(l.record) then
             local chance = M.obeyChance(uid, "player", kind)
             local obeyed = roll(100) < chance
             local done = false

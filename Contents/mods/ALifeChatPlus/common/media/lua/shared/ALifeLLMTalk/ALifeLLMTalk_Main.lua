@@ -1014,10 +1014,18 @@ function M.respondNow(player, listener, text, now, choiceIntent)
     -- -> A-Life's own answer): orders were only looked for on the AI path (notePlayerLine), so any line A-Life kept
     -- (its own intents, a fight, AI off) never reached the order parser. Now every typed line is checked for an order
     -- first; an order is carried out (the ack comes from the order's answer) and A-Life's stock answer is skipped.
+    -- pre-1.0 (edge corpus): mark a line said to one of your own people, so A-Life's hold-up / robbery intents
+    -- ("dont move", "hand over the keys") are not read as a threat against them (ALifeNPCOverhaul classify filter)
+    M.ownLine = nil
+    if choiceIntent == nil and fn(M, "isMine") and type(listener) == "table" then
+        local okM, mine = pcall(M.isMine, listener.record)
+        if okM and mine then M.ownLine = { text = text, at = nowMs() } end
+    end
     if choiceIntent == nil and not M.inNative and fn(M, "playerOrder") and M.settings.ordersFirst ~= false then
-        local okO, kind = pcall(M.playerOrder, player, text)
+        local okO, kind, outO = pcall(M.playerOrder, player, text)
         M.orderCheckedText, M.orderCheckedAt = text, nowMs()
-        if okO and kind ~= nil then
+        -- pre-1.0 (edge corpus): an order with none of your people in earshot is not an order: A-Life answers it
+        if okO and kind ~= nil and type(outO) == "table" and #outO > 0 then
             M.inputNote(text, "order", tostring(kind))
             if type(listener) == "table" and type(listener.record) == "table" then
                 M.lastAddressee = { uid = tostring(listener.record.uid), at = nowMs(), text = text }

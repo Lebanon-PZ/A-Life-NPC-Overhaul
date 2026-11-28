@@ -68,7 +68,7 @@ end
 L.GROUPS = { "Fighting", "Getting around", "Gear", "Looking after themselves", "Help me", "Lights and noise" }
 L.CMDS = {
     { id = "hold_fire", group = "Fighting", order = "hold_fire", label = "hold fire",
-      words = { "hold fire", "hold your fire", "don't shoot", "dont shoot", "do not shoot", "no shooting", "cease fire", "stop shooting" }, neg = true,
+      words = { "hold fire", "hold your fire", "don't shoot", "dont shoot", "do not shoot", "no shooting", "cease fire", "stop shooting", "stand down" }, neg = true,
       say = { "Hold your fire.", "Don't shoot." }, what = "No shooting until you say so." },
     -- A-Life keeps two separate switches: fire (hold/free) and weapons (melee/needed/free/...). "fire_free" alone
     -- only lifts a hold; a guard on the default "needed" still swings a blade at a thin crowd. Send both.
@@ -227,9 +227,25 @@ local function negated(lowP, at)
     before = " " .. string.sub(before, cut + 1)
     return string.find(before, "n't", 1, true) ~= nil or string.find(before, " not ", 1, true) ~= nil
         or string.find(before, " never ", 1, true) ~= nil or string.find(before, " dont ", 1, true) ~= nil
+        -- pre-1.0 (edge corpus): "no crouch", and the player talking about themself ("im gonna chop wood", "i'll siphon it")
+        or string.find(before, " no ", 1, true) ~= nil or L.selfSaid(before)
+end
+L.SELF_WORDS = { " i'm gonna ", " im gonna ", " i am gonna ", " i'm going to ", " im going to ", " i am going to ", " i'll ", " ill ",
+    " i will ", " i should ", " i need to ", " i have to ", " i gotta ", " i got to ", " let me just " }
+function L.selfSaid(before)
+    for _, w in ipairs(L.SELF_WORDS) do if string.find(before, w, 1, true) then return true end end
+    -- "i keep watch better than tom": the phrase right after "i" is about the player
+    if string.find(before, " i %s*$") then return true end
+    return false
 end
 -- returns the command row and the noun after it ("rifle" in "give me your rifle"), or nil
+local parseRaw
 function L.parse(text)
+    -- pre-1.0: as typed first, then the close-enough copy (slang, stretched letters, typos: ALifeOrderText)
+    if type(ALifeOrderText) == "table" and fn(ALifeOrderText, "tryBoth") then return ALifeOrderText.tryBoth(parseRaw, text) end
+    return parseRaw(text)
+end
+parseRaw = function(text)
     if type(text) ~= "string" or text == "" then return nil end
     local lowP = " " .. string.lower(text) .. " "
     local low = string.gsub(lowP, "[%.,!%?;:]", " ")

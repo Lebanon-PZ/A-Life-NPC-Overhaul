@@ -2,6 +2,40 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- Nov 27 2026: close-enough orders. Same 5000 messy lines, with the field/camp commands counted too: orders understood
+  26% -> 45%, wrong actions 7.6% -> 1.9%, chat taken as an order 9/75 -> 8/75. Not played yet.
+  * NEW shared/ALifeNPCOverhaul/ALifeOrderText.lua: every typed order is read as typed, then again cleaned up:
+    texting slang (u, ur, n, gimme, lemme, every1, rn, w/...), game slang (zeds, biters, walkers -> zombies; shotty ->
+    shotgun; truck / van / ride -> car), stretched letters ("stooop"), and typos fixed against the words the commands
+    use ("siphn", "folow", "atack", "hlod"). Names (capitalised), short words and every word A-Life's own talk uses are
+    never changed. Settings orderCloseEnough, orderTypoFix.
+  * More ways to say existing commands: "knives only", "go loud", "attack him", "hit it", "heal me", "fix my arm",
+    "fix your wound", "get firewood", "keep watch", "guard duty", "toss me a mag", "stash the stuff", "recon",
+    "crouch", "tag along", "protect me" and more (ALifeOrderText T.MORE, merged into the command rows).
+  * Not orders: "no crouch", the player talking about themself ("im gonna chop wood", "i keep watch better than
+    tom"), "get outta here, no way", "don't move in with them".
+  * Change: "stand down" is hold fire now. A lieutenant is let go with "you are dismissed" (also "you're relieved",
+    "step down", "you're not in charge any more"); the camp board button says "dismiss".
+
+- Nov 27 2026: typed orders heard right (5000-line edge-case corpus run through the real no-AI path; wrong actions
+  7.2% -> 2.4%; docs/EDGE-CORPUS.md, test docs/tests/test_pre1_heard.lua). Not played yet.
+  * Fix: "trade with me" made your people follow you, "you're dead to me" made them regroup. Short order words
+    (with me / to me / on me / lets go / get back) only count at the start of a clause now (World M.orderShort,
+    M.orderLead); a name before them needs a comma ("jess, with me"). Lines are split into clauses for orders.
+  * Fix: "dont follow me" made them follow (only "n't" counted as a no). "dont" and "no" negate now.
+  * Fix: "hand over the keys" / "dont move" to your own people read as a robbery / hold-up. A line said to one of
+    yours is marked (Main M.ownLine, World M.isMine) and A-Life's threat intents are dropped for it.
+  * Fix: any line with "stop" could start a hold-up (A-Life's bare "stop" pattern): "why did you stop", "stop being
+    weird", "stop the car". Not on questions or "stop <something>" now; "stop", "freeze", "stop right there" stay.
+  * Fix: "back to work" / "fight back" read as "give my stuff back". GIVE_BACK needs give / return / mine / stole.
+  * Fix: a guessed (fuzzy) match could make NPCs follow, wait, join or leave ("ditch that" -> typo fix "pitch" ->
+    "pitch in" -> join). Guesses never become those now. "come on really" / "hold on, let me think" are sighs.
+  * Fix: an order word said with none of your people near skipped A-Life's normal answer. Now only an order someone
+    of yours actually took counts.
+  * New order phrases: "get out of here" / "get outta here" = fall back, "dont move" = hold (your people only).
+  * All in ALifeNPCOverhaul CP.heardFilter (one filter on every classify) + World parseOrder. Stale CP.lastHow
+    ("fuzzy" from the line before) reset per line.
+
 - Nov 27 2026 session: party overlay + play-test fixes. Not played yet.
   * NEW party overlay (client/ALifeNPCOverhaul/ALifePartyHUD.lua): small panel with your travelling party (health bar,
     hurt / hunger / thirst words, order), one-click Follow / Wait / Guard / Base / Talk / Stance for the picked person

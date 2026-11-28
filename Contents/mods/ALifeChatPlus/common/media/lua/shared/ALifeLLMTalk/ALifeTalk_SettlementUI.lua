@@ -225,7 +225,7 @@ end
 function K.standButtons()
     local out = {}
     if setting("lieutenants") == false then return out end
-    for _, uid in ipairs(K.lieutenants()) do out[#out + 1] = { label = first(uid) .. ": stand down", uid = uid } end
+    for _, uid in ipairs(K.lieutenants()) do out[#out + 1] = { label = first(uid) .. ": dismiss", uid = uid } end
     return out
 end
 function K.standSig()

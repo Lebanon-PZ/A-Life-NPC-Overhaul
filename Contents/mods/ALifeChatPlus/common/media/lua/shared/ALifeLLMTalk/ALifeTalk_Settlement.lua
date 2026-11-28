@@ -276,10 +276,12 @@ cmd({ id = "make_lt", group = "Your camp", client = true, mine = true, camp = "l
 cmd({ id = "make_lt2", group = "Your camp", client = true, mine = true, camp = "lt", rank = 2, label = "you're next in line",
     words = { "you're next in line", "youre next in line", "you're second in line", "if they're gone you're in charge", "you're my second lieutenant" },
     say = { "You're next in line." }, what = "They take over if your first lieutenant isn't there." })
-cmd({ id = "stand_down", group = "Your camp", client = true, mine = true, camp = "standdown", label = "stand down",
-    words = { "stand down", "you're not in charge any more", "youre not in charge any more", "you're not in charge anymore", "youre not in charge anymore",
+-- pre-1.0 (Joe, Nov 27): "stand down" is hold fire (Fighting); a lieutenant is let go with "you are dismissed"
+cmd({ id = "stand_down", group = "Your camp", client = true, mine = true, camp = "standdown", label = "dismiss",
+    words = { "you are dismissed", "you're dismissed", "youre dismissed", "ur dismissed", "you are relieved of command",
+        "you're not in charge any more", "youre not in charge any more", "you're not in charge anymore", "youre not in charge anymore",
         "step down", "i'm taking you off", "you're relieved", "you're done running things" },
-    say = { "Stand down. You're not in charge any more." }, what = "They stop running the base while you're away. How they take it depends on who they are, how long they had it and how you two get on." })
+    say = { "You're dismissed. You're not in charge any more." }, what = "They stop running the base while you're away. How they take it depends on who they are, how long they had it and how you two get on." })
 
 -- 0.8.8: CAMP WORK BY WORD. Said to one of your base's people (the one you're talking to): a Jeem job or a watch.
 -- The server (ALifeCampWork) goes through Jeem's own Manage.setJob / setShift; they answer yes, or why not.

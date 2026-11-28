@@ -104,6 +104,45 @@ function K.targets(player, text, c)
 end
 
 ----------------------------------------------------------------------------------------------------------------
+-- pre-1.0 fix: "clear this building". A-Life's sweep (CompanionCqb.locate) only looks 2 tiles around the spot for a
+-- building and then for a door; "where you stand" missed it from the yard or the street, the order was taken, and the
+-- sweep quietly refused later. Now: the building you're in, else the closest one within cmdBuildingReach tiles, and
+-- the spot sent is the outside tile of its nearest door (the same door test A-Life uses: outside:getDoorTo(inside)).
+----------------------------------------------------------------------------------------------------------------
+local SIDES = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } }
+function K.buildingDoor(px, py, pz)
+    local cell = type(getCell) == "function" and getCell() or nil
+    if cell == nil then return nil end
+    local z = math.floor(pz or 0)
+    local reach = tonumber(ALifeCommands.setting("cmdBuildingReach")) or 12
+    local cx, cy = math.floor(px), math.floor(py)
+    local mine = nil
+    pcall(function() local sq = cell:getGridSquare(cx, cy, z); mine = sq and sq:getBuilding() or nil end)
+    local best, bd = nil, nil
+    for dx = -reach, reach do
+        for dy = -reach, reach do
+            local ox, oy = cx + dx, cy + dy
+            local d = dx * dx + dy * dy
+            if bd == nil or d < bd then
+                pcall(function()
+                    local outside = cell:getGridSquare(ox, oy, z)
+                    if outside == nil or outside:getBuilding() ~= nil then return end
+                    for _, sd in ipairs(SIDES) do
+                        local inside = cell:getGridSquare(ox + sd[1], oy + sd[2], z)
+                        local b = inside and inside:getBuilding() or nil
+                        if b ~= nil and (mine == nil or b == mine) and outside:getDoorTo(inside) ~= nil then
+                            best, bd = { x = ox, y = oy, z = z }, d
+                            return
+                        end
+                    end
+                end)
+            end
+        end
+    end
+    return best
+end
+
+----------------------------------------------------------------------------------------------------------------
 -- where: the spot a command needs
 ----------------------------------------------------------------------------------------------------------------
 function K.point(player, kind)
@@ -115,6 +154,7 @@ function K.point(player, kind)
         if not ok or type(b) ~= "table" or how == "building" or tonumber(b.x1) == nil then return nil end
         return { x = math.floor((b.x1 + (tonumber(b.x2) or b.x1)) / 2), y = math.floor((b.y1 + (tonumber(b.y2) or b.y1)) / 2), z = 0 }
     end
+    if kind == "building" then return K.buildingDoor(px, py, pz) end
     if kind == "threat" then
         local best, bd = nil, 15 * 15
         pcall(function()
@@ -200,7 +240,7 @@ K.SAY_WHY = {
     doesnt_have = { "I don't have one.", "Don't have one on me." }, no_skill = { "I don't know enough first aid for that." },
     worn = { "I'm wearing it." }, equipped_weapon = { "Not letting go of this one." }, you_dont_have = { "You don't have that." },
     too_heavy_or_equipped = { "Can't carry that. Or it's still in your hands." }, too_heavy = { "Too heavy for me." },
-    what_item = { "Give you what?", "What do you want?" }, no_spot = { "I don't see anything there." },
+    what_item = { "Give you what?", "What do you want?" }, no_spot = { "I don't see anything there." }, no_building = { "What building? Get me closer to it." }, no_door = { "Can't find a way in." },
     too_far = { "Come closer." }, ["repeat"] = { "Already on it." }, no_footing = { "Can't get there." },
     no_base = { "What base? We don't have one.", "Back where? We don't have a place." },
     -- 0.8.3

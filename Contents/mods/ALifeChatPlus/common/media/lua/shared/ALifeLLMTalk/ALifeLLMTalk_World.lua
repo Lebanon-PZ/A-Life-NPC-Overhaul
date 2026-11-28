@@ -485,7 +485,9 @@ if type(M.notePlayerLine) == "function" and not M._orderWrapped then
     local orig = M.notePlayerLine
     M.notePlayerLine = function(player, text, ...)
         local a, b = orig(player, text, ...)
-        pcall(M.playerOrder, player, text)
+        -- already checked when the line came in (respondNow, ordersFirst): don't run it twice
+        local dup = M.orderCheckedText == text and M.nowMs() - (M.orderCheckedAt or -1e12) < 3000
+        if not dup then pcall(M.playerOrder, player, text) end
         return a, b
     end
     M._orderWrapped = true

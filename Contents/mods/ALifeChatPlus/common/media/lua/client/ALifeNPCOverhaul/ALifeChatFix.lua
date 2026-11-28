@@ -61,9 +61,62 @@ function X.install()
             return o(player, text, ...)
         end
     end
+    pcall(X.echoInstall)
     X.repoint()
     print(TAG .. " ready")
     return true
+end
+
+-- pre-1.0 fix (Joe Nov 27: "my chats don't show up in the chat"): A-Life's own talk box (ProjectALife.TalkInput.say)
+-- puts NPC lines in the chat (NpcChat) but never your own, so the chat showed only one side. Now your line is added
+-- the same way (NpcChat.deliver: vanilla chat tab, else A-Life's log panel), on your screen. Lines typed in the
+-- vanilla chat box already show there and are skipped. Setting chatEchoMine (true).
+function X.echoOn()
+    local M = ALifeLLMTalk
+    return not (type(M) == "table" and type(M.settings) == "table" and M.settings.chatEchoMine == false)
+end
+function X.echo(text, loud)
+    if not X.echoOn() then return false end
+    local t0 = getTimestampMs and getTimestampMs() or 0
+    if X.boxClosedAt == nil or t0 - X.boxClosedAt > 500 then return false end -- typed in the vanilla chat: already shown
+    X.boxClosedAt = nil
+    local Chat = ProjectALife and ProjectALife.NpcChat
+    if type(Chat) ~= "table" or type(Chat.deliver) ~= "function" then return false end
+    text = string.gsub(tostring(text or ""), "^%s*!?%s*", "")
+    if text == "" then return false end
+    local name = "You"
+    pcall(function() local d = getSpecificPlayer(0):getDescriptor(); name = d:getForename() .. " " .. d:getSurname() end)
+    if loud then text = string.upper(text) end
+    local now = getTimestampMs and getTimestampMs() or 0
+    return pcall(Chat.deliver, name, text, 0.55, 0.8, 1.0, 1, 1, 1, now) == true
+end
+function X.echoInstall()
+    local Input = ProjectALife and ProjectALife.TalkInput
+    if X._echo or type(Input) ~= "table" or type(Input.say) ~= "function" then return false end
+    X._echo = true
+    local origSay = Input.say
+    Input.say = function(text, loud, ...)
+        local r = origSay(text, loud, ...)
+        pcall(X.echo, text, loud) -- you said it, whoever heard it
+        return r
+    end
+    -- A-Life's own box closes itself right before it says the line (Box entry: Input.close(); Input.say(text));
+    -- the vanilla chat box never calls Input.close. Only a line straight after that close is echoed.
+    if type(Input.close) == "function" then
+        local origClose = Input.close
+        Input.close = function(...) X.boxClosedAt = getTimestampMs and getTimestampMs() or 0; return origClose(...) end
+    end
+    return true
+end
+do
+    local M = ALifeLLMTalk
+    if type(M) == "table" and type(M.settings) == "table" then
+        if M.settings.chatEchoMine == nil then M.settings.chatEchoMine = true end
+        M.fileKeys = M.fileKeys or {}
+        local have = false
+        for _, k in ipairs(M.fileKeys) do if k == "chatEchoMine" then have = true end end
+        if not have then M.fileKeys[#M.fileKeys + 1] = "chatEchoMine" end
+    end
 end
 
 -- the chat box keeps the function it was built with, so point it at the current (wrapped) one

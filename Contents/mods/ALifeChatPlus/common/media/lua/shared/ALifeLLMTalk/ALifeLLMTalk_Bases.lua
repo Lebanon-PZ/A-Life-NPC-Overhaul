@@ -1124,6 +1124,7 @@ function M.nbAttack(b, haven, crew, home, h, kind)
     local n = #crew
     local def = home * 12 + (M.nbStageDef[b.stage] or 0) + math.floor((b.morale or 50) / 5)
     local str = 15 + (hash(b.id .. "#str#" .. math.floor(h)) % 70) + (kind == "raiders" and 15 or 0) + (M.nbSeason() == "winter" and 5 or 0)
+    if kind == "horde" and fn(M, "nbHordeMul") then local okM, mul = pcall(M.nbHordeMul, b, "str", h); if okM and tonumber(mul) then str = math.floor(str * mul + 0.5) end end -- Brain 3: the sandbox's zombie count
     if M.nbForceStrength then str = M.nbForceStrength end
     local what = kind == "raiders" and "a band of raiders" or "a horde of the dead"
     b.lastAttack = { h = h, kind = kind, str = str, def = def }
@@ -1245,7 +1246,9 @@ function M.nbStep(b, haven, crew, home, dt, h, far, scan)
         local town = true
         if fn(fair, "kindAt") then local ok, k = pcall(fair.kindAt, b.x, b.y); town = not ok or k == "town" end
         local raiders = M.nbRaidersNear(b) ~= nil
-        local chance = cfg.attackPerDay * dt / 24 * (season == "winter" and 1.3 or 1) * (town and 1.4 or 1) + (raiders and 0.04 * dt / 24 or 0)
+        local hordeMul = 1 -- Brain 3 (ALifeBrainDead): hordes follow the sandbox's zombie count, cleared ground, hordeBaseHit
+        if not raiders and fn(M, "nbHordeMul") then local okM, mul = pcall(M.nbHordeMul, b, "chance", h); if okM and tonumber(mul) then hordeMul = mul end end
+        local chance = cfg.attackPerDay * dt / 24 * (season == "winter" and 1.3 or 1) * (town and 1.4 or 1) * hordeMul + (raiders and 0.04 * dt / 24 or 0)
         if M.nbForceAttack then chance = 1 end
         local roll = ALifeRoll01 and ALifeRoll01(b.id .. "#atk#" .. math.floor(h * 4)) or ((hash(b.id .. "#atk#" .. math.floor(h * 4)) % 10000) / 10000) -- 0.6.8: well mixed
         if roll < chance then

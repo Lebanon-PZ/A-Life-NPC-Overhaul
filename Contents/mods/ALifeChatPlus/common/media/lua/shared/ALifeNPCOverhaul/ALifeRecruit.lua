@@ -183,8 +183,259 @@ function RC.ask(kind, record, shell, player, text)
     return line, "answered"
 end
 
+-- ADMIN SECRET (not in the settings list; docs only): typed to an NPC, "Do you have a towel on you? It's a bit chilly."
+-- skips the "will you come?" check and they join your base now with their whole group (Jeem's real recruit, so beds /
+-- room still apply). Single player: anyone; MP: admins only. Off: settings key adminTowel = false.
+RC.TOWEL = "do you have a towel on you its a bit chilly"
+-- the answer: they know where their towel is (Hitchhiker's Guide nods, our own words)
+RC.TOWEL_YES = {
+    "A towel? Never go anywhere without one. Don't panic - we're coming with you.",
+    "Of course I know where my towel is. Someone who knows where theirs is, that's someone worth following. Lead on.",
+    "Bit chilly, end of the world, same thing really. Got my towel. We'll come.",
+    "Ha. A fellow traveller. Grab your towel, everyone - we're going with them.",
+    "Forty-two reasons to say no and one towel to say yes. We're in.",
+}
+-- your place is full (or Jeem said no): they walk with you instead
+RC.TOWEL_FULL = {
+    "No room at yours? Then the road it is. Towel's packed - we'll walk with you.",
+    "Full up back home, huh. Don't panic. We'll stick with you instead.",
+}
+-- no base of yours: they walk with you instead (the whole crew)
+RC.TOWEL_WALK = {
+    "No place of your own? Doesn't matter. A hoopy frood with a towel - we'll walk with you.",
+    "Homeless, cold, end of the world. Don't panic. Towels out, everyone, we go with them.",
+    "Mostly harmless, you look. Fine. We'll tag along until you find somewhere.",
+}
+-- your party, them and their crew (TalkOrders.crew), through the same join a yes to "join me" uses (M.recruitApply,
+-- wrapped in Party.lua: A-Life walk-with, else the patch's follow order, then the party list). Returns how many came.
+-- No recruitApply: A-Life walk-with + companion mode only.
+-- the towel's people stay: marked here (saved with the world), never judged by the party's "treated badly / starving /
+-- too scared" check nor the base's "fed up" walk-out (the same two hooks the oath uses, ALifeOathWatch)
+function RC.towelKept()
+    local M = ALifeLLMTalk
+    if type(M) == "table" and type(M.bucket) == "function" then local ok, b = pcall(M.bucket, "towelKept"); if ok and type(b) == "table" then return b end end
+    RC._kept = RC._kept or {}
+    return RC._kept
+end
+-- kept, and A-Life's opinion of you lifted to friendly (NpcOpinion.adjust, 42.20 source; the unscaled original if
+-- our Bond wrap is on: M.origAdjust)
+function RC.towelKeep(uid, player)
+    if uid == nil then return end
+    RC.towelKept()[tostring(uid)] = true
+    if player == nil then return end
+    pcall(function()
+        local Op = ProjectALife.NpcOpinion
+        local r = ProjectALife.ActorRegistry.read(tostring(uid))
+        if r == nil or Op == nil then return end
+        local v = tonumber((Op.valueOf(r, player))) or 0
+        local M = ALifeLLMTalk
+        local f = (type(M) == "table" and M.origAdjust) or Op.adjust
+        if v < 40 then f(r, player, 40 - v, "admin") end
+    end)
+end
+-- pre-1.0 fix: the towel only took the crew A-Life sees near the one you spoke to (TalkOrders.crew, crewRadius); the
+-- rest of their group stayed as they were and could turn on you. Now: the whole group (same groupId / outpostId in
+-- A-Life's registry, loaded or not) is kept and lifted to friendly; everyone loaded within towelCrewRadius joins.
+function RC.towelGroup(record)
+    local out = {}
+    local m = type(record) == "table" and type(record.memory) == "table" and record.memory or {}
+    local gid, oid = m.groupId, m.outpostId
+    if gid == nil and oid == nil then return out end
+    pcall(function()
+        ProjectALife.ActorRegistry.each(function(other)
+            if type(other) ~= "table" or other.uid == record.uid or other.lifecycle ~= "active" then return end
+            local om = type(other.memory) == "table" and other.memory or {}
+            if (gid ~= nil and om.groupId == gid) or (oid ~= nil and om.outpostId == oid) then out[#out + 1] = other end
+        end)
+    end)
+    return out
+end
+function RC.towelKeepGroup(record, player)
+    if type(record) ~= "table" then return 0 end
+    RC.towelKeep(record.uid, player)
+    local n = 1
+    for _, r in ipairs(RC.towelGroup(record)) do RC.towelKeep(r.uid, player); n = n + 1 end
+    return n
+end
+function RC.towelCrew(record, shell)
+    local list = { { record = record, shell = shell } }
+    local M = ALifeLLMTalk
+    local radius = type(M) == "table" and type(M.settings) == "table" and tonumber(M.settings.towelCrewRadius) or 60
+    pcall(function() local c = ProjectALife.TalkOrders.crew(record, shell, radius); if type(c) == "table" and #c > 0 then list = c end end)
+    return list
+end
+function RC.isTowelKept(uid) return uid ~= nil and RC.towelKept()[tostring(uid)] == true end
+function RC.towelHooks()
+    local M = ALifeLLMTalk
+    if type(M) ~= "table" then return false end
+    if type(M.partyLeaveCheck) == "function" and not M._towelLeave then
+        M._towelLeave = true
+        local orig = M.partyLeaveCheck
+        M.partyLeaveCheck = function(uid, player, now, ...)
+            if RC.isTowelKept(uid) then return nil end
+            return orig(uid, player, now, ...)
+        end
+    end
+    if type(M.baseLeave) == "function" and not M._towelBase then
+        M._towelBase = true
+        local origB = M.baseLeave
+        M.baseLeave = function(uid, player, why, ...)
+            if RC.isTowelKept(uid) and tostring(why) == "fed up" then return false end
+            return origB(uid, player, why, ...)
+        end
+    end
+    return true
+end
+function RC.towelWalk(player, record, shell)
+    local list = RC.towelCrew(record, shell)
+    RC.towelKeepGroup(record, player) -- nobody of theirs stays hostile, near or far
+    local M = ALifeLLMTalk
+    local n = 0
+    for _, l in ipairs(list) do
+        if type(l) == "table" and type(l.record) == "table" then
+            if type(M) == "table" and type(M.partyIsMember) == "function" and M.partyIsMember(l.record.uid, player)
+                    and type(M.bucket) == "function" and M.bucket("party")[tostring(l.record.uid)] then
+                n = n + 1 -- already in your party
+                RC.towelKeep(l.record.uid, player)
+            elseif type(M) == "table" and type(M.recruitApply) == "function" then
+                local ok, yes = pcall(M.recruitApply, l, player)
+                if not (ok and yes == true) then
+                    -- admin: whatever kept them (their own squad / guard / patrol stance, a walk cooldown) lets go, then again
+                    pcall(ProjectALife.Talk.writeMemory, l.record.uid, function(m)
+                        if m.stance ~= "walkWith" then m.stance, m.stanceAnchor = nil, nil end
+                        m.walkCooldownUntilHours = nil
+                    end)
+                    ok, yes = pcall(M.recruitApply, l, player)
+                end
+                if not (ok and yes == true) and type(M.partyJoin) == "function" then
+                    -- last resort: on your party list with the patch's companion mode (follows you, no time limit)
+                    if type(M.followStart) == "function" then pcall(M.followStart, l, player) end
+                    pcall(M.partyJoin, l.record.uid, player, "admin")
+                    ok, yes = true, true
+                end
+                if ok and yes == true then n = n + 1; RC.towelKeep(l.record.uid, player) end
+            else
+                local ok, yes = pcall(ProjectALife.Talk.walkWith, player, l, "WALK_WITH_ME")
+                if ok and yes then
+                    n = n + 1
+                    RC.towelKeep(l.record.uid, player)
+                    if type(M) == "table" and type(M.followStart) == "function" then pcall(M.followStart, l, player) end
+                end
+            end
+        end
+    end
+    return n
+end
+do
+    local M = ALifeLLMTalk
+    if type(M) == "table" and type(M.settings) == "table" then
+        if M.settings.adminTowel == nil then M.settings.adminTowel = true end
+        if M.settings.towelCrewRadius == nil then M.settings.towelCrewRadius = 60 end
+        if M.settings.towelHearTiles == nil then M.settings.towelHearTiles = 15 end -- towel: reaches the nearest person this close, even hostile -- towel: how far (tiles) their group joins from
+        M.fileKeys = M.fileKeys or {}
+        local have = false
+        for _, k in ipairs(M.fileKeys) do if k == "adminTowel" then have = true end end
+        if not have then M.fileKeys[#M.fileKeys + 1] = "adminTowel" end
+        have = false
+        for _, k in ipairs(M.fileKeys) do if k == "towelCrewRadius" then have = true end end
+        if not have then M.fileKeys[#M.fileKeys + 1] = "towelCrewRadius" end
+        have = false
+        for _, k in ipairs(M.fileKeys) do if k == "towelHearTiles" then have = true end end
+        if not have then M.fileKeys[#M.fileKeys + 1] = "towelHearTiles" end
+    end
+end
+function RC.towelSaid(text)
+    if type(text) ~= "string" then return false end
+    local t = string.lower(text)
+    t = string.gsub(t, "['`]", "")
+    t = string.gsub(t, "[^%w]+", " ")
+    return string.find(" " .. t .. " ", " " .. RC.TOWEL .. " ", 1, true) ~= nil
+end
+-- nil = not the phrase (normal talk goes on); else the line they say (spoken here) and "answered" / "refused"
+local towelInner
+function RC.towel(player, listener, text)
+    local line, why = towelInner(player, listener, text)
+    local shell = type(listener) == "table" and listener.shell or nil
+    if line ~= nil and shell ~= nil then pcall(function() ProjectALife.Speech.say(shell, line, { face = player }) end) end
+    return line, why
+end
+towelInner = function(player, listener, text)
+    if not RC.towelSaid(text) then return nil end
+    pcall(RC.towelHooks)
+    local M = ALifeLLMTalk
+    if type(M) == "table" and type(M.settings) == "table" and M.settings.adminTowel == false then return nil end
+    if not ALifeSide.isAdmin(player) then return nil end
+    local record = type(listener) == "table" and listener.record or nil
+    local shell = type(listener) == "table" and listener.shell or nil
+    if type(record) ~= "table" then return nil end
+    if type(record.memory) == "table" and type(record.memory.jimmyResident) == "table" then return "I'm already with you.", "answered" end
+    local Rs = J() and J().Residents
+    local base = (Rs ~= nil and type(Rs.recruit) == "function") and RC.baseFor(player, record, shell) or nil
+    if base == nil then
+        local n = RC.towelWalk(player, record, shell)
+        ALifeHealth.note(TAG, "towel: no base, " .. tostring(n) .. " walk with you")
+        if n > 0 then return pick(RC.TOWEL_WALK), "answered" end
+        return pick(RC.LINES.no_busy), "refused"
+    end
+    RC.approved[record.uid] = true
+    local ok, n, err = pcall(Rs.recruit, player, record.uid, base.id, true)
+    RC.approved[record.uid] = nil
+    if not ok or n == nil then
+        -- admin: Jeem said no (beds, room, on a trip, a fight): they join your party instead
+        local e = tostring(ok and err or n)
+        local w = RC.towelWalk(player, record, shell)
+        ALifeHealth.note(TAG, "towel: Jeem refused (" .. e .. "), " .. tostring(w) .. " in your party instead")
+        if w > 0 then return pick(RC.TOWEL_FULL), "answered" end
+        return pick(RC.LINES.no_busy), "refused"
+    end
+    pcall(function() local B = ALifeBonds; B.change(B.keyOf(player), record.uid, 4, 0, 0, { player = player, record = record }) end)
+    RC.towelKeepGroup(record, player)
+    ALifeHealth.note(TAG, "towel: " .. tostring(record.uid) .. " joined with " .. tostring(n) .. " (admin phrase)")
+    return pick(RC.TOWEL_YES), "answered"
+end
+
+-- pre-1.0 fix (Joe Nov 27: a hostile NPC "wouldn't take the towel"): A-Life only hands a typed line to someone
+-- Speech.talkable (not fighting you, not hostile), so an attacker never heard the admin phrase. The phrase now reaches
+-- the nearest A-Life person within towelHearTiles whatever their mood, before A-Life picks a listener. Admin only.
+function RC.towelNearest(player)
+    local px, py, pz = nil, nil, nil
+    pcall(function() px, py, pz = player:getX(), player:getY(), player:getZ() end)
+    if px == nil then return nil end
+    local M = ALifeLLMTalk
+    local reach = type(M) == "table" and type(M.settings) == "table" and tonumber(M.settings.towelHearTiles) or 15
+    local best, bd = nil, reach * reach
+    pcall(function()
+        ProjectALife.ActorRegistry.each(function(r)
+            if type(r) ~= "table" or r.lifecycle ~= "active" then return end
+            local sh = ProjectALife.Talk.shellFor(r.uid)
+            if sh == nil then return end
+            local d = (sh:getX() - px) ^ 2 + (sh:getY() - py) ^ 2
+            if math.floor(sh:getZ()) == math.floor(pz) and d < bd then best, bd = { record = r, shell = sh }, d end
+        end)
+    end)
+    return best
+end
+function RC.towelWrapText()
+    local Talk = ProjectALife and ProjectALife.Talk
+    if Talk == nil or type(Talk.onPlayerText) ~= "function" or RC._towelText then return false end
+    RC._towelText = true
+    local orig = Talk.onPlayerText
+    Talk.onPlayerText = function(player, text, loud, ...)
+        if RC.towelSaid(text) and ALifeSide.isAdmin(player) then
+            local l = RC.towelNearest(player)
+            if l ~= nil then
+                local ok, line = pcall(RC.towel, player, l, text)
+                if ok and line ~= nil then return true, "towel" end
+            end
+        end
+        return orig(player, text, loud, ...)
+    end
+    return true
+end
 function RC.install()
     if RC.__installed then return true end
+    pcall(RC.towelHooks)
+    pcall(RC.towelWrapText)
     local Data, Intents, Talk = ProjectALife and ProjectALife.DialogueData, ProjectALife and ProjectALife.TalkIntents,
         ProjectALife and ProjectALife.Talk
     local Rs = J() and J().Residents

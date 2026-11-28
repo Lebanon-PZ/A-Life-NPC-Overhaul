@@ -35,6 +35,7 @@ L.DEFAULTS = {
     cmdGiveTrust = 20,     -- handing over their own gear: how much harder than an order (0-100)
     cmdReach = 30,         -- how far away (tiles) someone of yours can hear an order
     cmdPointReach = 40,    -- how far from you a spot you point at may be
+    cmdBuildingReach = 12, -- "clear this building": how far (tiles) to look for the building and its door when you're outside
     cmdBaseReach = 300,    -- 0.8.2 part 2: "back to base" works from this far away (tiles)
     -- 0.8.3
     wakeReach = 15,        -- "wake me": how close (tiles) the dead / someone hostile gets before they wake you
@@ -115,7 +116,7 @@ L.CMDS = {
     { id = "lookout", group = "Getting around", order = "watch_there", point = "ahead", label = "keep a lookout",
       words = { "keep a lookout", "be the lookout", "on lookout", "look out that way", "watch that way", "keep watch over there", "eyes on that", "watch over there" },
       say = { "Keep a lookout that way." }, what = "They hold their spot and watch where you're looking." },
-    { id = "clear_house", group = "Getting around", order = "clear_building", point = "here", label = "clear the house",
+    { id = "clear_house", group = "Getting around", order = "clear_building", point = "building", label = "clear the house",
       words = { "clear the house", "clear this house", "clear the building", "clear this building", "sweep the house", "sweep the building", "clear this place" },
       say = { "Clear the house." }, what = "They go room by room through the building you're in or next to and call out what they find." },
     { id = "give_me", group = "Gear", item = "take", label = "hand it over",
@@ -665,7 +666,7 @@ function L.run(player, args)
     end
     local results = {}
     if c.point ~= nil and point == nil then
-        for uid in string.gmatch(tostring(args.uids or ""), "[^,]+") do results[#results + 1] = { uid = uid, ok = false, why = c.point == "base" and "no_base" or "no_spot" } end
+        for uid in string.gmatch(tostring(args.uids or ""), "[^,]+") do results[#results + 1] = { uid = uid, ok = false, why = c.point == "base" and "no_base" or (c.point == "building" and "no_building" or "no_spot") } end
     else
         local n = 0
         for uid in string.gmatch(tostring(args.uids or ""), "[^,]+") do
@@ -690,6 +691,7 @@ L.WHY = {
     ["repeat"] = "they're already on it", no_companions = "A-Life's companions are off", no_items = "A-Life's companion inventory is off",
     no_footing = "there's nowhere to stand there", busy = "they're busy", too_heavy = "it's too heavy for them",
     no_base = "you don't have a base for them to go to",
+    no_building = "there's no building close enough", no_door = "they couldn't find a way in",
     -- 0.8.3
     not_clothing = "that isn't something you wear", already_wearing = "they're already wearing it",
     slot_taken = "they're already wearing something there", neither_has = "neither of you has one",

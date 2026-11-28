@@ -85,11 +85,11 @@ M.settings = {
     ambient = true,
     ambientMinSec = 20,     -- check every 20..40 real seconds (random jitter)
     ambientMaxSec = 40,
-    ambientCooldownSec = 120, -- per group (or per NPC without a group)
+    ambientCooldownSec = 300, -- per group (pre-1.0: was 120, too chatty) (or per NPC without a group)
     ambientReplyChance = 60, -- % the other NPC answers (a third line follows with backChance rules, max 3 lines)
     ambientQuietSec = 20,   -- no ambient talk this soon after you said something
     ambientPairTiles = 8,   -- the two NPCs must be this close to each other
-    banterChance = 50,      -- % chance an A-Life banter scene gets one live follow-up line (+ maybe a reply)
+    banterChance = 25,      -- (pre-1.0: was 50) % chance an A-Life banter scene gets one live follow-up line (+ maybe a reply)
     banterCooldownMs = 90000,
     banterPlayerTiles = 15, -- only when you are this close (you are the audience)
     targetLockMs = 30000,   -- right-click "Talk (type in chat)" makes that NPC the addressee for this long
@@ -100,14 +100,16 @@ M.settings = {
     localGreet = true,      -- Nov 16: a plain hello / how are you is answered by A-Life locally, never waits for the AI (off = AI takes it)
     healNeed = 10,          -- pre-1.0 (Joe Nov 19): Need they gain when you treat their wounds (pills / food / water when down: half; 0 = off)
     downedStill = true,     -- pre-1.0 (Rundown Nov 13): someone lying hurt (A-Life downed / dragged) is never turned on the spot (turning plays the crawl)
-    chatterHearTiles = 40,  -- pre-1.0 (Joe Nov 20): NPC chatter (banter, chimes, witness lines) is only asked of the AI when a player is this close (0 = no limit)
+    ordersFirst = true,     -- pre-1.0: every typed line is checked for an order before A-Life or the AI answers it
+    chatterGapSec = 60,     -- pre-1.0 (Joe Nov 27, "NPCs chatter too much"): at least this many seconds between NPC small talk lines near you (ambient, banter, chimes; 0 = no limit)
+    chatterHearTiles = 20,  -- (pre-1.0: was 40) pre-1.0 (Joe Nov 20): NPC chatter (banter, chimes, witness lines) is only asked of the AI when a player is this close (0 = no limit)
     mpAI = true,            -- server: use players' AI bridges (off = A-Life's own lines for everyone)
     mpAIStaleSec = 90,      -- server: a player's "my AI is on/off" older than this counts as off
     mpAIStateSec = 20,      -- client: tell the server whether your AI is on at least this often (and on every change)
 }
 if earlySettings ~= nil then for k, v in pairs(earlySettings) do if M.settings[k] == nil then M.settings[k] = v end end end
 M.fileKeys = M.fileKeys or {}
-for _, k in ipairs({ "mpAI", "mpAIStaleSec", "mpAIStateSec", "localGreet", "chatterHearTiles", "downedStill", "healNeed" }) do
+for _, k in ipairs({ "mpAI", "mpAIStaleSec", "mpAIStateSec", "localGreet", "chatterHearTiles", "chatterGapSec", "ordersFirst", "downedStill", "healNeed" }) do
     local have = false
     for _, x in ipairs(M.fileKeys) do if x == k then have = true end end
     if not have then M.fileKeys[#M.fileKeys + 1] = k end
@@ -899,10 +901,70 @@ function M.readdress(player, listener, text, now)
             return l
         end
     end
+    -- pre-1.0 fix: with your party around you, a line meant for a stranger further off went to whoever of yours
+    -- stood closest. Now a stranger wins when you're facing them (or say "hey you" / "stranger" / "you there"),
+    -- unless the line names one of yours. Setting talkStrangerFirst = false: old behaviour.
+    if M.settings.talkStrangerFirst ~= false then
+        local s2 = M.strangerAddressed(player, list, low, listener)
+        if s2 ~= nil then return s2 end
+    end
     if M.lock ~= nil and now < M.lock.untilMs then
         for _, l in ipairs(list) do if tostring(l.record.uid) == M.lock.uid then return l end end
     end
     return listener
+end
+for k, v in pairs({ talkStrangerFirst = true, talkFacingDeg = 30 }) do
+    if M.settings[k] == nil then M.settings[k] = v end
+    if type(M.fileKeys) == "table" then
+        local have = false
+        for _, x in ipairs(M.fileKeys) do if x == k then have = true end end
+        if not have then M.fileKeys[#M.fileKeys + 1] = k end
+    end
+end
+M.STRANGER_WORDS = { "hey you", "you there", "stranger", "hello there", "hey there", "over there", "excuse me", "you with the" }
+local function isMine(uid, player)
+    uid = tostring(uid)
+    if fn(M, "partyIsMember") and M.partyIsMember(uid, player) then return true end
+    if fn(M, "cpIsHome") and M.cpIsHome(uid, player) then return true end
+    return false
+end
+-- the stranger you mean: in front of you (within talkFacingDeg of where you face; closest to that line wins), or the
+-- nearest stranger when you call out to one. nil = no stranger meant (the usual pick stands)
+function M.strangerAddressed(player, list, low, listener)
+    if player == nil or type(list) ~= "table" then return nil end
+    local curUid = type(listener) == "table" and type(listener.record) == "table" and tostring(listener.record.uid) or nil
+    local strangers, anyMine = {}, curUid ~= nil and isMine(curUid, player)
+    for _, l in ipairs(list) do
+        if type(l) == "table" and type(l.record) == "table" then
+            if isMine(l.record.uid, player) then anyMine = true else strangers[#strangers + 1] = l end
+        end
+    end
+    if #strangers == 0 or not anyMine then return nil end
+    local px, py = player:getX(), player:getY()
+    local fx, fy = nil, nil
+    pcall(function() local v = player:getForwardDirection(); fx, fy = v:getX(), v:getY() end) -- unverified on 42.21, guarded
+    local called = false
+    for _, w in ipairs(M.STRANGER_WORDS) do if string.find(low, " " .. w .. " ", 1, true) or string.find(low, " " .. w, 1, true) then called = true break end end
+    local cosMax = math.cos(math.rad(tonumber(M.settings.talkFacingDeg) or 30))
+    local best, bestScore = nil, nil
+    for _, l in ipairs(strangers) do
+        local sx, sy = nil, nil
+        pcall(function() sx, sy = l.shell:getX(), l.shell:getY() end)
+        if sx ~= nil then
+            local dx, dy = sx - px, sy - py
+            local d = math.sqrt(dx * dx + dy * dy)
+            local cos = -1
+            if fx ~= nil and d > 0.01 then
+                local fl = math.sqrt(fx * fx + fy * fy)
+                if fl > 0 then cos = (dx * fx + dy * fy) / (d * fl) end
+            end
+            local score = nil
+            if cos >= cosMax then score = (1 - cos) * 100 + d * 0.1 -- in front: the one nearest your line of sight
+            elseif called then score = 1000 + d end                   -- called out: the nearest stranger
+            if score ~= nil and (bestScore == nil or score < bestScore) then best, bestScore = l, score end
+        end
+    end
+    return best
 end
 
 -- Nov17 #1: wrappers of Talk.respond (ours, this load or an earlier copy of this file) are remembered here, so one
@@ -942,6 +1004,26 @@ function M.respondNow(player, listener, text, now, choiceIntent)
     if choiceIntent == nil and not M.inNative and M.settings.enabled then
         local okA, picked = pcall(M.readdress, player, listener, text, now or nowMs())
         if okA and picked ~= nil then listener = picked end
+    end
+    -- admin secret phrase (ALifeRecruit.towel): they join you now with their group, before the AI or A-Life answers
+    if choiceIntent == nil and type(ALifeRecruit) == "table" and fn(ALifeRecruit, "towel") then
+        local okT, tl, tw = pcall(ALifeRecruit.towel, player, listener, text)
+        if okT and tl ~= nil then return tl, tw end
+    end
+    -- pre-1.0 fix (Joe Nov 27 log: "Clear this building." x3 -> A-Life's own CAMP_ALARM_CLEAR; "bandage me" mid-fight
+    -- -> A-Life's own answer): orders were only looked for on the AI path (notePlayerLine), so any line A-Life kept
+    -- (its own intents, a fight, AI off) never reached the order parser. Now every typed line is checked for an order
+    -- first; an order is carried out (the ack comes from the order's answer) and A-Life's stock answer is skipped.
+    if choiceIntent == nil and not M.inNative and fn(M, "playerOrder") and M.settings.ordersFirst ~= false then
+        local okO, kind = pcall(M.playerOrder, player, text)
+        M.orderCheckedText, M.orderCheckedAt = text, nowMs()
+        if okO and kind ~= nil then
+            M.inputNote(text, "order", tostring(kind))
+            if type(listener) == "table" and type(listener.record) == "table" then
+                M.lastAddressee = { uid = tostring(listener.record.uid), at = nowMs(), text = text }
+            end
+            return nil, "order"
+        end
     end
     local orig = M.realRespond()
     -- loop breaker: the "original" we call came back into us with the very same line (a wrapper chain that ends in
@@ -1283,11 +1365,21 @@ function M.chatterHeard(job)
     if not heard then for _, p in ipairs(M.players()) do near(p) end end
     return heard
 end
+M.smallTalkModes = { ambient = true, banter = true, chime = true }
 function M.submit(job)
     local now = nowMs()
     if M.chatterModes[job.mode] and not M.chatterHeard(job) then
         M.metrics.farChatter = (M.metrics.farChatter or 0) + 1
         return nil
+    end
+    -- one gap for all small talk (a reply in the same exchange, depth > 0, is let through)
+    if M.smallTalkModes[job.mode] and (tonumber(job.depth) or 0) == 0 then
+        local gap = (tonumber(M.settings.chatterGapSec) or 0) * 1000
+        if gap > 0 and now - (M.smallTalkAt or -1e12) < gap then
+            M.metrics.gapChatter = (M.metrics.gapChatter or 0) + 1
+            return nil
+        end
+        M.smallTalkAt = now
     end
     if (job.mode == "reply" or job.mode == "radio") and (type(job.text) ~= "string" or string.match(job.text, "^[%s%p]*$")) then
         M.emptyDropped = (M.emptyDropped or 0) + 1

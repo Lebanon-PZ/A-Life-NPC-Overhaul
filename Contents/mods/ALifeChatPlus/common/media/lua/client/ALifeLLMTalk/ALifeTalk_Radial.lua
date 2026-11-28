@@ -517,6 +517,7 @@ if type(PZAPI) == "table" and type(PZAPI.ModOptions) == "table" and fn(PZAPI.Mod
         local o = PZAPI.ModOptions:create("ALifeChatPlus", "A-Life NPC Overhaul")
         R.keyOpt = o:addKeyBind("radialKey", "A-Life quick wheel", 0, "Opens the A-Life quick wheel for whoever / wherever your mouse is pointing (same as right-click > A-Life).")
         R.hubKeyOpt = o:addKeyBind("hubKey", "A-Life window", 0, "Opens / closes the A-Life window, where every tab is (people, camp, settings, help and the rest).") -- 0.6.10
+        R.partyHudKeyOpt = o:addKeyBind("partyHudKey", "Party overlay show / hide", 0, "Shows or hides the party overlay (the small panel with your people and one-click orders).") -- pre-1.0
         R.talkKeyOpt = o:addKeyBind("talkKey", "Talk to the nearest person", 0, "Opens the talk window with the closest A-Life person (a few tiles). Press again to close it.") -- 0.8.12
         R.repeatKeyOpt = o:addKeyBind("repeatOrderKey", "Repeat last order", 0, "Gives your last order again to the same people. Spots ('hold there') are worked out again from where you are.") -- 0.8.12
         R.hoverKeyOpt = o:addKeyBind("hoverKey", "Hover: read people", 0, "With 'hover line only while the key is held' on (A-Life Settings): hold this and point at someone to see how they are toward you.") -- 0.8.12

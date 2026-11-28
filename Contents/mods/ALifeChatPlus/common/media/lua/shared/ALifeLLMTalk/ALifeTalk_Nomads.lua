@@ -117,7 +117,9 @@ function M.nmTryLeave(b, h)
     if (tonumber(b.nmTriedH) or -1e9) > h - M.nmCfg.retryH then return false end
     if (tonumber(M.nmSearchH) or -1e9) > h - M.nmCfg.searchEveryH then return false end
     b.nmTriedH = h
-    if not M.nmStripped(b) then M.nmStats.notStripped = M.nmStats.notStripped + 1; return false end
+    local deadMove = b.nmWhy == "dead" -- Brain 3 (ALifeBrainDead): overrun again and again, they move away even from good land
+    b.nmWhy = nil
+    if not deadMove and not M.nmStripped(b) then M.nmStats.notStripped = M.nmStats.notStripped + 1; return false end
     M.nmSearchH = h
     local dest = M.nmFindDest(b, math.max(1, tonumber(b.crewN) or 1), h)
     if dest == nil then M.nmStats.noPlace = M.nmStats.noPlace + 1; return false end
@@ -136,7 +138,7 @@ function M.nmTryLeave(b, h)
     end
     b.starveH = 0
     M.nmStats.left = M.nmStats.left + 1
-    event(b, "Nothing left to find around here. They packed what they had and took to the road", "road")
+    event(b, deadMove and "The dead kept coming. They packed what they had and took to the road" or "Nothing left to find around here. They packed what they had and took to the road", "road")
     log((b.name or b.id) .. " left for (" .. math.floor(dest.center.x) .. "," .. math.floor(dest.center.y) .. "), " .. b.road.dist .. " tiles")
     return true
 end

@@ -110,6 +110,17 @@ function K.apply(shell, text, kind)
     return res
 end
 
+-- the chat box: text to log, or false. No body on this screen = too far away to hear.
+function K.chatHeard(shell, text, kind)
+    if shell == nil then return false end
+    if K.inDisplay then
+        local d = distTo(shell)
+        if d ~= nil and d > select(2, K.range(kind)) then return false end
+        return text
+    end
+    return K.apply(shell, text, kind)
+end
+
 function K.install()
     if K.installed then return true end
     local pa = type(ProjectALife) == "table" and ProjectALife or nil
@@ -121,21 +132,25 @@ function K.install()
             if res == false then return true end
             text = res
         end
-        return orig(shell, text, color, kind, uid)
+        K.inDisplay = true -- the chat mirror inside gets the already-garbled text: don't garble it twice
+        local ok, r = pcall(orig, shell, text, color, kind, uid)
+        K.inDisplay = false
+        if not ok then error(r) end
+        return r
     end
     -- 0.9.6+: the chat window too. Lines mirrored to chat without passing Speech.display (sayLine, chimes, ambient,
-    -- reshows) used to show from any distance. Drop them past hearing range (never rewrites text: display already did).
+    -- reshows) used to show from any distance. pre-1.0 fix (MP): lines reached the chat box whole from people you
+    -- couldn't see. Now the chat follows the same earshot rule as bubbles: garbled between clear and heard range,
+    -- dropped past it, and dropped when their body isn't even loaded on your screen (too far to hear).
     local chat = pa.NpcChat
     if type(chat) == "table" and type(chat.mirror) == "function" and not K.chatWrapped then
         K.chatWrapped = true
         local origMirror = chat.mirror
         chat.mirror = function(shell, text, color, kind, uid)
-            if M.settings.earshot ~= false and M.settings.immersive ~= false and shell ~= nil then
-                local d = distTo(shell)
-                if d ~= nil then
-                    local _, hear = K.range(kind)
-                    if d > hear then K.metrics.hidden = K.metrics.hidden + 1; return false end
-                end
+            if M.settings.earshot ~= false and M.settings.immersive ~= false and not K.skip then
+                local heard = K.chatHeard(shell, text, kind)
+                if heard == false then K.metrics.hidden = K.metrics.hidden + 1; return false end
+                text = heard
             end
             return origMirror(shell, text, color, kind, uid)
         end

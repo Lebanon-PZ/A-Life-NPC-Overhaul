@@ -20,10 +20,14 @@ local function has(o, name) local ok, r = pcall(function() return type(o[name]) 
 local function hours() local h = 0; pcall(function() h = getGameTime():getWorldAgeHours() end); return h end
 
 if M.settings.farLook == nil then M.settings.farLook = true end
+if M.settings.avatarLive == nil then M.settings.avatarLive = false end -- pre-1.0: true = previews bind the live body (old way)
 if type(M.fileKeys) == "table" then
     local have = false
     for _, x in ipairs(M.fileKeys) do if x == "farLook" then have = true end end
     if not have then M.fileKeys[#M.fileKeys + 1] = "farLook" end
+    have = false
+    for _, x in ipairs(M.fileKeys) do if x == "avatarLive" then have = true end end
+    if not have then M.fileKeys[#M.fileKeys + 1] = "avatarLive" end
 end
 M.lookCfg = { everyMs = 60000, maxItems = 24 }
 M.lookAt = M.lookAt or {}
@@ -208,6 +212,9 @@ function M.lookPortrait(win)
     if shell ~= nil then
         pcall(M.lookSave, uid, shell, false)
         if win.portraitMode == "live" and win.model ~= nil and win.portraitShell == shell then return "live" end
+        local t = type(getTimestampMs) == "function" and getTimestampMs() or 0
+        if M.settings.avatarLive ~= true and win.portraitMode == "standin" and win.model ~= nil and win.snapUid == uid and t - (win.snapAt or 0) < 10000 then return "standin" end
+        win.snapUid, win.snapAt = uid, t
     end
     local L = M.settings.farLook ~= false and M.lookOf(uid) or nil
     if shell == nil and win.portraitMode ~= nil and win.portraitMode ~= "live" then
@@ -216,6 +223,12 @@ function M.lookPortrait(win)
     end
     local desc = nil
     if shell == nil then desc = M.lookDesc(L) end
+    -- pre-1.0 fix: the live body faded out in the preview; use a fresh snapshot of it (avatarLive = true: old way)
+    if shell ~= nil and M.settings.avatarLive ~= true then
+        pcall(M.lookSave, uid, shell, true)
+        local okD, d = pcall(M.lookDesc, M.lookOf(uid))
+        if okD and d ~= nil then desc, shell = d, nil end
+    end
     local can3d = ISUI3DModel ~= nil and (shell ~= nil or (desc ~= nil and type(ISUI3DModel.setSurvivorDesc) == "function"))
     if not can3d then
         if win.model ~= nil then pcall(function() win.model:setVisible(false) end) end

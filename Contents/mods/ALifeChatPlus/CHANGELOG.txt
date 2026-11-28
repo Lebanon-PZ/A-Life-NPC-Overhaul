@@ -2,6 +2,96 @@ A-LIFE NPC OVERHAUL - CHANGELOG (formerly A-Life Chat Plus)
 
 pre-1.0 (work in progress toward 1.0: multiplayer)
 
+- Nov 27 2026 session: party overlay + play-test fixes. Not played yet.
+  * NEW party overlay (client/ALifeNPCOverhaul/ALifePartyHUD.lua): small panel with your travelling party (health bar,
+    hurt / hunger / thirst words, order), one-click Follow / Wait / Guard / Base / Talk / Stance for the picked person
+    and All follow / All wait / Party window. "A" on the panel = auto-hide (tucks to a slim tab, back on hover or when
+    someone is hurt, bitten, bleeding, downed or starving). Drag to move, corner grip to resize, right-click Size
+    small / normal / large, lock, hide buttons. Keybind (Options > Mods): "Party overlay show / hide". Now tab button
+    "Party overlay on/off". Settings partyHud, partyHudHideSec, partyHudMaxRows.
+  * Fix: "clear this building" was taken and then quietly dropped (A-Life's sweep only looks 2 tiles around the spot).
+    Now the building you're in or the nearest within cmdBuildingReach (12) tiles, sent at its door; no building = they
+    say so. New setting cmdBuildingReach.
+  * Fix: admin towel phrase only took the nearby crew; the rest of the group could stay hostile and turn on you. Now
+    the whole A-Life group (groupId / outpostId, loaded or not) is kept and made friendly; everyone loaded within
+    towelCrewRadius (60) joins. New setting towelCrewRadius.
+  * Fix: People / With me avatar showed, then faded out. Now a snapshot of how they look (refreshed every 10 s)
+    instead of the live body. Setting avatarLive = true brings the old way back.
+  * Fix (MP): NPC lines reached the chat box whole from people you couldn't see. Chat now follows earshot like the
+    bubbles: garbled at mid range, dropped past hearing range or when their body isn't loaded on your screen.
+  * Fix: with your party around, talking to a stranger went to whoever of yours was closest. Now a stranger you face
+    (talkFacingDeg 30) or call out to ("hey you", "stranger", "you there") gets it, unless you name one of yours.
+    Settings talkStrangerFirst, talkFacingDeg.
+  * Less chatter: chatterGapSec (60 s between NPC small talk lines), ambientCooldownSec 120 -> 300, banterChance
+    50 -> 25, chatterHearTiles 40 -> 20 (new defaults; saved settings keep their values).
+  * NEW brain jobs become real work (shared/ALifeNPCOverhaul/ALifeBrainWork.lua): the brain's home jobs fill A-Life's
+    activity planner bias (ctx.bias) per group, loaded and off screen. Food -> scavenge / forage / water / hunt /
+    fish, build -> fortify, guard / clear -> patrol; haven rest loses weight by how many have work. A-Life still
+    decides. Settings brainWork, brainWorkBias (5).
+  * Fix: after you died, your old party (even someone who had turned on you) appeared beside your new character in
+    another town. A-Life keys a companion's owner by username and catches companions up to the owner; same name =
+    same owner. Now on death every companion is let go through A-Life's own dismiss and our party list
+    (ALifeDeathRelease.lua, setting deathReleaseParty), and any companion who turns hostile (opinion <= deathHostileAt,
+    -41) stops following you (checked every minute; also cleans saves where it already happened).
+  * Fix: the admin towel phrase never reached a hostile NPC (A-Life only lets typed lines reach people who will talk).
+    It now reaches the nearest A-Life person within towelHearTiles (15), whatever their mood. Admin only.
+  * Fix: party overlay resize / drag stopped when the mouse moved fast and left the panel.
+  * Fix: no party overlay button did anything (the click matched the pressed button by table, but the button list is
+    rebuilt every frame). Now matched by what was pressed.
+  * NEW companions read the dead (ALifeZedOdds.lua): about once a second each companion weighs the dead around them
+    (close ones count more) against what they can take (gun with rounds > melee > bare hands, times health, plus you
+    and other companions standing with them). Too much: they break away from the middle of the dead (A-Life go_to)
+    and say so; calm again: back to following or their old hold spot. A few they can handle: "I got this." Settings
+    zedOdds, zedTickMs, zedFleeTiles, zedCalmMs, zedFriendTiles, zedNerve.
+  * Fix (Joe's log): orders were only looked for when a line went to the AI. "Clear this building." went to A-Life's
+    own camp-alarm "all clear" answer three times; "bandage me" mid-fight got A-Life's stock answer. Now every typed
+    line is checked for an order first (respondNow); an order runs and A-Life's stock answer is skipped. Setting
+    ordersFirst.
+  * Fix: your own lines typed in A-Life's talk box never showed in the chat (only the NPCs' did). Now added to the
+    chat on your screen the same way NPC lines are; lines typed in the vanilla chat box are not doubled. Setting
+    chatEchoMine.
+  * Unverified: whether MP servers push NPC lines into vanilla chat outside A-Life's mirror (not covered); the avatar
+    fade cause (no alpha found in UI3DModel / AnimatedModel); getForwardDirection on 42.21 (guarded).
+
+- MAJOR: Brain 4 (docs/PLAN-BRAIN-4.md). Groups break apart for real, fight over who leads, come back together, and the
+  world keeps its own history. World side (MP: server). Tests: docs/tests/test_pre1_brain4.lua.
+  * S1 real splits (ALifeBrainSplit.lua): reasons are low morale, members against the leader's course (BR.MUTTER
+    natures vs the stance), losses this week, hunger, a close succession contest. The rival (someone they'd follow who
+    sees things differently from the boss, or the contest's runner-up) leads; followers are the ones closer to the
+    rival's nature; at most splitMaxShare. Off screen only. They take a real house (the nomads' search), walk there
+    (lvSend), carry their fair share of each kind in the stash and of the rations, get their own splinter band and
+    their own brain. Ties -40 both ways, grudges both ways. Nowhere to go = no split. Brain on: Bands' label-only
+    split is off (M.b4OwnsSplits). Settings brainSplits, splitMinCrew, splitChance, splitGapDays, splitMaxShare.
+  * S2 kin: a week without a war eases the bad blood (kinHeal); weeks later, small or pressed and on good terms, the
+    splinter comes back (real nbAbsorb). Settings kinRejoin, kinRejoinDays, kinRejoinChance, kinHeal.
+  * S3 succession (wrap of M.nbPickLeader when the old leader is gone): love / need / fear from each one's nature,
+    weighted by creed (raiders fear, open / traders love and need, faithful love plus devout, others need); A-Life's
+    own group leader still counts. A close runner-up is a contest (b4Contest) and a reason to split. A new group's
+    first leader is no news. Settings succession, contestSplit.
+  * S4 world chronicle (ALifeBrainHistory.lua, global ModData ALifeChatPlus_World): splits, successions, rejoins,
+    moving away from the dead, merges, takeovers, bases falling. Each line goes to the radio news pool; your camp's
+    Chronicle hears it ("Word came: ...") when it happens within knowRadioTiles of a player; a group's own past is in
+    the AI's picture of them (BR.why). Settings worldChronicle, worldMax, worldRadio, worldHearsay, worldPastDays.
+  * Not built: watch mode (needs a verified camera call), long hunger / treaties, a "The world" Journal page.
+- MAJOR: Brain 3 (docs/PLAN-BRAIN-3.md). NPC groups live by the same zombie count you do. World side (MP: server).
+  Tests: docs/tests/test_pre1_brain3.lua.
+  * Off-screen hordes follow SandboxVars.ZombieConfig.PopulationMultiplier (0.65 = Normal): chance x square root,
+    strength x 0.3 power (Insane is about twice Normal, None = no hordes). Hook M.nbHordeMul in Bases (chance in
+    nbStep, strength in nbAttack). Works with the brain off. Settings hordePop, hordeBaseHit.
+  * The brain sees the dead (ALifeBrainDead.lua): horde attacks (repelled / broke in / overrun, b.deadHits) and the
+    dead counted around the base while a player is near feed sit.dead: secure stance up, peaceful stances damped,
+    pressure up, more guards, walls first. Overrun again and again (deadMoveScore within deadMoveDays, or half of it on
+    stripped land): they move away even from good land (nomads, b.nmWhy = "dead"). Settings brainDead, deadWeight,
+    deadMoveScore, deadMoveDays.
+  * Clearing: a real job "clear" (allocator, costs hands) makes the ground quieter for clearDays (clearCut). Nothing
+    deletes zombies. Settings deadClear, clearDays, clearCut.
+  * Strength in numbers on high pop (deadMergePop): small hard-pressed groups join a friendly neighbour with room
+    (real nbAbsorb, off screen), low-morale groups still take in loners. Settings deadMerge, deadMergePop,
+    deadMergeChance.
+  * Loaded habits: the patch's shelter / fall-back trigger (hordeN) drops on high pop; A-Life's "retreat from hordes"
+    (off in its sandbox by default) is turned on with a pop-scaled count, and put back when the setting is off
+    (ModuleHordeRetreat, read in A-Life 42.20; unverified on 42.21). Settings deadShelter, deadRetreat, deadRetreatCount.
+  * Not built: "guns only when cornered" (A-Life's horde defence fires when it has a gun; left to A-Life).
 - MAJOR: Brain 2 (docs/PLAN-BRAIN-2.md). Fights you can see, roads worth fighting over, a camp you can hand the keys to,
   groups that learn how you play and lie to each other. All world side (MP: server). Tests: docs/tests/test_pre1_brain2_*.lua.
   * R1 real fights (ALifeBrainFight.lua): a war party arriving with people around fights for real (A-Life combat) instead

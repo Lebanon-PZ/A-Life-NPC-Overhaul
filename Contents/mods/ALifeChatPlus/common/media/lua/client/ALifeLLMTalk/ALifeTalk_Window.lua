@@ -360,6 +360,7 @@ function NowPage.moreActions()
         { label = tr("BtnNotices", "Missed something?"), fn = function() M.winNotices() end },
         { label = tr("BtnLog", "The camp's notes"), fn = function() M.winLog() end },
         { label = tr("BtnWidget", "Camp widget on/off"), fn = function() if M.wgShown("widget") then M.wgClose("widget") else M.wgOpen("widget") end end },
+        { label = tr("BtnPartyHud", "Party overlay on/off"), show = function() return type(M.phudToggle) == "function" end, fn = function() M.phudToggle() end },
         { label = tr("BtnQuick", "Quick orders on/off"), fn = function() if M.wgShown("quick") then M.wgClose("quick") else M.wgOpen("quick") end end },
         { label = tr("BtnJeemStatus", "Jeem status"), show = hasJeem, fn = function(win, btn) local cm = menuAt(win, btn); M.winJeem(cm, { 10 }) end },
     }
@@ -518,7 +519,18 @@ function PeoplePage:showAvatar(uid)
     local shell = nil
     pcall(function() shell = PA().Talk.shellFor(uid) end)
     local shown = false
-    if shell then shown = pcall(function() self.avatar:setCharacter(shell) end) end
+    -- pre-1.0 fix: the live body (setCharacter) showed, then faded out in the Party / People avatar. A snapshot of how
+    -- they look right now (Look.lua: lookSave + lookDesc, a SurvivorDesc, nothing spawned) doesn't depend on the body.
+    -- Setting "avatarLive" = true brings the old live body back.
+    if shell and M.settings.avatarLive ~= true and fn(M, "lookSave") and fn(M, "lookDesc") and fn(M, "lookOf") then
+        pcall(M.lookSave, uid, shell, true)
+        local okD, desc = pcall(M.lookDesc, M.lookOf(uid))
+        if okD and desc then
+            pcall(function() self.avatar:setCharacter(nil) end)
+            shown = pcall(function() self.avatar:setSurvivorDesc(desc) end)
+        end
+    end
+    if shell and not shown then shown = pcall(function() self.avatar:setCharacter(shell) end) end
     if not shown then
         pcall(function() self.avatar:setCharacter(nil) end)
         local desc = M.winDescOf and M.winDescOf(uid)

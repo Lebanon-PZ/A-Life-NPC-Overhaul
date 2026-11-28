@@ -331,7 +331,8 @@ function M.bandDay()
     -- splits: a big unhappy community loses some people to a new band
     for _, band in ipairs(live) do
         local b = band.baseId and M.nbOf and M.nbOf(band.baseId) or nil
-        if b and (band.n or 0) >= 5 and (tonumber(b.morale) or 50) < 30 and roll(band.id .. "#split" .. day) < 0.2 then
+        local owned = fn(M, "b4OwnsSplits") and M.b4OwnsSplits() == true -- Brain 4 (ALifeBrainSplit): real splits instead of a new label
+        if b and not owned and (band.n or 0) >= 5 and (tonumber(b.morale) or 50) < 30 and roll(band.id .. "#split" .. day) < 0.2 then
             local people = M.bandLiving(band)
             local leaving = {}
             for _, r in ipairs(people) do if tostring(r.uid) ~= tostring(band.leader) and #leaving < 2 then leaving[#leaving + 1] = r end end
